@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Назва Товару | Мій Інтернет-магазин</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Montserrat (Google Fonts) -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <style>
+        /* Загальні стилі для тіла сторінки та шрифтів */
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f8f9fa; /* Світло-сірий фон */
+            color: #333; /* Темний текст */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Забезпечує, що футер завжди внизу */
+        }
+
+        /* Стилі для навігаційної панелі */
+        .navbar-brand {
+            font-weight: 700;
+            color: #007bff !important; /* Колір бренду */
+        }
+        .navbar .nav-link {
+            color: #333 !important;
+            font-weight: 500;
+            transition: color 0.3s ease; /* Плавний перехід кольору при наведенні */
+        }
+        .navbar .nav-link:hover {
+            color: #0056b3 !important; /* Темніший синій при наведенні */
+        }
+        .navbar .nav-link.active {
+            color: #007bff !important; /* Активний елемент меню */
+            font-weight: 700;
+        }
+
+        /* Стилі для хлібних крихт */
+        .breadcrumbs {
+            background-color: #e2e8f0; /* Світло-сірий фон */
+            padding: 1rem 0;
+            font-size: 0.9rem;
+            color: #475569; /* Темно-сірий текст */
+        }
+        .breadcrumbs a {
+            color: #3b82f6; /* Синій колір посилань */
+            text-decoration: none;
+        }
+        .breadcrumbs a:hover {
+            text-decoration: underline;
+        }
+        .breadcrumbs span {
+            margin: 0 0.5rem; /* Відступи між елементами */
+        }
+
+        /* Стилі для секції деталей товару */
+        .product-detail-section {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .product-main-image {
+            width: 100%;
+            max-height: 450px;
+            object-fit: contain;
+            border-radius: 0.5rem;
+            margin-bottom: 20px;
+        }
+        .product-thumbnail {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border: 2px solid #eee;
+            border-radius: 0.3rem;
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+        }
+        .product-thumbnail:hover, .product-thumbnail.active {
+            border-color: #007bff;
+        }
+        .product-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        .product-price {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #28a745; /* Зелений колір ціни */
+            margin-bottom: 1.5rem;
+        }
+        .product-description {
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        .quantity-input {
+            width: 80px;
+            text-align: center;
+        }
+        .btn-add-to-cart {
+            background-color: #27ae60; /* Зелений для кнопки "Додати в кошик" */
+            border-color: #2ecc71;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+            padding: 0.75rem 2rem;
+            border-radius: 0.3rem;
+            color: white;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-add-to-cart:hover {
+            background-color: #f39c12; /* Помаранчевий при наведенні */
+            border-color: #f1c40f;
+            color: white;
+        }
+
+        /* Стилі для вкладок (характеристики, відгуки) */
+        .nav-tabs .nav-link {
+            color: #555;
+            border: 1px solid transparent;
+            border-top-left-radius: 0.25rem;
+            border-top-right-radius: 0.25rem;
+            transition: all 0.3s ease;
+        }
+        .nav-tabs .nav-link.active {
+            color: #007bff;
+            background-color: #fff;
+            border-color: #dee2e6 #dee2e6 #fff;
+        }
+        .tab-content {
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-top: none;
+            border-bottom-left-radius: 0.25rem;
+            border-bottom-right-radius: 0.25rem;
+        }
+
+        /* Стилі для карток схожих товарів */
+        .related-product-card {
+            border: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .related-product-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .related-product-card img {
+            width: 100%;
+            max-height: 150px;
+            object-fit: contain;
+            padding: 5px;
+            background-color: #fff;
+        }
+        .related-product-card .card-body {
+            padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .related-product-card .card-title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #007bff;
+            margin-bottom: 0.5rem;
+        }
+        .related-product-card .product-price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #28a745;
+            margin-top: auto; /* Прикріплює ціну до низу */
+        }
+
+        /* Стилі для футера */
+        .footer {
+            background-color: #343a40; /* Темний фон футера */
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            margin-top: auto; /* Прикріплює футер до низу сторінки */
+        }
+        .footer a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Стилі для зірочок рейтингу в модальному вікні */
+        .star-rating {
+            font-size: 1.8rem; /* Розмір зірочок */
+            color: #ccc; /* Колір незаповнених зірочок */
+            cursor: pointer;
+        }
+        .star-rating .fas {
+            color: #ffc107; /* Колір заповнених зірочок (жовтий) */
+        }
+        .star-rating i {
+            transition: color 0.2s ease; /* Плавний перехід кольору */
+        }
+        .star-rating i:hover {
+            color: #ffc107; /* Жовтий при наведенні */
+        }
+        .star-rating i:hover ~ i {
+            color: #ccc; /* Зірочки після наведеної стають сірими */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Заголовок / Навігаційна панель -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top py-3">
+        <div class="container">
+            <a class="navbar-brand animate__animated animate__fadeInLeft" href="#">Мій Магазин</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-home me-2"></i>Головна</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-th-large me-2"></i>Каталог</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-info-circle me-2"></i>Про нас</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-envelope me-2"></i>Контакти</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-shopping-cart me-2"></i>Кошик <span class="badge bg-primary rounded-pill">0</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-user me-2"></i>Вхід</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Хлібні крихти -->
+    <section class="breadcrumbs">
+        <div class="container">
+            <a href="#"><i class="fas fa-home me-1"></i>Головна</a>
+            <span>/</span>
+            <a href="#"><i class="fas fa-th-large me-1"></i>Каталог Товарів</a>
+            <span>/</span>
+            <span><i class="fas fa-mobile-alt me-1"></i>Смартфон ProX</span>
+        </div>
+    </section>
+
+    <!-- Основний контент сторінки товару -->
+    <main class="py-5 flex-grow-1">
+        <div class="container">
+            <div class="row product-detail-section animate__animated animate__fadeIn">
+                <!-- Колонка для зображень товару -->
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <img src="https://placehold.co/600x400/007bff/ffffff?text=Смартфон+ProX" class="img-fluid product-main-image" alt="Смартфон ProX - Основне зображення" id="mainProductImage">
+                    <div class="d-flex justify-content-center justify-content-lg-start mt-3">
+                        <img src="https://placehold.co/100x100/007bff/ffffff?text=Зображення+1" class="img-fluid product-thumbnail me-2 active" alt="Thumbnail 1" data-full-src="https://placehold.co/600x400/007bff/ffffff?text=Смартфон+ProX">
+                        <img src="https://placehold.co/100x100/28a745/ffffff?text=Зображення+2" class="img-fluid product-thumbnail me-2" alt="Thumbnail 2" data-full-src="https://placehold.co/600x400/28a745/ffffff?text=Смартфон+ProX+Вид+2">
+                        <img src="https://placehold.co/100x100/ffc107/333333?text=Зображення+3" class="img-fluid product-thumbnail" alt="Thumbnail 3" data-full-src="https://placehold.co/600x400/ffc107/333333?text=Смартфон+ProX+Вид+3">
+                    </div>
+                </div>
+
+                <!-- Колонка для інформації про товар -->
+                <div class="col-lg-6">
+                    <h1 class="product-title animate__animated animate__fadeInRight">Смартфон ProX <i class="fas fa-mobile-alt ms-3 text-muted opacity-75"></i></h1>
+                    <p class="product-price animate__animated animate__fadeInRight animate__delay-0-5s">15 999 грн</p>
+                    <p class="product-description animate__animated animate__fadeInRight animate__delay-1s">
+                        Потужний процесор, неймовірна камера та елегантний дизайн – Смартфон ProX створений для тих, хто цінує продуктивність та стиль. Насолоджуйтесь бездоганною роботою додатків, яскравими фотографіями та довгим часом автономної роботи.
+                    </p>
+
+                    <div class="d-flex align-items-center mb-4 animate__animated animate__fadeInUp animate__delay-1-5s">
+                        <label for="quantity" class="form-label me-3 mb-0">Кількість:</label>
+                        <input type="number" id="quantity" class="form-control quantity-input" value="1" min="1">
+                        <button type="button" class="btn btn-add-to-cart ms-3">
+                            <i class="fas fa-cart-plus me-2"></i>Додати в кошик
+                        </button>
+                    </div>
+
+                    <ul class="list-unstyled text-muted animate__animated animate__fadeInUp animate__delay-2s">
+                        <li><i class="fas fa-check-circle text-success me-2"></i> В наявності</li>
+                        <li><i class="fas fa-shipping-fast text-info me-2"></i> Швидка доставка</li>
+                        <li><i class="fas fa-star text-warning me-2"></i> Рейтинг: 4.8 (125 відгуків)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Вкладки з характеристиками та відгуками -->
+            <div class="row mt-5 animate__animated animate__fadeInUp animate__delay-2-5s">
+                <div class="col-12">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="specs-tab" data-bs-toggle="tab" data-bs-target="#specs" type="button" role="tab" aria-controls="specs" aria-selected="true"><i class="fas fa-info-circle me-2"></i>Характеристики</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab" aria-controls="reviews" aria-selected="false"><i class="fas fa-comments me-2"></i>Відгуки</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="specs" role="tabpanel" aria-labelledby="specs-tab">
+                            <h4 class="mb-3">Технічні характеристики</h4>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-display me-2 text-primary"></i><strong>Дисплей:</strong> 6.7" Super Retina XDR</li>
+                                <li><i class="fas fa-microchip me-2 text-primary"></i><strong>Процесор:</strong> A17 Bionic</li>
+                                <li><i class="fas fa-memory me-2 text-primary"></i><strong>Пам'ять:</strong> 256 ГБ</li>
+                                <li><i class="fas fa-camera me-2 text-primary"></i><strong>Камера:</strong> 48 МП основна, 12 МП ультраширококутна</li>
+                                <li><i class="fas fa-battery-full me-2 text-primary"></i><strong>Акумулятор:</strong> До 24 годин відтворення відео</li>
+                                <li><i class="fas fa-mobile-alt me-2 text-primary"></i><strong>Операційна система:</strong> iOS 18</li>
+                            </ul>
+                        </div>
+                        <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+                            <h4 class="mb-3">Відгуки покупців (3)</h4>
+                            <div class="mb-3 border-bottom pb-3">
+                                <strong>Іван П.</strong> <span class="text-warning"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></span>
+                                <p class="text-muted mb-1">"Просто неймовірний телефон! Камера робить чудові фото, а швидкість роботи вражає."</p>
+                                <small class="text-muted"><i class="far fa-calendar-alt me-1"></i>15 липня 2025</small>
+                            </div>
+                            <div class="mb-3 border-bottom pb-3">
+                                <strong>Олена С.</strong> <span class="text-warning"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></span>
+                                <p class="text-muted mb-1">"Відмінний пристрій, але батарея могла б тримати трохи довше."</p>
+                                <small class="text-muted"><i class="far fa-calendar-alt me-1"></i>10 липня 2025</small>
+                            </div>
+                             <div class="mb-3">
+                                <strong>Дмитро В.</strong> <span class="text-warning"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></span>
+                                <p class="text-muted mb-1">"Перейшов з Android, дуже задоволений. Інтерфейс інтуїтивно зрозумілий."</p>
+                                <small class="text-muted"><i class="far fa-calendar-alt me-1"></i>8 липня 2025</small>
+                            </div>
+                            <button class="btn btn-outline-primary mt-3" data-bs-toggle="modal" data-bs-target="#reviewModal"><i class="fas fa-pen-to-square me-2"></i>Написати відгук</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Секція схожих товарів -->
+            <section class="mt-5 animate__animated animate__fadeInUp animate__delay-3s">
+                <h2 class="h4 fw-bold text-dark mb-4 text-center">Схожі товари</h2>
+                <div class="row">
+                    <!-- Схожий товар 1 -->
+                    <div class="col-6 col-md-4 col-lg-3 mb-4">
+                        <div class="card related-product-card">
+                            <img src="https://placehold.co/200x150/ffc107/333333?text=Розумний+Годинник" class="card-img-top" alt="Розумний Годинник">
+                            <div class="card-body">
+                                <h5 class="card-title">Розумний Годинник</h5>
+                                <p class="product-price">4 199 грн</p>
+                                <a href="#" class="btn btn-sm btn-outline-primary mt-auto"><i class="fas fa-info-circle me-1"></i>Детальніше</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Схожий товар 2 -->
+                    <div class="col-6 col-md-4 col-lg-3 mb-4">
+                        <div class="card related-product-card">
+                            <img src="https://placehold.co/200x150/e83e8c/ffffff?text=Планшет+Ultra" class="card-img-top" alt="Планшет Ultra">
+                            <div class="card-body">
+                                <h5 class="card-title">Планшет Ultra</h5>
+                                <p class="product-price">12 500 грн</p>
+                                <a href="#" class="btn btn-sm btn-outline-primary mt-auto"><i class="fas fa-info-circle me-1"></i>Детальніше</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Схожий товар 3 -->
+                    <div class="col-6 col-md-4 col-lg-3 mb-4">
+                        <div class="card related-product-card">
+                            <img src="https://placehold.co/200x150/28a745/ffffff?text=Бездротові+Навушники" class="card-img-top" alt="Бездротові Навушники">
+                            <div class="card-body">
+                                <h5 class="card-title">Бездротові Навушники</h5>
+                                <p class="product-price">2 499 грн</p>
+                                <a href="#" class="btn btn-sm btn-outline-primary mt-auto"><i class="fas fa-info-circle me-1"></i>Детальніше</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Схожий товар 4 -->
+                    <div class="col-6 col-md-4 col-lg-3 mb-4">
+                        <div class="card related-product-card">
+                            <img src="https://placehold.co/200x150/6610f2/ffffff?text=Фітнес-Браслет" class="card-img-top" alt="Фітнес-Браслет">
+                            <div class="card-body">
+                                <h5 class="card-title">Фітнес-Браслет</h5>
+                                <p class="product-price">1 200 грн</p>
+                                <a href="#" class="btn btn-sm btn-outline-primary mt-auto"><i class="fas fa-info-circle me-1"></i>Детальніше</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Мій Інтернет-магазин. Усі права захищено.</p>
+            <div class="mt-3">
+                <a href="#" class="text-white mx-2">Політика конфіденційності</a> |
+                <a href="#" class="text-white mx-2">Умови використання</a> |
+                <a href="#" class="text-white mx-2">FAQ</a>
+            </div>
+            <div class="mt-3 fs-5">
+                <a href="#" class="text-white mx-2"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="text-white mx-2"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-white mx-2"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Модальне вікно для написання відгуку -->
+    <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reviewModalLabel"><i class="fas fa-pen-to-square me-2"></i>Написати відгук про Смартфон ProX</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрити"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="reviewForm">
+                        <div class="mb-3">
+                            <label for="reviewerName" class="form-label">Ваше ім'я (необов'язково):</label>
+                            <input type="text" class="form-control" id="reviewerName" placeholder="Ваше ім'я">
+                        </div>
+                        <div class="mb-3">
+                            <label for="reviewerEmail" class="form-label">Ваш email (необов'язково):</label>
+                            <input type="email" class="form-control" id="reviewerEmail" placeholder="name@example.com">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label d-block">Ваша оцінка:</label>
+                            <div class="star-rating" id="starRating">
+                                <i class="far fa-star" data-rating="1"></i>
+                                <i class="far fa-star" data-rating="2"></i>
+                                <i class="far fa-star" data-rating="3"></i>
+                                <i class="far fa-star" data-rating="4"></i>
+                                <i class="far fa-star" data-rating="5"></i>
+                            </div>
+                            <input type="hidden" id="selectedRating" value="0">
+                        </div>
+                        <div class="mb-3">
+                            <label for="reviewText" class="form-label">Ваш відгук:</label>
+                            <textarea class="form-control" id="reviewText" rows="5" placeholder="Напишіть ваш відгук тут..."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-2"></i>Скасувати</button>
+                    <button type="button" class="btn btn-primary" id="submitReviewBtn"><i class="fas fa-paper-plane me-2"></i>Відправити відгук</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.1.min.js"></script>
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Обробка кліків по мініатюрам зображень
+            const mainProductImage = document.getElementById('mainProductImage');
+            const thumbnails = document.querySelectorAll('.product-thumbnail');
+
+            thumbnails.forEach(thumbnail => {
+                thumbnail.addEventListener('click', function() {
+                    // Змінюємо основне зображення
+                    mainProductImage.src = this.dataset.fullSrc;
+
+                    // Знімаємо активний клас з усіх мініатюр
+                    thumbnails.forEach(t => t.classList.remove('active'));
+                    // Додаємо активний клас до поточної мініатюри
+                    this.classList.add('active');
+                });
+            });
+
+            // Додаткова логіка для кнопки "Додати в кошик" (приклад)
+            const addToCartBtn = document.querySelector('.btn-add-to-cart');
+            if (addToCartBtn) {
+                addToCartBtn.addEventListener('click', function() {
+                    const quantity = document.getElementById('quantity').value;
+                    // Використовуємо console.log замість alert для кращого досвіду
+                    console.log(`Додано ${quantity} шт. товару "Смартфон ProX" до кошика!`);
+                    // alert(`Додано ${quantity} шт. товару "Смартфон ProX" до кошика! (Це лише приклад, реальна логіка потребує бекенду)`);
+                });
+            }
+
+            // Логіка для зірочкового рейтингу в модальному вікні
+            const starRatingContainer = document.getElementById('starRating');
+            const stars = starRatingContainer.querySelectorAll('i');
+            const selectedRatingInput = document.getElementById('selectedRating');
+            let currentRating = 0;
+
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    currentRating = parseInt(this.dataset.rating);
+                    selectedRatingInput.value = currentRating;
+                    updateStars();
+                });
+
+                star.addEventListener('mouseover', function() {
+                    highlightStars(parseInt(this.dataset.rating));
+                });
+
+                star.addEventListener('mouseout', function() {
+                    highlightStars(currentRating); // Повертаємо до поточної оцінки
+                });
+            });
+
+            function updateStars() {
+                stars.forEach(star => {
+                    const rating = parseInt(star.dataset.rating);
+                    if (rating <= currentRating) {
+                        star.classList.remove('far');
+                        star.classList.add('fas');
+                    } else {
+                        star.classList.remove('fas');
+                        star.classList.add('far');
+                    }
+                });
+            }
+
+            function highlightStars(ratingToHighlight) {
+                stars.forEach(star => {
+                    const rating = parseInt(star.dataset.rating);
+                    if (rating <= ratingToHighlight) {
+                        star.classList.remove('far');
+                        star.classList.add('fas');
+                    } else {
+                        star.classList.remove('fas');
+                        star.classList.add('far');
+                    }
+                });
+            }
+
+            // Обробка відправки відгуку
+            const submitReviewBtn = document.getElementById('submitReviewBtn');
+            const reviewForm = document.getElementById('reviewForm');
+            const reviewModal = new bootstrap.Modal(document.getElementById('reviewModal')); // Ініціалізуємо модальне вікно Bootstrap
+
+            submitReviewBtn.addEventListener('click', function() {
+                const reviewerName = document.getElementById('reviewerName').value;
+                const reviewerEmail = document.getElementById('reviewerEmail').value;
+                const rating = selectedRatingInput.value;
+                const reviewText = document.getElementById('reviewText').value;
+
+                if (rating === "0" || reviewText.trim() === "") {
+                    // Використовуємо console.error замість alert для кращого досвіду
+                    console.error("Будь ласка, поставте оцінку та напишіть відгук.");
+                    // alert("Будь ласка, поставте оцінку та напишіть відгук.");
+                    return;
+                }
+
+                console.log("Відгук відправлено:");
+                console.log("Ім'я:", reviewerName || "Анонім");
+                console.log("Email:", reviewerEmail || "Не вказано");
+                console.log("Оцінка:", rating);
+                console.log("Текст відгуку:", reviewText);
+
+                // Тут мала б бути логіка відправки даних на сервер
+                // fetch('/api/submit-review', {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify({ name: reviewerName, email: reviewerEmail, rating: rating, review: reviewText })
+                // }).then(response => response.json())
+                //   .then(data => console.log('Success:', data))
+                //   .catch((error) => console.error('Error:', error));
+
+                reviewModal.hide(); // Закриваємо модальне вікно
+                reviewForm.reset(); // Очищаємо форму
+                currentRating = 0; // Скидаємо рейтинг
+                selectedRatingInput.value = 0;
+                updateStars(); // Оновлюємо вигляд зірочок
+            });
+
+            // Очищення форми при закритті модального вікна
+            document.getElementById('reviewModal').addEventListener('hidden.bs.modal', function () {
+                reviewForm.reset();
+                currentRating = 0;
+                selectedRatingInput.value = 0;
+                updateStars();
+            });
+        });
+    </script>
+</body>
+</html>

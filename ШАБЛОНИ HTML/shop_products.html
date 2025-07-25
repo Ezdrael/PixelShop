@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог Товарів | Мій Інтернет-магазин</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Montserrat (Google Fonts) -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <!-- Chart.js для діаграм (видалено, оскільки діаграма більше не використовується) -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
+
+    <style>
+        /* Загальні стилі для тіла сторінки та шрифтів */
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f8f9fa; /* Світло-сірий фон */
+            color: #333; /* Темний текст */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Забезпечує, що футер завжди внизу */
+        }
+
+        /* Стилі для навігаційної панелі */
+        .navbar-brand {
+            font-weight: 700;
+            color: #007bff !important; /* Колір бренду */
+        }
+        .navbar .nav-link {
+            color: #333 !important;
+            font-weight: 500;
+            transition: color 0.3s ease; /* Плавний перехід кольору при наведенні */
+        }
+        .navbar .nav-link:hover {
+            color: #0056b3 !important; /* Темніший синій при наведенні */
+        }
+        .navbar .nav-link.active {
+            color: #007bff !important; /* Активний елемент меню */
+            font-weight: 700;
+        }
+
+        /* Стилі для карток товарів */
+        .product-card {
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Тінь для картки */
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Анімація при наведенні */
+            margin-bottom: 30px;
+            border-radius: 0.5rem; /* Закруглені кути */
+            overflow: hidden; /* Обрізання вмісту, що виходить за межі */
+            height: 100%; /* Забезпечує однакову висоту карток у рядку */
+            display: flex;
+            flex-direction: column; /* Елементи картки розташовуються вертикально */
+        }
+        .product-card:hover {
+            transform: translateY(-5px); /* Зсув вгору при наведенні */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Посилення тіні */
+        }
+        .product-card img {
+            width: 100%; /* Зображення займатиме всю доступну ширину картки */
+            max-height: 200px; /* Обмежуємо максимальну висоту */
+            height: auto; /* Висота буде автоматично підлаштовуватись, зберігаючи пропорції */
+            object-fit: contain; /* Зображення буде повністю вміщатися у рамки, не обрізаючись */
+            padding: 10px; /* Додамо невеликий відступ */
+            background-color: #fff; /* Білий фон для зображень */
+        }
+        .product-card .card-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1; /* Дозволяє тілу картки займати весь доступний простір */
+        }
+        .product-card .card-title {
+            font-weight: 700;
+            color: #007bff;
+            font-size: 1.25rem; /* Розмір заголовка */
+            margin-bottom: 0.5rem;
+        }
+        .product-card .card-text {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            flex-grow: 1; /* Дозволяє тексту заповнювати простір, штовхаючи ціну та кнопку вниз */
+        }
+        .product-card .product-price {
+            font-size: 1.5rem; /* Розмір ціни */
+            font-weight: 700;
+            color: #28a745; /* Зелений колір для ціни */
+            margin-bottom: 1rem;
+        }
+        .btn-add-to-cart {
+            background-color: #27ae60; /* Зелений для кнопки "Додати в кошик" */
+            border-color: #2ecc71;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.3rem;
+            color: white;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: auto; /* Прикріплює кнопку до низу картки */
+        }
+        .btn-add-to-cart:hover {
+            background-color: #f39c12; /* Помаранчевий при наведенні */
+            border-color: #f1c40f;
+            color: white;
+        }
+
+        /* Стилі для футера */
+        .footer {
+            background-color: #343a40; /* Темний фон футера */
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            margin-top: auto; /* Прикріплює футер до низу сторінки */
+        }
+        .footer a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Стилі для контейнера діаграми (видалено, оскільки діаграма більше не використовується) */
+        /*
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        */
+
+        /* Стилі для хлібних крихт */
+        .breadcrumbs {
+            background-color: #e2e8f0; /* Світло-сірий фон */
+            padding: 1rem 0;
+            font-size: 0.9rem;
+            color: #475569; /* Темно-сірий текст */
+        }
+        .breadcrumbs a {
+            color: #3b82f6; /* Синій колір посилань */
+            text-decoration: none;
+        }
+        .breadcrumbs a:hover {
+            text-decoration: underline;
+        }
+        .breadcrumbs span {
+            margin: 0 0.5rem; /* Відступи між елементами */
+        }
+
+        /* Стилі для пагінації */
+        .pagination .page-item.active .page-link {
+            background-color: #3b82f6; /* Активний колір сторінки */
+            border-color: #3b82f6;
+            color: white;
+        }
+        .pagination .page-item .page-link {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.3s ease;
+            color: #6c757d; /* Стандартний колір посилань пагінації */
+            background-color: #e9ecef; /* Світло-сірий фон */
+            border: 1px solid #dee2e6; /* Межі */
+        }
+        .pagination .page-item .page-link:hover {
+            background-color: #ced4da; /* Темніший сірий при наведенні */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Заголовок / Навігаційна панель -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top py-3">
+        <div class="container">
+            <a class="navbar-brand animate__animated animate__fadeInLeft" href="#">Мій Магазин</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-home me-2"></i>Головна</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#"><i class="fas fa-th-large me-2"></i>Каталог</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-info-circle me-2"></i>Про нас</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-envelope me-2"></i>Контакти</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-shopping-cart me-2"></i>Кошик <span class="badge bg-primary rounded-pill">0</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-user me-2"></i>Вхід</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Хлібні крихти -->
+    <section class="breadcrumbs">
+        <div class="container">
+            <a href="#">Головна</a>
+            <span>/</span>
+            <span>Каталог Товарів</span>
+        </div>
+    </section>
+
+    <!-- Основний контент -->
+    <main class="py-5">
+        <div class="container">
+            <!-- Фільтри та сортування -->
+            <section class="mb-5 p-4 bg-white rounded shadow-sm animate__animated animate__fadeInUp">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+                    <h3 class="h5 fw-bold text-dark mb-3 mb-md-0">Фільтри та Сортування</h3>
+                    <div class="d-flex align-items-center">
+                        <label for="sort-by" class="form-label me-2 mb-0">Сортувати за:</label>
+                        <select id="sort-by" class="form-select w-auto">
+                            <option value="default">За замовчуванням</option>
+                            <option value="price-asc">Ціна (зростання)</option>
+                            <option value="price-desc">Ціна (спадання)</option>
+                            <option value="name-asc">Назва (А-Я)</option>
+                            <option value="name-desc">Назва (Я-А)</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Сітка товарів -->
+            <section class="row" id="product-list">
+                <!-- Картки товарів будуть згенеровані JavaScript -->
+            </section>
+
+            <!-- Пагінація -->
+            <section class="d-flex justify-content-center mt-4 animate__animated animate__fadeInUp">
+                <nav>
+                    <ul class="pagination" id="pagination-links">
+                        <!-- Посилання пагінації будуть згенеровані JavaScript -->
+                    </ul>
+                </nav>
+            </section>
+        </div>
+    </main>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Мій Інтернет-магазин. Усі права захищено.</p>
+            <div class="mt-3">
+                <a href="#" class="text-white mx-2">Політика конфіденційності</a> |
+                <a href="#" class="text-white mx-2">Умови використання</a> |
+                <a href="#" class="text-white mx-2">FAQ</a>
+            </div>
+            <div class="mt-3 fs-5">
+                <a href="#" class="text-white mx-2"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="text-white mx-2"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-white mx-2"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Дані про товари
+        const productsData = [
+            { id: 1, name: "Смартфон ProX", description: "Потужний процесор, неймовірна камера.", price: 15999, category: "Електроніка", imageUrl: "https://placehold.co/300x200/007bff/ffffff?text=Смартфон", displayPrice: "15 999 грн" },
+            { id: 2, name: "Бездротові Навушники", description: "Чистий звук, комфортне носіння.", price: 2499, category: "Аксесуари", imageUrl: "https://placehold.co/300x200/28a745/ffffff?text=Навушники", displayPrice: "2 499 грн" },
+            { id: 3, name: "Розумний Годинник", description: "Відстежуйте активність та сповіщення.", price: 4199, category: "Електроніка", imageUrl: "https://placehold.co/300x200/ffc107/333333?text=Годинник", displayPrice: "4 199 грн" },
+            { id: 4, name: "Портативна Колонка", description: "Відмінний звук для вечірок.", price: 1899, category: "Аксесуари", imageUrl: "https://placehold.co/300x200/dc3545/ffffff?text=Колонка", displayPrice: "1 899 грн" },
+            { id: 5, name: "Електронна Книга", description: "Тисячі книг у вашій кишені.", price: 3500, category: "Гаджети", imageUrl: "https://placehold.co/300x200/6f42c1/ffffff?text=Е-Книга", displayPrice: "3 500 грн" },
+            { id: 6, name: "Ігрова Миша", description: "Точність та швидкість для геймерів.", price: 899, category: "Аксесуари", imageUrl: "https://placehold.co/300x200/17a2b8/ffffff?text=Миша", displayPrice: "899 грн" },
+            { id: 7, name: "Планшет Ultra", description: "Ідеально для роботи та розваг.", price: 12500, category: "Електроніка", imageUrl: "https://placehold.co/300x200/e83e8c/ffffff?text=Планшет", displayPrice: "12 500 грн" },
+            { id: 8, name: "Фітнес-Браслет", description: "Моніторинг здоров'я 24/7.", price: 1200, category: "Гаджети", imageUrl: "https://placehold.co/300x200/6610f2/ffffff?text=Фітнес", displayPrice: "1 200 грн" },
+            { id: 9, name: "Зарядний Пристрій", description: "Швидка та безпечна зарядка.", price: 450, category: "Аксесуари", imageUrl: "https://placehold.co/300x200/20c997/ffffff?text=Зарядка", displayPrice: "450 грн" },
+            { id: 10, name: "Бездротова Клавіатура", description: "Ергономічна, тиха, ідеальна для роботи.", price: 1100, category: "Аксесуари", imageUrl: "https://placehold.co/300x200/800080/ffffff?text=Клавіатура", displayPrice: "1 100 грн" },
+            { id: 11, name: "Кавоварка Еспресо", description: "Створюйте ідеальну каву вдома.", price: 7500, category: "Побутова техніка", imageUrl: "https://placehold.co/300x200/A0522D/ffffff?text=Кавоварка", displayPrice: "7 500 грн" },
+            { id: 12, name: "Настільна Лампа LED", description: "Сучасний дизайн, регульована яскравість.", price: 950, category: "Освітлення", imageUrl: "https://placehold.co/300x200/4682B4/ffffff?text=Лампа", displayPrice: "950 грн" },
+            { id: 13, name: "Ігровий Монітор 27''", description: "Висока частота оновлення, швидкий відгук.", price: 8500, category: "Електроніка", imageUrl: "https://placehold.co/300x200/556B2F/ffffff?text=Монітор", displayPrice: "8 500 грн" },
+            { id: 14, name: "Робот-Пилосос", description: "Автоматичне прибирання для чистоти вашого дому.", price: 6200, category: "Побутова техніка", imageUrl: "https://placehold.co/300x200/8B4513/ffffff?text=Пилосос", displayPrice: "6 200 грн" },
+            { id: 15, name: "Зовнішній Жорсткий Диск 1ТБ", description: "Надійне зберігання ваших даних.", price: 2100, category: "Аксесуари", imageUrl: "https://placehold.co/300x200/4F4F4F/ffffff?text=Диск", displayPrice: "2 100 грн" }
+        ];
+
+        let currentPage = 1;
+        const productsPerPage = 8; // Кількість товарів на сторінці
+        let currentSort = 'default';
+
+        const productListDiv = document.getElementById('product-list');
+        const sortBySelect = document.getElementById('sort-by');
+        const paginationUl = document.getElementById('pagination-links');
+
+        // Функція для рендерингу товарів на сторінці
+        function renderProducts(productsToRender) {
+            productListDiv.innerHTML = ''; // Очищаємо поточні товари
+            const startIndex = (currentPage - 1) * productsPerPage;
+            const endIndex = startIndex + productsPerPage;
+            const paginatedProducts = productsToRender.slice(startIndex, endIndex);
+
+            if (paginatedProducts.length === 0) {
+                const noProductsMessage = document.createElement('div');
+                noProductsMessage.className = 'col-12 text-center text-xl text-muted py-5';
+                noProductsMessage.textContent = 'Товарів за вибраними критеріями не знайдено.';
+                productListDiv.appendChild(noProductsMessage);
+                return;
+            }
+
+            paginatedProducts.forEach(product => {
+                const productCardHtml = `
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 animate__animated animate__fadeInUp">
+                        <div class="card product-card h-100">
+                            <img src="${product.imageUrl}" class="card-img-top" alt="${product.name}" loading="lazy">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">${product.name}</h5>
+                                <p class="card-text flex-grow-1">${product.description}</p>
+                                <p class="product-price">${product.displayPrice}</p>
+                                <button type="button" class="btn btn-add-to-cart mt-auto">
+                                    <i class="fas fa-cart-plus me-2"></i>Додати в кошик
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                productListDiv.innerHTML += productCardHtml;
+            });
+        }
+
+        // Функція для налаштування пагінації
+        function setupPagination(products) {
+            paginationUl.innerHTML = ''; // Очищаємо поточні посилання пагінації
+            const totalPages = Math.ceil(products.length / productsPerPage);
+
+            if (totalPages <= 1) { // Не показуємо пагінацію, якщо є лише одна сторінка
+                return;
+            }
+
+            for (let i = 1; i <= totalPages; i++) {
+                const li = document.createElement('li');
+                li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                li.innerHTML = `<a href="#" class="page-link" data-page="${i}">${i}</a>`;
+                paginationUl.appendChild(li);
+
+                li.querySelector('a').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    currentPage = parseInt(e.target.dataset.page);
+                    applyFiltersAndSort();
+                    window.scrollTo({ top: 0, behavior: 'smooth' }); // Прокручуємо до верху сторінки при зміні
+                });
+            }
+        }
+
+        // Функція для сортування товарів
+        function sortProducts(products, sortBy) {
+            switch (sortBy) {
+                case 'price-asc':
+                    return [...products].sort((a, b) => a.price - b.price);
+                case 'price-desc':
+                    return [...products].sort((a, b) => b.price - a.price);
+                case 'name-asc':
+                    return [...products].sort((a, b) => a.name.localeCompare(b.name));
+                case 'name-desc':
+                    return [...products].sort((a, b) => b.name.localeCompare(a.name));
+                default:
+                    // Для "За замовчуванням" повертаємо початковий порядок productsData
+                    return productsData.slice();
+            }
+        }
+
+        // Функція для застосування фільтрів та сортування
+        function applyFiltersAndSort() {
+            let filteredProducts = productsData.slice(); // Починаємо з копії всіх товарів
+
+            // Застосовуємо сортування
+            filteredProducts = sortProducts(filteredProducts, currentSort);
+
+            renderProducts(filteredProducts);
+            setupPagination(filteredProducts);
+        }
+
+        // Обробники подій
+        sortBySelect.addEventListener('change', (e) => {
+            currentSort = e.target.value;
+            currentPage = 1; // Скидаємо на першу сторінку при зміні сортування
+            applyFiltersAndSort();
+        });
+
+        // Ініціалізація при завантаженні сторінки
+        document.addEventListener('DOMContentLoaded', function() {
+            applyFiltersAndSort(); // Застосовуємо початкове сортування та пагінацію
+            // renderCategoryChart(); // Видалено, оскільки діаграма більше не використовується
+        });
+    </script>
+</body>
+</html>
