@@ -1,0 +1,348 @@
+/* Загальні стилі для тіла сторінки та шрифтів */
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #f8f9fa; /* Світло-сірий фон */
+    color: #333; /* Темний текст */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Забезпечує, що футер завжди внизу */
+}
+
+/* Стилі для навігаційної панелі */
+.navbar-brand {
+    font-weight: 700;
+    color: #007bff !important; /* Колір бренду */
+    font-family: 'Lobster', cursive; /* Додано новий шрифт */
+}
+.navbar .nav-link {
+    color: #333 !important;
+    font-weight: 500;
+    transition: color 0.3s ease; /* Плавний перехід кольору при наведенні */
+}
+.navbar .nav-link:hover {
+    color: #0056b3 !important; /* Темніший синій при наведенні */
+}
+.navbar .nav-link.active {
+    color: #007bff !important; /* Активний елемент меню */
+    font-weight: 700;
+}
+
+/* Стилі для хлібних крихт */
+.breadcrumbs {
+    background-color: #e2e8f0; /* Світло-сірий фон */
+    padding: 1rem 0;
+    font-size: 0.9rem;
+    color: #475569; /* Темно-сірий текст */
+}
+.breadcrumbs a {
+    color: #3b82f6; /* Синій колір посилань */
+    text-decoration: none;
+}
+.breadcrumbs a:hover {
+    text-decoration: underline;
+}
+.breadcrumbs span {
+    margin: 0 0.5rem; /* Відступи між елементами */
+}
+
+/* Стилі для секції деталей товару */
+.product-detail-section {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+.product-main-image {
+    width: 100%;
+    max-height: 450px;
+    object-fit: contain;
+    border-radius: 0.5rem;
+    margin-bottom: 20px;
+}
+.product-thumbnail {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border: 2px solid #eee;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+.product-thumbnail:hover, .product-thumbnail.active {
+    border-color: #007bff;
+}
+.product-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 1rem;
+}
+.product-price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #28a745; /* Зелений колір ціни */
+    margin-bottom: 1.5rem;
+}
+.product-description {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+.quantity-input {
+    width: 80px !important; /* Зменшена ширина з !important */
+    text-align: center;
+}
+/* Стилі для кнопки "Додати в кошик" на сторінці деталей товару */
+.btn-add-to-cart {
+    background-color: #27ae60; /* Зелений для кнопки "Додати в кошик" */
+    border-color: #2ecc71;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    padding: 0.75rem 2rem;
+    border-radius: 0.3rem;
+    color: white;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn-add-to-cart:hover {
+    background-color: #f39c12; /* Помаранчевий при наведенні */
+    border-color: #f1c40f;
+    color: white;
+}
+
+/* Стилі для вкладок (характеристики, відгуки) */
+.nav-tabs .nav-link {
+    color: #555;
+    border: 1px solid transparent;
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+    transition: all 0.3s ease;
+}
+.nav-tabs .nav-link.active {
+    color: #007bff;
+    background-color: #fff;
+    border-color: #dee2e6 #dee2e6 #fff;
+}
+.tab-content {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #dee2e6;
+    border-top: none;
+    border-bottom-left-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+}
+
+/* Стилі для карток товарів (на сторінці каталогу та рекомендованих товарів) */
+.product-card {
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 30px;
+    height: 420px; /* Фіксована висота картки */
+    display: flex;
+    flex-direction: column;
+    border-radius: 0.5rem; /* Додано, щоб картки були заокруглені */
+    overflow: hidden; /* Додано, щоб вміст не виходив за межі заокруглення */
+}
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+.product-card img {
+    width: 100%;
+    max-height: 200px; /* Обмежуємо висоту зображення */
+    height: auto; /* Зберігаємо пропорції */
+    object-fit: contain; /* Запобігає розтягуванню зображення */
+    padding: 10px; /* Додаємо невеликий відступ всередині зображення */
+    background-color: #fff; /* Білий фон для зображень */
+}
+.product-card .card-body {
+    padding: 20px;
+    flex-grow: 1; /* Дозволяє тілу картки розтягуватися */
+    display: flex;
+    flex-direction: column;
+}
+.product-card .card-title {
+    font-weight: 700;
+    color: #007bff;
+    margin-bottom: 0.5rem;
+}
+.product-card .card-text {
+    color: #666;
+    flex-grow: 1; /* Дозволяє тексту опису розтягуватися */
+    margin-bottom: 1rem;
+    overflow: hidden; /* Приховуємо текст, що виходить за межі */
+    text-overflow: ellipsis; /* Додаємо три крапки, якщо текст обрізається */
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Обмежуємо до 2 рядків */
+    -webkit-box-orient: vertical;
+}
+.product-card .product-price {
+    font-size: 1.5rem; /* Збільшено розмір ціни для кращої видимості */
+    font-weight: 700;
+    color: #28a745;
+    margin-top: auto; /* Прикріплює ціну до низу картки */
+    margin-bottom: 1rem;
+}
+/* Стилі для кнопки "Додати в кошик" / "Детальніше" на картках товарів */
+/* Це загальний стиль для кнопок на картках, який відповідає оригінальному зразку */
+.product-card .btn-add-to-cart {
+    background-color: #27ae60; /* Зелений колір */
+    border-color: #2ecc71;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    padding: 0.6rem 1.2rem; /* Трохи менший padding для кнопок на картках */
+    border-radius: 0.3rem;
+    color: white;
+    font-weight: 600;
+    display: flex; /* Використовуємо flex для вирівнювання іконки та тексту */
+    align-items: center;
+    justify-content: center;
+    width: 100%; /* Кнопка на всю ширину картки */
+}
+.product-card .btn-add-to-cart:hover {
+    background-color: #f39c12; /* Помаранчевий при наведенні */
+    border-color: #f1c40f;
+    color: white;
+}
+
+
+/* Стилі для футера */
+.footer {
+    background-color: #343a40; /* Темний фон футера */
+    color: white;
+    padding: 40px 0;
+    text-align: center;
+    margin-top: auto; /* Прикріплює футер до низу сторінки */
+}
+.footer a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+}
+.footer a:hover {
+    text-decoration: underline;
+}
+
+/* Стилі для зірочок рейтингу в модальному вікні */
+.star-rating {
+    font-size: 1.8rem; /* Розмір зірочок */
+    color: #ccc; /* Колір незаповнених зірочок */
+    cursor: pointer;
+}
+.star-rating .fas {
+    color: #ffc107; /* Колір заповнених зірочок (жовтий) */
+}
+.star-rating i {
+    transition: color 0.2s ease; /* Плавний перехід кольору */
+}
+.star-rating i:hover {
+    color: #ffc107; /* Жовтий при наведенні */
+}
+.star-rating i:hover ~ i {
+    color: #ccc; /* Зірочки після наведеної стають сірими */
+}
+
+/* Стилі, перенесені з default.php */
+.hero-section {
+    /* Запасний варіант: градієнт та колір, якщо зображення не завантажується */
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), #343a40 url('https://images.pexels.com/photos/1779487/pexels-photo-1779487.jpeg') no-repeat center center/cover;
+    color: white;
+    padding: 100px 0;
+    text-align: center;
+}
+.hero-section h1 {
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+/* Стилі для кнопки "Переглянути товари" на головній сторінці (Hero Section) */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+/* Стилі для кнопки "Переглянути весь каталог" (outline) */
+.btn-outline-primary {
+    border-color: #007bff;
+    color: #007bff;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+.btn-outline-primary:hover {
+    background-color: #007bff;
+    color: white;
+}
+/* Стилі для пагінації */
+.pagination .page-item.active .page-link {
+    background-color: #3b82f6; /* Активний колір сторінки */
+    border-color: #3b82f6;
+    color: white;
+}
+.pagination .page-item .page-link {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    transition: background-color 0.3s ease;
+    color: #6c757d; /* Стандартний колір посилань пагінації */
+    background-color: #e9ecef; /* Світло-сірий фон */
+    border: 1px solid #dee2e6; /* Межі */
+}
+.pagination .page-item .page-link:hover {
+    background-color: #ced4da; /* Темніший сірий при наведенні */
+}
+/* Стилі для бічної панелі категорій */
+.list-group-item.active {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+.list-group-item.active a {
+    color: white !important;
+}
+
+/* Стилі для модального вікна кошика */
+.modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+.modal-title {
+    font-weight: 700;
+    color: #333;
+}
+.modal-body {
+    background-color: #fff;
+}
+.modal-footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+}
+
+/* НОВІ СТИЛІ ДЛЯ КНОПКИ GOOGLE LOGIN */
+.btn-google-login {
+    background-color: #4285F4; /* Google Blue */
+    color: white;
+    border: 1px solid #4285F4;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-google-login:hover {
+    background-color: #357ae8; /* Darker blue on hover */
+    border-color: #357ae8;
+    color: white; /* Ensure text remains white */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-google-login .fab {
+    font-size: 1.2em; /* Adjust icon size */
+    margin-right: 0.5rem;
+}
