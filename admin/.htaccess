@@ -1,0 +1,12 @@
+# ВАЖЛИВО: Якщо ваш проєкт знаходиться в корені домену (http://localhost/),
+# RewriteBase має бути /
+# Якщо проєкт у підпапці (http://localhost/my-project/),
+# RewriteBase має бути /my-project/
+
+Options -Indexes
+RewriteEngine On
+RewriteBase /admin/
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?route=$1 [L,QSA]

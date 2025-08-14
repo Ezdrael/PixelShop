@@ -1,0 +1,169 @@
+/* ===================================================================
+   Файл:      _comp_ui_elements.css
+   Призначення: Бейджі, вкладки, іконки, хлібні крихти.
+   =================================================================== */
+
+/* --- Бейджі статусу та ID --- */
+.status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    font-size: 0.8em;
+    font-weight: 600;
+    border-radius: 12px;
+    color: #fff;
+    line-height: 1.5;
+}
+
+.status-badge.active {
+    background-color: var(--success-color);
+}
+
+.status-badge.inactive {
+    background-color: var(--secondary-text);
+}
+
+.category-id-badge {
+    display: inline-block;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.8em;
+    background-color: var(--sidebar-hover-bg);
+    padding: 3px 8px;
+    border-radius: 4px;
+    color: var(--secondary-text);
+    margin: 2px;
+    line-height: 1.5;
+}
+
+.status-badge-warning {
+    display: inline-block;
+    padding: 3px 10px;
+    font-size: 0.8em;
+    font-weight: 600;
+    border-radius: 12px;
+    color: #fff;
+    line-height: 1.5;
+    background-color: var(--warning-color);
+}
+
+.status-badge-warning a {
+    color: #fff;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+.status-badge-warning a:hover {
+    opacity: 0.9;
+}
+
+/* --- Посилання та неактивні елементи --- */
+.styled-link {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.inactive-good {
+    color: var(--secondary-text);
+    font-style: italic;
+    text-decoration: line-through;
+}
+
+/* --- Вкладки (Tabs) --- */
+.tabs-container {
+    margin-top: 1.5rem;
+}
+
+.tab-nav {
+    display: flex;
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: -2px;
+}
+
+.tab-link {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .8rem 1.5rem;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--secondary-text);
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    transition: color .2s, border-color .2s;
+}
+
+.tab-link:hover {
+    color: var(--primary-text);
+}
+
+.tab-link.active {
+    color: var(--accent-color);
+    border-bottom-color: var(--accent-color);
+}
+
+.tab-content-wrapper {
+    border: 1px solid var(--border-color);
+    border-top: none;
+    padding: 1.5rem;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* --- Іконки дозволів --- */
+.perm-icon {
+    font-size: 1.25rem;
+}
+
+.perm-icon.yes {
+    color: var(--success-color);
+}
+
+.perm-icon.no {
+    color: var(--danger-color);
+}
+
+/* --- Хлібні крихти (Breadcrumbs) --- */
+.breadcrumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9em;
+    padding: 0.75rem 1rem;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.breadcrumbs a {
+    color: var(--secondary-text);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.breadcrumbs a:hover {
+    color: var(--accent-color);
+}
+
+.breadcrumbs span {
+    color: var(--primary-text);
+    font-weight: 500;
+}
+
+.breadcrumbs .separator {
+    color: var(--border-color);
+}
+
+.breadcrumbs .active {
+    color: var(--accent-color);
+    font-weight: 700;
+}

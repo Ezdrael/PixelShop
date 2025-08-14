@@ -1,0 +1,41 @@
+/* ===================================================================
+   Файл:      main.css
+   Призначення: Головний файл стилів.
+   =================================================================== */
+
+/* --- 1. ІМПОРТ ВСІХ ЧАСТИН (МАЄ БУТИ НА ПОЧАТКУ) --- */
+@import url('_layout.css');
+@import url('_tables.css');
+@import url('_forms.css');
+@import url('_components.css');
+
+/* --- 2. Глобальні змінні та стилі (ПІСЛЯ ІМПОРТІВ) --- */
+:root {
+    --bg-color: #f4f7fa;
+    --sidebar-bg: #ffffff;
+    --card-bg: #ffffff;
+    --primary-text: #1a202c;
+    --secondary-text: #718096;
+    --accent-color: #4a90e2;
+    --success-color: #22c55e;
+    --danger-color: #ef4444;
+    --warning-color: #f97316;
+    --border-color: #e2e8f0;
+    --shadow-color: rgba(0, 0, 0, 0.05);
+    --sidebar-hover-bg: #f1f5f9;
+    --sidebar-active-bg: #e2e8f0;
+    
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--primary-text);
+    font-size: 16px;
+}

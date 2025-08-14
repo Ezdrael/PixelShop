@@ -1,0 +1,65 @@
+/* ===================================================================
+   Файл:      _layout.css
+   Призначення: Стилі для основної розмітки сторінки:
+   - Загальний контейнер панелі (.dashboard-container)
+   - Бічна панель (.sidebar)
+   - Верхній хедер (.top-header)
+   - Обгортка для контенту (.content-wrapper, .main-content)
+   =================================================================== */
+
+/* --- Контейнер адмін-панелі --- */
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* --- Бічна панель (Sidebar) --- */
+.sidebar {
+    width: 260px;
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* --- Обгортка для контенту та хедера --- */
+.content-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Верхній хедер --- */
+.top-header {
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--primary-text);
+}
+
+/* --- Основний контент сторінки --- */
+.main-content {
+    flex-grow: 1;
+    padding: 2rem;
+    overflow-y: auto;
+}
