@@ -3,7 +3,7 @@
  * step-1.php - Перевірка вимог до сервера.
  */
 
-$errors =;
+$errors = [];
 // Перевірка версії PHP
 if (!version_compare(PHP_VERSION, REQUIRED_PHP_VERSION, '>=')) {
     $errors = "Необхідна версія PHP ". REQUIRED_PHP_VERSION. " або вище. Ваша версія: ". PHP_VERSION;
