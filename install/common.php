@@ -13,8 +13,9 @@ session_start([
 ]);
 
 // --- Визначення констант та конфігурації ---
-define('GITHUB_CMS_USER', 'your-github-username'); // Замініть на ваш логін GitHub
-define('GITHUB_CMS_REPO', 'your-cms-repo');      // Замініть на назву репозиторію CMS
+define('GITHUB_CMS_USER', 'Ezdrael'); // Важливо, щоб тут були правильні дані
+define('GITHUB_CMS_REPO', 'PixelShop'); // І тут також
+define('GITHUB_CMS_BRANCH', 'main'); // <-- ДОДАЙТЕ ЦЕЙ РЯДОК
 define('REQUIRED_PHP_VERSION', '8.0.0');
 define('SQL_FILE_PATH', 'database/schema.sql'); // Шлях до SQL файлу всередині репозиторію CMS
 define('CONFIG_FILE_NAME', 'config.php');
@@ -39,6 +40,28 @@ function render_header($title) {
         input[type="text"], input[type="password"], input[type="email"] { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
        .button { display: inline-block; background-color: #1877f2; color: #fff; padding: 10px 20px; border: none; border-radius: 4px; text-decoration: none; font-size: 16px; cursor: pointer; }
        .button:hover { background-color: #166fe5; }
+       .status-box {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 6px;
+            display: none; /* Схований за замовчуванням */
+            border: 1px solid transparent;
+            text-align: center;
+        }
+        .status-success {
+            background-color: var(--success-color-bg, #d4edda);
+            color: var(--success-color-text, #155724);
+            border-color: var(--success-color-border, #c3e6cb);
+        }
+        .status-danger {
+            background-color: var(--danger-color-bg, #f8d7da);
+            color: var(--danger-color-text, #721c24);
+            border-color: var(--danger-color-border, #f5c6cb);
+        }
+        .button:disabled {
+            background-color: var(--gray-color);
+            cursor: not-allowed;
+        }
        .error-box { background: #ffebe8; border: 1px solid #dd3c10; padding: 15px; border-radius: 4px; margin-bottom: 20px; }
         #progress-log { border: 1px solid #ccc; padding: 10px; height: 200px; overflow-y: scroll; background: #fafafa; margin-bottom: 20px; }
        .log-info { color: #333; }
@@ -80,13 +103,20 @@ function log_message($message, $type = 'info') {
  * @return bool
  */
 function delete_directory_recursive($dir) {
-    if (!file_exists($dir)) return true;
-    if (!is_dir($dir)) return unlink($dir);
+    if (!file_exists($dir)) {
+        return true;
+    }
+    if (!is_dir($dir)) {
+        return unlink($dir);
+    }
     foreach (scandir($dir) as $item) {
-        if ($item == '.' |
-
-| $item == '..') continue;
-        if (!delete_directory_recursive($dir. DIRECTORY_SEPARATOR. $item)) return false;
+        // Ось виправлений рядок
+        if ($item == '.' || $item == '..') {
+            continue;
+        }
+        if (!delete_directory_recursive($dir . DIRECTORY_SEPARATOR . $item)) {
+            return false;
+        }
     }
     return rmdir($dir);
 }
