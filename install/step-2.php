@@ -15,37 +15,14 @@ if (isset($_SESSION['error'])) {
 ?>
 
 <form method="post" action="index.php?step=2" id="db-form">
-    <p>Введіть дані для підключення до вашої бази даних MySQL. З'єднання буде перевірено автоматично.</p>
-    
-    <div>
-        <label for="db_host">Хост бази даних:</label>
-        <input type="text" id="db_host" name="db_host" value="<?= htmlspecialchars($db_data['db_host'] ?? 'localhost') ?>" required>
-    </div>
-    
-    <div>
-        <label for="db_name">Ім'я бази даних:</label>
-        <input type="text" id="db_name" name="db_name" value="<?= htmlspecialchars($db_data['db_name'] ?? '') ?>" required>
-    </div>
-    
-    <div>
-        <label for="db_user">Ім'я користувача:</label>
-        <input type="text" id="db_user" name="db_user" value="<?= htmlspecialchars($db_data['db_user'] ?? '') ?>" required>
-    </div>
-    
-    <div>
-        <label for="db_pass">Пароль:</label>
-        <input type="password" id="db_pass" name="db_pass" value="<?= htmlspecialchars($db_data['db_pass'] ?? '') ?>">
-    </div>
-    
-    <div>
-        <label for="db_prefix">Префікс таблиць:</label>
-        <input type="text" id="db_prefix" name="db_prefix" value="<?= htmlspecialchars($db_data['db_prefix'] ?? 'ps_') ?>" required>
-    </div>
-
+    <div class="input-group"><i class="fas fa-server"></i><input type="text" id="db_host" name="db_host" value="<?= htmlspecialchars($db_data['db_host'] ?? 'localhost') ?>" placeholder="Хост бази даних" required></div>
+    <div class="input-group"><i class="fas fa-database"></i><input type="text" id="db_name" name="db_name" value="<?= htmlspecialchars($db_data['db_name'] ?? '') ?>" placeholder="Ім'я бази даних" required></div>
+    <div class="input-group"><i class="fas fa-user"></i><input type="text" id="db_user" name="db_user" value="<?= htmlspecialchars($db_data['db_user'] ?? '') ?>" placeholder="Ім'я користувача" required></div>
+    <div class="input-group"><i class="fas fa-lock"></i><input type="password" id="db_pass" name="db_pass" value="<?= htmlspecialchars($db_data['db_pass'] ?? '') ?>" placeholder="Пароль"></div>
+    <div class="input-group"><i class="fas fa-table"></i><input type="text" id="db_prefix" name="db_prefix" value="<?= htmlspecialchars($db_data['db_prefix'] ?? 'cms_') ?>" placeholder="Префікс таблиць" required></div>
     <div id="connection-status" class="status-box"></div>
-    
-    <button type="button" id="check-db-btn" class="button">Перевірити з'єднання</button>
-    <button type="submit" id="continue-btn" class="button" disabled>Далі</button>
+    <button type="button" id="check-db-btn" class="button"><i class="fas fa-plug"></i> Перевірити з'єднання</button>
+    <button type="submit" id="continue-btn" class="button" disabled>Далі <i class="fas fa-arrow-right"></i></button>
 </form>
 
 <script>
