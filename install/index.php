@@ -45,10 +45,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['install_data']['admin_user'] = $_POST['admin_user'];
                 $_SESSION['install_data']['admin_pass'] = password_hash($_POST['admin_pass'], PASSWORD_DEFAULT);
                 $_SESSION['install_data']['admin_email'] = $_POST['admin_email'];
+                
+                // Зберігаємо вибір про демо-дані
+                $_SESSION['install_data']['install_demo_data'] = isset($_POST['install_demo_data']);
+                
                 header('Location: index.php?step=4');
                 exit;
-            }
-            break;
     }
 }
 
