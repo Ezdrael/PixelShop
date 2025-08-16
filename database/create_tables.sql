@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS `%%PREFIX%%roles` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO `%%PREFIX%%roles` (`id`, `role_name`, `perm_chat`, `perm_roles`, `perm_users`, `perm_categories`, `perm_goods`, `perm_warehouses`, `perm_arrivals`, `perm_transfers`, `perm_albums`) VALUES
+-- Змінено на INSERT IGNORE
+INSERT IGNORE INTO `%%PREFIX%%roles` (`id`, `role_name`, `perm_chat`, `perm_roles`, `perm_users`, `perm_categories`, `perm_goods`, `perm_warehouses`, `perm_arrivals`, `perm_transfers`, `perm_albums`) VALUES
 (1, 'Адміністратор', 'vaed', 'vaed', 'vaed', 'vaed', 'vaed', 'vaed', 'vaed', 'vaed', 'vaed');
 
 CREATE TABLE IF NOT EXISTS `%%PREFIX%%users` (
@@ -28,7 +29,8 @@ CREATE TABLE IF NOT EXISTS `%%PREFIX%%users` (
   KEY `role_id` (`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO `%%PREFIX%%users` (`id`, `name`, `email`, `password`, `role_id`, `token`) VALUES
+-- Змінено на INSERT IGNORE
+INSERT IGNORE INTO `%%PREFIX%%users` (`id`, `name`, `email`, `password`, `role_id`, `token`) VALUES
 (1, 'Admin', 'admin@example.com', '$2y$10$fW.1.Yups8QPkZ3jOE6vTu3S1ajw2g5S8V8C55qhbZxdgBv0uMh.S', 1, NULL);
 
 CREATE TABLE IF NOT EXISTS `%%PREFIX%%categories` (
@@ -140,32 +142,24 @@ CREATE TABLE IF NOT EXISTS `%%PREFIX%%chat_messages` (
 
 ALTER TABLE `%%PREFIX%%users`
   ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `%%PREFIX%%roles` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
 ALTER TABLE `%%PREFIX%%categories`
   ADD CONSTRAINT `categories_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `%%PREFIX%%categories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
 ALTER TABLE `%%PREFIX%%goods`
   ADD CONSTRAINT `goods_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `%%PREFIX%%categories` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
 ALTER TABLE `%%PREFIX%%product_stock`
   ADD CONSTRAINT `product_stock_ibfk_1` FOREIGN KEY (`good_id`) REFERENCES `%%PREFIX%%goods` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `product_stock_ibfk_2` FOREIGN KEY (`warehouse_id`) REFERENCES `%%PREFIX%%warehouses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
 ALTER TABLE `%%PREFIX%%product_transactions`
   ADD CONSTRAINT `product_transactions_ibfk_1` FOREIGN KEY (`good_id`) REFERENCES `%%PREFIX%%goods` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `product_transactions_ibfk_2` FOREIGN KEY (`warehouse_id`) REFERENCES `%%PREFIX%%warehouses` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `product_transactions_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `%%PREFIX%%users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
 ALTER TABLE `%%PREFIX%%photo_albums`
   ADD CONSTRAINT `photo_albums_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `%%PREFIX%%photo_albums` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
 ALTER TABLE `%%PREFIX%%photos`
   ADD CONSTRAINT `photos_ibfk_1` FOREIGN KEY (`album_id`) REFERENCES `%%PREFIX%%photo_albums` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
 ALTER TABLE `%%PREFIX%%chat_group_members`
   ADD CONSTRAINT `chat_group_members_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `%%PREFIX%%chat_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `chat_group_members_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `%%PREFIX%%users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
 ALTER TABLE `%%PREFIX%%chat_messages`
   ADD CONSTRAINT `chat_messages_ibfk_1` FOREIGN KEY (`sender_id`) REFERENCES `%%PREFIX%%users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `chat_messages_ibfk_2` FOREIGN KEY (`recipient_id`) REFERENCES `%%PREFIX%%users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
