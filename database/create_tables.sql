@@ -1,4 +1,4 @@
-CREATE TABLE `%%PREFIX%%roles` (
+CREATE TABLE IF NOT EXISTS `%%PREFIX%%roles` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `role_name` varchar(255) NOT NULL,
   `perm_chat` varchar(10) NOT NULL DEFAULT '',
@@ -16,7 +16,7 @@ CREATE TABLE `%%PREFIX%%roles` (
 INSERT INTO `%%PREFIX%%roles` (`id`, `role_name`, `perm_chat`, `perm_roles`, `perm_users`, `perm_categories`, `perm_goods`, `perm_warehouses`, `perm_arrivals`, `perm_transfers`, `perm_albums`) VALUES
 (1, 'Адміністратор', 'vaed', 'vaed', 'vaed', 'vaed', 'vaed', 'vaed', 'vaed', 'vaed', 'vaed');
 
-CREATE TABLE `%%PREFIX%%users` (
+CREATE TABLE IF NOT EXISTS `%%PREFIX%%users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE `%%PREFIX%%users` (
 INSERT INTO `%%PREFIX%%users` (`id`, `name`, `email`, `password`, `role_id`, `token`) VALUES
 (1, 'Admin', 'admin@example.com', '$2y$10$fW.1.Yups8QPkZ3jOE6vTu3S1ajw2g5S8V8C55qhbZxdgBv0uMh.S', 1, NULL);
 
-CREATE TABLE `%%PREFIX%%categories` (
+CREATE TABLE IF NOT EXISTS `%%PREFIX%%categories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT 1,
@@ -40,7 +40,7 @@ CREATE TABLE `%%PREFIX%%categories` (
   KEY `parent_id` (`parent_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE `%%PREFIX%%goods` (
+CREATE TABLE IF NOT EXISTS `%%PREFIX%%goods` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `description` text DEFAULT NULL,
@@ -56,14 +56,14 @@ CREATE TABLE `%%PREFIX%%goods` (
   KEY `category_id` (`category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE `%%PREFIX%%warehouses` (
+CREATE TABLE IF NOT EXISTS `%%PREFIX%%warehouses` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `address` text DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE `%%PREFIX%%product_stock` (
+CREATE TABLE IF NOT EXISTS `%%PREFIX%%product_stock` (
   `good_id` int(11) NOT NULL,
   `warehouse_id` int(11) NOT NULL,
   `quantity` decimal(15,3) NOT NULL DEFAULT 0.000,
@@ -71,7 +71,7 @@ CREATE TABLE `%%PREFIX%%product_stock` (
   KEY `warehouse_id` (`warehouse_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE `%%PREFIX%%product_transactions` (
+CREATE TABLE IF NOT EXISTS `%%PREFIX%%product_transactions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `transaction_date` datetime NOT NULL,
   `good_id` int(11) NOT NULL,
@@ -91,7 +91,7 @@ CREATE TABLE `%%PREFIX%%product_transactions` (
   KEY `transaction_type` (`transaction_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE `%%PREFIX%%photo_albums` (
+CREATE TABLE IF NOT EXISTS `%%PREFIX%%photo_albums` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `description` text DEFAULT NULL,
@@ -101,7 +101,7 @@ CREATE TABLE `%%PREFIX%%photo_albums` (
   KEY `parent_id` (`parent_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE `%%PREFIX%%photos` (
+CREATE TABLE IF NOT EXISTS `%%PREFIX%%photos` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `album_id` int(11) NOT NULL,
   `filename` varchar(255) NOT NULL,
@@ -111,20 +111,20 @@ CREATE TABLE `%%PREFIX%%photos` (
   KEY `album_id` (`album_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE `%%PREFIX%%chat_groups` (
+CREATE TABLE IF NOT EXISTS `%%PREFIX%%chat_groups` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `group_name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE `%%PREFIX%%chat_group_members` (
+CREATE TABLE IF NOT EXISTS `%%PREFIX%%chat_group_members` (
   `group_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   PRIMARY KEY (`group_id`,`user_id`),
   KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE `%%PREFIX%%chat_messages` (
+CREATE TABLE IF NOT EXISTS `%%PREFIX%%chat_messages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `sender_id` int(11) NOT NULL,
   `recipient_id` int(11) DEFAULT NULL,
