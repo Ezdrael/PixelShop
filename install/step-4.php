@@ -8,35 +8,44 @@ echo '<div id="progress-log">';
 
 // --- Функції встановлення ---
 
-function download_from_github($user, $repo) {
-    $api_url = "https://api.github.com/repos/$user/$repo/releases/latest";
+function download_from_github($user, $repo, $branch) {
+    // URL для завантаження архіву гілки
+    $zip_url = "https://api.github.com/repos/$user/$repo/zipball/$branch";
     $zip_file = '../cms_latest.zip';
 
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $api_url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_USERAGENT, 'CMS Installer');
-    $response = curl_exec($ch);
-    curl_close($ch);
-
-    $data = json_decode($response, true);
-    if (!isset($data['zipball_url'])) {
-        throw new Exception("Не вдалося отримати URL для завантаження з GitHub API. Відповідь: ". $response);
-    }
-    $zip_url = $data['zipball_url'];
-
     $fp = fopen($zip_file, 'w+');
+    if ($fp === false) {
+        throw new Exception("Не вдалося створити тимчасовий файл для архіву.");
+    }
+
     $ch = curl_init($zip_url);
     curl_setopt($ch, CURLOPT_FILE, $fp);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_USERAGENT, 'CMS Installer');
-    curl_exec($ch);
-    if (curl_errno($ch)) {
-        throw new Exception("Помилка cURL при завантаженні архіву: ". curl_error($ch));
+    // Додаємо заголовок для авторизації, якщо репозиторій CMS також приватний
+    // define('GITHUB_TOKEN', 'ghp_...'); у common.php
+    if (defined('GITHUB_TOKEN')) {
+         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: token ' . GITHUB_TOKEN]);
     }
+    curl_exec($ch);
+
+    if (curl_errno($ch)) {
+        throw new Exception("Помилка cURL при завантаженні архіву: " . curl_error($ch));
+    }
+
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    if ($http_code >= 400) {
+        // Отримуємо вміст файлу, щоб прочитати помилку
+        rewind($fp);
+        $error_response = stream_get_contents($fp);
+        fclose($fp);
+        unlink($zip_file); // Видаляємо порожній файл
+        throw new Exception("Помилка від GitHub API ($http_code). Відповідь: " . htmlspecialchars($error_response));
+    }
+
     curl_close($ch);
     fclose($fp);
-    
+
     return $zip_file;
 }
 
@@ -53,14 +62,25 @@ function extract_archive($zip_file) {
 
 function move_files_to_root($source_dir) {
     $files = scandir($source_dir);
-    $inner_dir_name = $files[span_0](start_span)[span_0](end_span); // Пропускаємо '.' та '..'
-    $inner_dir = $source_dir. '/'. $inner_dir_name;
+    if (count($files) < 3) {
+        throw new Exception("Не вдалося знайти папку з файлами CMS всередині розпакованого архіву.");
+    }
+    // Отримуємо назву папки (третій елемент масиву з індексом 2)
+    $inner_dir_name = $files[2]; 
+    $inner_dir = $source_dir . '/' . $inner_dir_name;
 
+    if (!is_dir($inner_dir)) {
+        throw new Exception("Внутрішній каталог '$inner_dir' не знайдено.");
+    }
+
+    // Переміщуємо файли з внутрішньої папки в корінь сайту ('../')
     foreach (scandir($inner_dir) as $file) {
-        if ($file!== '.' && $file!== '..') {
-            rename($inner_dir. '/'. $file, '../'. $file);
+        if ($file !== '.' && $file !== '..') {
+            rename($inner_dir . '/' . $file, '../' . $file);
         }
     }
+    
+    // Видаляємо порожні тимчасові папки
     rmdir($inner_dir);
     rmdir($source_dir);
 }
@@ -89,12 +109,17 @@ function write_config_file($filename, $config) {
             'user' => $config['db_user'],
             'password' => $config['db_pass'],
             'prefix' => $config['db_prefix'],
+        ], 
         'site' => [
-            'title' => $config['site_title']
+            'title' => $config['site_title'],
+            'admin_user'  => $config['admin_user'], // Додано для повноти
+            'admin_pass'  => $config['admin_pass'], // Додано для повноти
+            'admin_email' => $config['admin_email'] // Додано для повноти
+        ]
     ];
 
-    $config_content = "<?php\n\nreturn ". var_export($config_data, true). ";\n";
-    if (file_put_contents('../'. $filename, $config_content) === false) {
+    $config_content = "<?php\n\nreturn " . var_export($config_data, true) . ";\n";
+    if (file_put_contents('../' . $filename, $config_content) === false) {
         throw new Exception("Не вдалося записати конфігураційний файл '$filename'.");
     }
 }
@@ -103,7 +128,7 @@ function write_config_file($filename, $config) {
 
 try {
     log_message("Завантаження останньої версії CMS з GitHub...");
-    $zip_file = download_from_github(GITHUB_CMS_USER, GITHUB_CMS_REPO);
+    $zip_file = download_from_github(GITHUB_CMS_USER, GITHUB_CMS_REPO, GITHUB_CMS_BRANCH);
     log_message("Архів '$zip_file' успішно завантажено.");
 
     log_message("Розпакування файлів CMS...");
