@@ -11,13 +11,12 @@ if (isset($_SESSION['error'])) {
 }
 ?>
 <form method="post" action="index.php?step=3">
-    <p>Тепер налаштуйте основні параметри сайту та створіть обліковий запис адміністратора.</p>
-    <div><label>Назва сайту:</label><input type="text" name="site_title" required></div>
-    <div><label>Ім'я адміністратора:</label><input type="text" name="admin_user" required></div>
-    <div><label>Пароль адміністратора:</label><input type="password" name="admin_pass" required></div>
-    <div><label>Підтвердіть пароль:</label><input type="password" name="admin_pass_confirm" required></div>
-    <div><label>Email адміністратора:</label><input type="email" name="admin_email" required></div>
-    <button type="submit" class="button">Встановити CMS</button>
+    <div class="input-group"><i class="fas fa-globe-europe"></i><input type="text" name="site_title" placeholder="Назва сайту" required></div>
+    <div class="input-group"><i class="fas fa-user-shield"></i><input type="text" name="admin_user" placeholder="Ім'я адміністратора" required></div>
+    <div class="input-group"><i class="fas fa-key"></i><input type="password" name="admin_pass" placeholder="Пароль адміністратора" required></div>
+    <div class="input-group"><i class="fas fa-key"></i><input type="password" name="admin_pass_confirm" placeholder="Підтвердіть пароль" required></div>
+    <div class="input-group"><i class="fas fa-at"></i><input type="email" name="admin_email" placeholder="Email адміністратора" required></div>
+    <button type="submit" class="button">Встановити <i class="fas fa-check"></i></button>
 </form>
 <?php
 render_footer();
