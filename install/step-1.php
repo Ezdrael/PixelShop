@@ -26,10 +26,11 @@ if (!empty($errors)) {
     echo '</ul><p>Будь ласка, виправте ці проблеми перед продовженням встановлення.</p>';
     echo '</div>';
 } else {
-    echo '<h2>Ласкаво просимо до інсталятора вашої CMS!</h2>';
-    echo '<p>Система готова до встановлення. Цей майстер проведе вас через процес налаштування.</p>';
-    echo '<p>Натисніть "Далі", щоб почати.</p>';
-    echo '<a href="index.php?step=2" class="button">Далі</a>';
+    echo '<div style="text-align:center;">';
+    echo '<h2>Ласкаво просимо!</h2>';
+    echo '<p>Ваша система готова до встановлення. Цей майстер проведе вас через увесь процес.</p>';
+    echo '<a href="index.php?step=2" class="button">Далі <i class="fas fa-arrow-right"></i></a>';
+    echo '</div>';
 }
 
 render_footer();
