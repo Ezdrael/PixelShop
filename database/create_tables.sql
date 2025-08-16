@@ -1,6 +1,3 @@
---
--- Структура таблиці `roles`
---
 CREATE TABLE `%%PREFIX%%roles` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `role_name` varchar(255) NOT NULL,
@@ -16,15 +13,9 @@ CREATE TABLE `%%PREFIX%%roles` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Початкові дані для `roles`
---
 INSERT INTO `%%PREFIX%%roles` (`id`, `role_name`, `perm_chat`, `perm_roles`, `perm_users`, `perm_categories`, `perm_goods`, `perm_warehouses`, `perm_arrivals`, `perm_transfers`, `perm_albums`) VALUES
 (1, 'Адміністратор', 'vaed', 'vaed', 'vaed', 'vaed', 'vaed', 'vaed', 'vaed', 'vaed', 'vaed');
 
---
--- Структура таблиці `users`
---
 CREATE TABLE `%%PREFIX%%users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
@@ -37,15 +28,9 @@ CREATE TABLE `%%PREFIX%%users` (
   KEY `role_id` (`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Початкові дані для `users` (пароль: admin)
---
 INSERT INTO `%%PREFIX%%users` (`id`, `name`, `email`, `password`, `role_id`, `token`) VALUES
 (1, 'Admin', 'admin@example.com', '$2y$10$fW.1.Yups8QPkZ3jOE6vTu3S1ajw2g5S8V8C55qhbZxdgBv0uMh.S', 1, NULL);
 
---
--- Структура таблиці `categories`
---
 CREATE TABLE `%%PREFIX%%categories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
@@ -55,9 +40,6 @@ CREATE TABLE `%%PREFIX%%categories` (
   KEY `parent_id` (`parent_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Структура таблиці `goods`
---
 CREATE TABLE `%%PREFIX%%goods` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
@@ -74,9 +56,6 @@ CREATE TABLE `%%PREFIX%%goods` (
   KEY `category_id` (`category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Структура таблиці `warehouses`
---
 CREATE TABLE `%%PREFIX%%warehouses` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
@@ -84,9 +63,6 @@ CREATE TABLE `%%PREFIX%%warehouses` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Структура таблиці `product_stock`
---
 CREATE TABLE `%%PREFIX%%product_stock` (
   `good_id` int(11) NOT NULL,
   `warehouse_id` int(11) NOT NULL,
@@ -95,16 +71,13 @@ CREATE TABLE `%%PREFIX%%product_stock` (
   KEY `warehouse_id` (`warehouse_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Структура таблиці `product_transactions`
---
 CREATE TABLE `%%PREFIX%%product_transactions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `transaction_date` datetime NOT NULL,
   `good_id` int(11) NOT NULL,
   `warehouse_id` int(11) NOT NULL,
-  `quantity` decimal(15,3) NOT NULL COMMENT 'Позитивне - надходження, негативне - списання',
-  `balance` decimal(15,3) NOT NULL COMMENT 'Залишок після транзакції',
+  `quantity` decimal(15,3) NOT NULL,
+  `balance` decimal(15,3) NOT NULL,
   `transaction_type` varchar(50) NOT NULL,
   `document_type` varchar(50) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
@@ -118,9 +91,6 @@ CREATE TABLE `%%PREFIX%%product_transactions` (
   KEY `transaction_type` (`transaction_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Структура таблиці `photo_albums`
---
 CREATE TABLE `%%PREFIX%%photo_albums` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
@@ -131,9 +101,6 @@ CREATE TABLE `%%PREFIX%%photo_albums` (
   KEY `parent_id` (`parent_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Структура таблиці `photos`
---
 CREATE TABLE `%%PREFIX%%photos` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `album_id` int(11) NOT NULL,
@@ -144,9 +111,6 @@ CREATE TABLE `%%PREFIX%%photos` (
   KEY `album_id` (`album_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Структури таблиць для чату
---
 CREATE TABLE `%%PREFIX%%chat_groups` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `group_name` varchar(255) NOT NULL,
@@ -174,9 +138,6 @@ CREATE TABLE `%%PREFIX%%chat_messages` (
   KEY `group_id` (`group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Зв'язки (FOREIGN KEY) для таблиць
---
 ALTER TABLE `%%PREFIX%%users`
   ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `%%PREFIX%%roles` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
