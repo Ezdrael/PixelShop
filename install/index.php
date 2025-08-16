@@ -10,10 +10,11 @@ if (file_exists('../install.lock')) {
     die("Помилка: Інсталятор вже заблоковано. Видаліть файл 'install.lock' у кореневому каталозі, щоб продовжити.");
 }
 
-$step = isset($_GET['step'])? (int)$_GET['step'] : 1;
+$step = isset($_GET['step']) ? (int)$_GET['step'] : 1;
 
+// --- ВИПРАВЛЕНА УМОВА ---
 // Обробка POST-запитів
-if ($_SERVER === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     switch ($step) {
         case 2: // Обробка форми БД
             $_SESSION['install_data']['db_host'] = $_POST['db_host'];
@@ -28,14 +29,14 @@ if ($_SERVER === 'POST') {
                 header('Location: index.php?step=3');
                 exit;
             } catch (PDOException $e) {
-                $_SESSION['error'] = "Не вдалося підключитися до бази даних: ". $e->getMessage();
+                $_SESSION['error'] = "Не вдалося підключитися до бази даних: " . $e->getMessage();
                 header('Location: index.php?step=2');
                 exit;
             }
             break;
 
         case 3: // Обробка форми сайту/адміністратора
-            if ($_POST['admin_pass']!== $_POST['admin_pass_confirm']) {
+            if ($_POST['admin_pass'] !== $_POST['admin_pass_confirm']) {
                 $_SESSION['error'] = "Паролі не співпадають.";
                 header('Location: index.php?step=3');
                 exit;
