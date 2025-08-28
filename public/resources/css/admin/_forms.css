@@ -1,0 +1,263 @@
+/* ===================================================================
+   Файл:      _forms.css
+   Призначення: Стилі для форм та їх елементів:
+   - Заголовки форм (.form-header)
+   - Групи полів (.form-group-inline)
+   - Поля вводу (.form-control)
+   - Кнопки (.action-btn, .btn-primary)
+   - Перемикачі (.toggle-switch)
+   =================================================================== */
+
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.form-header .user-id-text {
+    color: var(--secondary-text);
+}
+
+.form-body {
+    max-width: auto;
+}
+
+.form-group-inline {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.form-group-inline label {
+    font-weight: 500;
+    color: var(--primary-text);
+    flex-basis: 150px;
+    flex-shrink: 0;
+}
+
+.form-control-wrapper {
+    flex-grow: 1;
+    width: 100%;
+}
+
+.form-control {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-family: 'Roboto', sans-serif;
+    color: var(--primary-text);
+    background-color: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+}
+
+.required-field {
+    color: var(--danger-color);
+    font-weight: 700;
+    margin-left: 4px;
+}
+
+/* --- Кнопки --- */
+.actions-cell {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-start;
+}
+
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background-color: #f1f5f9;
+    color: var(--secondary-text);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1rem;
+    text-decoration: none;
+}
+
+.action-btn:hover {
+    background-color: var(--accent-color);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.action-btn.save {
+    background-color: var(--success-color);
+    color: #fff;
+}
+
+.action-btn.save:hover {
+    background-color: #16a34a;
+}
+
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    /* Відстань між іконкою та текстом */
+    padding: 0.7rem 1.2rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+    background-color: var(--accent-color);
+    /* Використовуємо основний колір теми */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #3a7ac8;
+    /* Трохи темніший відтінок при наведенні */
+    transform: translateY(-1px);
+}
+
+.btn-primary i {
+    font-size: 1rem;
+}
+
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    /* Відстань між іконкою та текстом */
+    padding: 0.7rem 1.2rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+    background-color: var(--secondary-color);
+    /* Використовуємо основний колір теми */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.btn-secondary:hover {
+    background-color: #fbbf24;
+    transform: translateY(-1px);
+}
+
+.btn-secondary i {
+    font-size: 1rem;
+}
+
+/* --- Перемикач (Toggle Switch) --- */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 28px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked+.slider {
+    background-color: var(--success-color);
+}
+
+input:checked+.slider:before {
+    transform: translateX(22px);
+}
+
+
+/* --- Стилі для кастомних радіо-кнопок --- */
+.delete-options label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+    margin-bottom: 0.75rem;
+}
+
+.delete-options label:hover {
+    background-color: var(--sidebar-hover-bg);
+}
+
+.delete-options input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    position: relative;
+    transition: border-color 0.2s;
+}
+
+.delete-options input[type="radio"]:checked {
+    border-color: var(--accent-color);
+}
+
+.delete-options input[type="radio"]:checked::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    background-color: var(--accent-color);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}

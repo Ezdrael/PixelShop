@@ -1,0 +1,10 @@
+/* ===================================================================
+   Файл:      _components.css
+   Призначення: Імпортує всі модульні файли компонентів.
+   =================================================================== */
+
+@import url('__comp_navigation.css');
+@import url('__comp_cards.css');
+@import url('__comp_modals.css');
+@import url('__comp_ui_elements.css');
+@import url('__comp_galleries.css');

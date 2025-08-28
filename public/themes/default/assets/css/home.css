@@ -1,0 +1,245 @@
+/* public/themes/default/assets/css/home.css */
+
+/* --- Секція головного слайдера --- */
+/* --- Секція головного банера (Слайдер) --- */
+.main-slider-section {
+    /* Розтягуємо секцію на всю ширину "скляної" панелі */
+    margin-left: -2rem;
+    /* Компенсуємо padding у .container */
+    margin-right: -2rem;
+    margin-top: -2.5rem;
+    /* Компенсуємо padding у .site-content */
+}
+
+.main-slider {
+    width: 100%;
+    height: 500px;
+    /* Висота слайдера для десктопів */
+}
+
+.swiper-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-size: cover;
+    background-position: center;
+    color: #ffffff;
+}
+
+.slide-content {
+    background-color: rgba(0, 0, 0, 0.4);
+    padding: 2rem 3rem;
+    border-radius: 12px;
+}
+
+.slide-content h1,
+.slide-content h2 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.slide-content p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.btn-primary-hero {
+    display: inline-block;
+    background-color: #e67e22;
+    color: #ffffff;
+    padding: 1rem 2.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: background-color 0.3s, transform 0.2s;
+    border: none;
+}
+
+.btn-primary-hero:hover {
+    background-color: #d35400;
+    transform: translateY(-2px);
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    color: #ffffff;
+}
+
+.swiper-pagination-bullet-active {
+    background-color: #ffffff;
+}
+
+/* Повертаємо контейнер для решти сторінки */
+.home-page .container {
+    padding-top: 3rem;
+}
+
+/* Стилізація кнопок навігації Swiper */
+.swiper-button-next, .swiper-button-prev {
+    color: #ffffff;
+}
+.swiper-pagination-bullet-active {
+    background-color: #ffffff;
+}
+
+/* --- Секція переваг --- */
+.features-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.feature-item i {
+    font-size: 2.5rem;
+    color: #e67e22;
+    margin-bottom: 1rem;
+}
+.feature-item h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+}
+.feature-item p {
+    color: #7f8c8d;
+    line-height: 1.6;
+}
+
+/* --- Секція товарів --- */
+.products-section h2 {
+    text-align: center;
+    font-size: 2.2rem;
+    font-weight: 600;
+    margin-bottom: 2.5rem;
+    color: #2c3e50;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.product-card-link {
+    text-decoration: none;
+    /* Прибираємо підкреслення */
+    color: inherit;
+    /* Успадковуємо колір тексту */
+    display: block;
+    /* Робимо посилання блоковим елементом */
+}
+
+.product-card {
+    background-color: #ffffff;
+    border: 1px solid #ecf0f1;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.product-image-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ecf0f1;
+    font-size: 3rem;
+    color: #bdc3c7;
+    height: 0;
+    padding-bottom: 100%;
+    position: relative;
+}
+
+.product-image-placeholder i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.product-info {
+    padding: 1rem 1.2rem;
+}
+
+.product-category {
+    font-size: 0.8rem;
+    color: #7f8c8d;
+    margin-bottom: 0.5rem;
+}
+
+.product-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.product-price {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #e67e22;
+}
+
+/* --- Адаптивні стилі --- */
+@media (max-width: 768px) {
+    .slide-content h1, .slide-content h2 {
+        font-size: 2.2rem;
+    }
+    .slide-content p {
+        font-size: 1rem;
+    }
+    .products-section h2 {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-slider-section {
+        /* Прибираємо негативні відступи на мобільних */
+        margin-left: -1.5rem;
+        margin-right: -1.5rem;
+        margin-top: -2.5rem;
+    }
+
+    .main-slider {
+        height: 350px;
+        /* Робимо слайдер нижчим */
+    }
+
+    .slide-content {
+        padding: 1.5rem;
+        /* Зменшуємо внутрішні відступи */
+    }
+
+    .slide-content h1,
+    .slide-content h2 {
+        font-size: 1.8rem;
+        /* Зменшуємо шрифт заголовків */
+    }
+
+    .slide-content p {
+        font-size: 1rem;
+        /* Зменшуємо шрифт тексту */
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-primary-hero {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    .home-page .container {
+        padding-top: 2rem;
+    }
+}

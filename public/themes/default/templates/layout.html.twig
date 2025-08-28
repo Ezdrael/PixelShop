@@ -1,0 +1,122 @@
+{# themes/default/templates/layout.html.twig #}
+{% macro render_category_menu(categories) %}
+    <ul>
+        {% for category in categories %}
+            {% set hasChildren = category.children is defined and category.children is not empty %}
+            <li class="{{ hasChildren ? 'has-submenu' : '' }}">
+                
+                <div class="submenu-toggle">
+                    <a href="{{ BASE_URL }}/category/{{ category.id }}">{{ category.name }}</a>
+                    {% if hasChildren %}
+                        <span class="arrow"></span>
+                    {% endif %}
+                </div>
+
+                {% if hasChildren %}
+                    {# Рекурсивний виклик для вкладених категорій #}
+                    {{ _self.render_category_menu(category.children, BASE_URL) }}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endmacro %}
+
+{% import _self as macros %}
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    
+    <link rel="icon" type="image/x-icon" href="{{ PROJECT_URL }}/favicon.ico">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="{{ PROJECT_URL }}/themes/default/assets/css/PUBLIC-MAIN.css">
+
+    {% if pageCSS is defined and pageCSS is not empty %}
+        {% for css_file in pageCSS %}
+            <link rel="stylesheet" href="{{ css_file }}">
+        {% endfor %}
+    {% endif %}
+    
+    {% block styles %}{% endblock %}
+
+    {% if settings.site_title_google_font is defined and settings.site_title_google_font %}
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family={{ settings.site_title_google_font|replace({' ': '+'}) }}&display=swap" rel="stylesheet">
+    {% endif %}
+</head>
+
+
+<body style="background-image: url('{{ PROJECT_URL }}/themes/default/assets/img/layout/bg.jpeg');">
+    <div class="page-wrapper">
+        <header class="site-header">
+            <div class="container">
+                <a href="{{ BASE_URL }}/" class="logo" 
+                    style="font-family: '{{ settings.site_title_google_font|default('Arial') }}', sans-serif; font-size: {{ settings.site_title_font_size|default(28) }}px;">
+                    {{ settings.site_name }}
+                </a>
+                <nav class="site-nav">
+                    <a href="{{ BASE_URL }}/">Головна</a>
+                    <div class="nav-item dropdown">
+                        <a href="#">Каталог</a>
+                        <div class="dropdown-menu">
+                            {% if categoryTree is defined and categoryTree is not empty %}
+                                {{ macros.render_category_menu(categoryTree, BASE_URL) }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <a href="#">Знижки</a>
+                </nav>
+                <div class="header-actions">
+                    <a href="#" class="header-icon"><i class="fas fa-search"></i></a>
+                    <a href="{{ BASE_URL }}/cart" class="header-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-badge">0</span>
+                    </a>
+                    <a href="#" class="header-icon"><i class="fas fa-user"></i></a>
+                </div>
+            </div>
+        </header>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const submenuToggles = document.querySelectorAll('.dropdown-menu .submenu-toggle');
+
+            submenuToggles.forEach(toggle => {
+                toggle.addEventListener('click', function(event) {
+                    event.stopPropagation(); // Зупиняємо спливання події
+                    const parentLi = this.parentElement;
+                    parentLi.classList.toggle('open');
+                });
+            });
+        });
+    </script>
+
+
+        <main class="site-content">
+            <div class="container">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <div class="container">
+                <div class="footer-nav">
+                    <a href="#">Про нас</a>
+                    <a href="#">Доставка і оплата</a>
+                    <a href="#">Гарантія</a>
+                    <a href="#">Контакти</a>
+                </div>
+                <p>&copy; {{ "now"|date("Y") }} PixelShop. Всі права захищено.</p>
+            </div>
+        </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,10 @@
+Options -Indexes
+RewriteEngine On
+RewriteBase /
+
+# Якщо запит НЕ є існуючим файлом
+RewriteCond %{REQUEST_FILENAME} !-f
+# І якщо запит НЕ є існуючою папкою
+RewriteCond %{REQUEST_FILENAME} !-d
+# Перенаправити АБСОЛЮТНО ВСЕ на головний public/index.php
+RewriteRule . index.php [L]

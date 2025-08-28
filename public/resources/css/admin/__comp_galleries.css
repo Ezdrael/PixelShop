@@ -1,0 +1,177 @@
+/* ===================================================================
+   Файл:      _comp_galleries.css
+   Призначення: Стилі для дерев категорій та фотогалерей.
+   =================================================================== */
+
+/* --- Дерево категорій/альбомів --- */
+.category-tree {
+    list-style: none;
+    padding-left: 20px;
+}
+
+.category-tree ul {
+    margin-top: 10px;
+}
+
+.category-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    margin-top: 5px;
+    transition: all 0.2s ease;
+}
+
+.inactive-category>.category-item {
+    background-color: #f8f8f8;
+    opacity: 0.6;
+}
+
+.inactive-category>.category-item span:first-child {
+    text-decoration: line-through;
+}
+
+.inactive-label {
+    display: inline-block;
+    padding: 3px 10px;
+    font-size: 0.8em;
+    font-weight: 600;
+    border-radius: 12px;
+    color: #fff;
+    line-height: 1.5;
+    background-color: var(--secondary-text);
+}
+
+/* --- Галерея альбомів --- */
+.album-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.album-thumbnail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--sidebar-hover-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    text-decoration: none;
+    color: var(--primary-text);
+    text-align: center;
+    transition: all 0.2s;
+}
+
+.album-thumbnail:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px var(--shadow-color);
+    border-color: var(--accent-color);
+}
+
+.album-icon {
+    font-size: 2.5rem;
+    color: var(--accent-color);
+    margin-bottom: 0.75rem;
+}
+
+.album-name {
+    font-weight: 500;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- Галерея фотографій (сітка) --- */
+.photo-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.photo-thumbnail {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+}
+
+.photo-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+}
+
+.photo-thumbnail img:hover {
+    transform: scale(1.05);
+}
+
+.photo-gallery.empty {
+    font-style: italic;
+    color: var(--secondary-text);
+    padding: 1rem;
+    text-align: center;
+}
+
+
+/* --- Оновлені стилі для дерева альбомів --- */
+.category-tree {
+    list-style: none;
+    padding-left: 20px;
+}
+
+.category-tree .category-tree {
+    margin-top: 10px;
+}
+
+.category-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-top: 5px;
+    transition: background-color 0.2s;
+}
+
+.category-item:hover {
+    background-color: var(--sidebar-hover-bg);
+}
+
+/* Вирівнюємо кнопки дій по правому краю */
+.category-item .actions-cell {
+    margin-left: auto;
+}
+
+/* Нові стилі для обкладинки */
+.album-list-cover {
+    flex-shrink: 0;
+    width: 50px;
+    height: 50px;
+    background-color: var(--sidebar-hover-bg);
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    color: var(--secondary-text);
+    overflow: hidden;
+}
+
+.album-list-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.empty-list-message {
+    color: var(--secondary-text);
+    font-style: italic;
+}

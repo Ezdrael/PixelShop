@@ -1,0 +1,97 @@
+{# themes/default/templates/home.html.twig #}
+{% extends "layout.html.twig" %}
+
+{% block content %}
+    <div class="home-page">
+
+        <section class="main-slider-section">
+            <div class="swiper main-slider">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide" style="background-image: url('{{ PROJECT_URL }}/themes/default/assets/img/slider/slide1.jpg');">
+                        <div class="slide-content">
+                            <h1>Оновлення колекції!</h1>
+                            <p>Зустрічайте нові флагманські смартфони 2025 року.</p>
+                            <a href="#" class="btn-primary-hero">Дізнатися більше</a>
+                        </div>
+                    </div>
+                    <div class="swiper-slide" style="background-image: url('{{ PROJECT_URL }}/themes/default/assets/img/slider/slide2.jpg');">
+                        <div class="slide-content">
+                            <h2>Знижки до -40%</h2>
+                            <p>Найкращі пропозиції на ноутбуки та аксесуари.</p>
+                            <a href="#" class="btn-primary-hero">Переглянути акції</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </section>
+
+        <div class="container">
+            <section class="features-section">
+                <div class="feature-item">
+                    <i class="fas fa-shipping-fast"></i>
+                    <h3>Швидка доставка</h3>
+                    <p>Доставка по всій Україні до 2-х днів.</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Гарантія якості</h3>
+                    <p>Офіційна гарантія на всі товари від виробника.</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-headset"></i>
+                    <h3>Підтримка 24/7</h3>
+                    <p>Наші консультанти завжди готові допомогти.</p>
+                </div>
+            </section>
+
+            <section class="products-section">
+            <h2>Нові надходження</h2>
+            <div class="product-grid">
+                {% if newestGoods is defined and newestGoods is not empty %}
+                    {% for good in newestGoods %}
+                        <a href="{{ BASE_URL }}/product/{{ good.id }}" class="product-card-link">
+                            <div class="product-card">
+                                <div class="product-image-link">
+                                    <div class="product-image-placeholder">
+                                        <i class="fas fa-camera"></i>
+                                    </div>
+                                </div>
+                                <div class="product-info">
+                                    <p class="product-category">{{ good.category_name }}</p>
+                                    <h3 class="product-title">{{ good.name }}</h3>
+                                    <div class="product-price">{{ good.price|number_format(0, '.', ' ') }} грн</div>
+                                </div>
+                            </div>
+                        </a>
+                    {% endfor %}
+                {% else %}
+                    <p>Нових товарів ще немає.</p>
+                {% endif %}
+            </div>
+        </section>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const swiper = new Swiper('.main-slider', {
+                loop: true,
+                autoplay: {
+                    delay: 5000,
+                    disableOnInteraction: false,
+                },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+            });
+        });
+    </script>
+{% endblock %}

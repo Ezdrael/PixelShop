@@ -1,0 +1,706 @@
+/* ===================================================================
+   Файл:      main.css
+   Призначення: Головний файл стилів.
+   =================================================================== */
+
+/* --- 1. ІМПОРТ ВСІХ ЧАСТИН (МАЄ БУТИ НА ПОЧАТКУ) --- */
+@import url('_layout.css');
+@import url('_tables.css');
+@import url('_forms.css');
+@import url('_components.css');
+
+/* --- 2. Глобальні змінні та стилі (ПІСЛЯ ІМПОРТІВ) --- */
+:root {
+    --bg-color: #f4f7fa;
+    --sidebar-bg: #ffffff;
+    --card-bg: #ffffff;
+    --primary-text: #1a202c;
+    --secondary-text: #718096;
+    --accent-color: #4a90e2;
+    --success-color: #22c55e;
+    --danger-color: #ef4444;
+    --warning-color: #f97316;
+    --secondary-color: #fbbf24;
+    --border-color: #e2e8f0;
+    --shadow-color: rgba(0, 0, 0, 0.05);
+    --sidebar-hover-bg: #f1f5f9;
+    --sidebar-active-bg: #e2e8f0;
+    
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--primary-text);
+    font-size: 16px;
+}
+
+/* Стилі для скасованих операцій */
+.canceled-operation {
+    color: #999;
+    text-decoration: line-through; /* Закреслюємо текст */
+    background-color: #f9f9f9;
+}
+
+.canceled-operation a {
+    color: #999; /* Робимо іконки дій також сірими */
+}
+
+/* Стилі для бейджів статусу */
+.status-badge {
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: white;
+}
+
+.status-badge.completed {
+    background-color: var(--success-color);
+}
+
+.status-badge.canceled {
+    background-color: #aaa;
+    text-decoration: none; /* Прибираємо закреслення для самого бейджа */
+    display: inline-block;
+}
+
+
+
+/* --- Notes Widget --- */
+.notes-widget {
+    position: fixed;
+    top: 65px;
+    left: 20px;
+    width: 620px;
+    /* Ширину збільшено */
+    max-height: calc(100vh - 85px);
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(-120%);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.4s ease, opacity 0.4s ease, visibility 0s 0.4s;
+}
+
+.notes-widget.open {
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.notes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.notes-header h3 {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+    /* Застосовуємо Montserrat */
+}
+
+.notes-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--secondary-text);
+}
+
+.notes-body {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+
+.notes-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.notes-list li {
+    display: flex;
+    padding: 0.75rem 1rem 0.75rem 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+    gap: 0.5rem;
+    align-items: flex-start;
+}
+
+.notes-list li::before {
+    content: var(--note-number, '');
+    font-weight: 600;
+    color: var(--secondary-text);
+    padding-left: 0.5rem;
+    padding-top: 0.2rem;
+    font-family: 'Roboto Mono', monospace;
+}
+
+.note-content {
+    line-height: 1.6;
+    word-wrap: break-word;
+    margin-bottom: 0.5rem;
+    flex-grow: 1;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.8rem;
+}
+
+.note-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.25rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.notes-list li:hover .note-actions {
+    opacity: 1;
+}
+
+.note-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.note-edit-form textarea {
+    min-height: 80px;
+    font-family: 'Roboto Mono', monospace;
+    /* Застосовуємо Roboto Mono */
+}
+
+.note-edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+/* Стилі для кнопок в групі */
+.note-edit-actions .btn-primary,
+.note-edit-actions .btn-secondary {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    font-family: 'Montserrat', sans-serif;
+    /* Застосовуємо Montserrat */
+}
+
+.notes-footer {
+    padding: 1rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+
+#new-note-content {
+    border-radius: 8px;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    font-family: 'Roboto Mono', monospace;
+    /* Застосовуємо Roboto Mono */
+    resize: vertical;
+}
+
+#add-note-btn {
+    align-self: flex-end;
+    font-family: 'Montserrat', sans-serif;
+    /* Застосовуємо Montserrat */
+}
+
+
+
+/* --- Clipboard Widget --- */
+.clipboard-widget {
+    position: fixed;
+    top: 65px;
+    left: 80px;
+    width: 620px;
+    max-height: calc(100vh - 85px);
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(-120%);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.4s ease, opacity 0.4s ease, visibility 0s 0.4s;
+}
+.clipboard-widget.open {
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+.clipboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+/* !! НОВИЙ СТИЛЬ: Обгортка для заголовка і кнопки очищення !! */
+.clipboard-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.clipboard-header h3 {
+    display: flex; gap: 0.75rem; align-items: center; font-size: 1rem; font-weight: 600;
+}
+.clipboard-close-btn {
+    background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--secondary-text);
+}
+/* !! НОВИЙ СТИЛЬ: Зменшуємо кнопку очищення !! */
+.clear-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
+    background-color: transparent;
+}
+.clear-btn:hover {
+    background-color: #fee2e2; /* Червонуватий фон при наведенні */
+    color: var(--danger-color);
+}
+.clipboard-body {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+.clipboard-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.clipboard-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+    gap: 1rem;
+}
+.clipboard-content {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.9em;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+.empty-clipboard {
+    justify-content: center;
+    color: var(--secondary-text);
+    font-style: italic;
+}
+
+
+
+
+
+/* --- Messages Widget --- */
+.action-btn {
+    position: relative;
+}
+
+.widget-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: var(--danger-color);
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.messages-widget {
+    position: fixed;
+    top: 65px;
+    left: 140px;
+    width: 820px;
+    height: calc(100vh - 85px);
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    z-index: 998;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(-120%);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.4s ease, opacity 0.4s ease, visibility 0s 0.4s;
+}
+
+.messages-widget.open {
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.messages-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.messages-header h3 {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.messages-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--secondary-text);
+}
+
+.messages-body {
+    display: flex;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.conversations-sidebar {
+    width: 280px;
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.sidebar-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Tabs */
+.conv-sidebar-header {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.chat-tabs {
+    display: flex;
+    flex-grow: 1;
+    background-color: var(--sidebar-hover-bg);
+    border-radius: 8px;
+    padding: 4px;
+}
+
+.tab-link {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--secondary-text);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all .2s;
+}
+
+.tab-link:hover {
+    color: var(--primary-text);
+}
+
+.tab-link.active {
+    background-color: var(--card-bg);
+    color: var(--accent-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+#chat-settings-btn {
+    margin-left: 0.5rem;
+}
+
+/* Lists and Settings Panel */
+.list-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    transition: max-height 0.4s ease-out;
+    max-height: 100%;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.conversation-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.conversation-list li {
+    padding: 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s;
+}
+
+.conversation-list li:hover {
+    background-color: var(--sidebar-hover-bg);
+}
+
+.conversation-list li.active {
+    background-color: var(--accent-color);
+    color: #fff;
+}
+
+.chat-settings-panel {
+    border-top: 1px solid var(--border-color);
+    background-color: var(--sidebar-hover-bg);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+    padding: 0 1rem;
+    flex-shrink: 0;
+}
+
+.sidebar-content.settings-open .list-container {
+    max-height: 0;
+}
+
+.sidebar-content.settings-open .chat-settings-panel {
+    max-height: 100%;
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+/* Settings Panel Content */
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.settings-header h4 {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+.btn-primary-small {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    color: #fff;
+    background-color: var(--accent-color);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.btn-primary-small:hover {
+    background-color: #3a7ac8;
+    transform: translateY(-1px);
+}
+
+.group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    font-size: 0.9rem;
+}
+
+.group-actions {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.group-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.members-list {
+    max-height: 100px;
+    overflow-y: auto;
+    background: var(--card-bg);
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+
+.members-list label {
+    display: block;
+    padding: 0.25rem;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.empty-list {
+    text-align: center;
+    color: var(--secondary-text);
+    padding: 1rem;
+    font-size: 0.9rem;
+}
+
+/* Chat Window */
+.chat-main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-window {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.welcome-message {
+    justify-content: center;
+    align-items: center;
+    color: var(--secondary-text);
+}
+
+.message-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.message-form {
+    display: flex;
+    padding: 1rem;
+    border-top: 1px solid var(--border-color);
+    gap: 0.5rem;
+}
+
+#message-body-input {
+    flex-grow: 1;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-size: 1rem;
+    resize: none;
+    overflow-y: auto;
+    line-height: 1.5;
+    max-height: 120px;
+}
+
+#message-form button {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    background-color: var(--accent-color);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.message-item {
+    margin-bottom: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.message-item .meta {
+    font-size: 0.8em;
+    color: var(--secondary-text);
+    margin-bottom: 0.25rem;
+}
+
+.message-item .meta strong {
+    color: var(--primary-text);
+}
+
+.message-item .body {
+    background-color: var(--sidebar-hover-bg);
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    max-width: 80%;
+    word-wrap: break-word;
+}
+
+.message-item.own {
+    align-items: flex-end;
+}
+
+.message-item.own .body {
+    background-color: var(--accent-color);
+    color: #fff;
+    border-bottom-right-radius: 3px;
+}
+
+.message-item:not(.own) .body {
+    border-bottom-left-radius: 3px;
+}
