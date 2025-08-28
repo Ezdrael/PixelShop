@@ -6,5 +6,5 @@ RewriteBase /
 RewriteCond %{REQUEST_FILENAME} !-f
 # І якщо запит НЕ є існуючою папкою
 RewriteCond %{REQUEST_FILENAME} !-d
-# Перенаправити АБСОЛЮТНО ВСЕ на головний public/index.php
+# Перенаправити все на головний index.php
 RewriteRule . index.php [L]

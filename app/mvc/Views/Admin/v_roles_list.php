@@ -43,6 +43,8 @@ function format_permissions($role, $key, $label) {
                     <td>
                         <?php
                             $permissions = [
+                                format_permissions($role, 'perm_notes', 'Нотатки'),
+                                format_permissions($role, 'perm_clipboard', 'Буфер обміну'),
                                 format_permissions($role, 'perm_chat', 'Повідомлення'),
                                 format_permissions($role, 'perm_roles', 'Ролі'),
                                 format_permissions($role, 'perm_users', 'Користувачі'),

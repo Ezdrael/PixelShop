@@ -1,7 +1,8 @@
-// public/resources/js/main.js
-import { initModalHandlers } from './_main_modal-handlers.js';
-import { initUiHandlers } from './_main_ui-handlers.js';
-import { initBreadcrumbs } from './_main_breadcrumbs.js';
+// public/resources/js/MAIN.js
+import { initModalHandlers } from './main/modal-handlers.js';
+import { initUiHandlers } from './main/ui-handlers.js';
+import { initBreadcrumbs } from './main/breadcrumbs.js';
+import { initHotkeys } from './_main_hotkeys.js';
 
 /**
  * Ініціалізує логіку для ОДНОГО flash-повідомлення (таймер, закриття).
@@ -80,6 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initUiHandlers();
     initModalHandlers();
     initBreadcrumbs();
+    initHotkeys();
 
     // Ініціалізуємо повідомлення, що прийшло від сервера при завантаженні сторінки
     const flashMessageOnLoad = document.getElementById('flashMessage');

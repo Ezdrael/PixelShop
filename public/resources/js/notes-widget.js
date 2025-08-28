@@ -92,13 +92,14 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.widget.classList.toggle('open');
         if (dom.widget.classList.contains('open')) {
             loadNotes();
+            setTimeout(() => dom.newNoteContent.focus(), 100); 
         }
     });
     
     dom.closeBtn.addEventListener('click', () => dom.widget.classList.remove('open'));
 
     if (dom.addNoteBtn) {
-        dom.addNoteBtn.addEventListener('click', async () => {
+        const addNewNote = async () => {
             const content = dom.newNoteContent.value.trim();
             if (!content) return;
             const result = await api.createNote(content);
@@ -107,7 +108,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 renumberNotes();
                 dom.newNoteContent.value = '';
             } else {
-                alert(result.message || 'Помилка');
+                alert(result.message || 'Помилка створення нотатки');
+            }
+        };
+
+        // Обробник для кнопки "Додати"
+        dom.addNoteBtn.addEventListener('click', addNewNote);
+
+        // Обробник для відправки по Ctrl+Enter
+        dom.newNoteContent.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                e.preventDefault(); // Запобігаємо створенню нового рядка
+                addNewNote();     // Викликаємо ту ж функцію, що й кнопка
             }
         });
     }

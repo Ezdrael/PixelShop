@@ -1,11 +1,18 @@
-import { initTextareaAutoResize } from './_msg_ui.js'; // <-- КРОК 1: ІМПОРТУВАТИ ФУНКЦІЮ
+// public/resources/js/messages-widget.js
+
+import { initTextareaAutoResize } from './messages-widget/msg_ui.js';
+import { getApi } from './messages-widget/api.js';
+import { state, saveState, loadState, saveDraft } from './messages-widget/state.js';
+import { loadConversations, activateChat, updateBlinkingUI } from './messages-widget/ui.js';
+import { connectWebSocket } from './messages-widget/websocket.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const config = {
         baseUrl: document.body.dataset.baseUrl || '',
         csrfToken: document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
         currentUserId: parseInt(document.body.dataset.currentUserId, 10) || 0,
-        wsHost: window.location.hostname
+        wsHost: window.location.hostname,
+        wsToken: document.body.dataset.wsToken || ''
     };
 
     const dom = {
@@ -13,351 +20,177 @@ document.addEventListener('DOMContentLoaded', () => {
         widget: document.getElementById('messages-widget'),
         closeBtn: document.querySelector('.messages-close-btn'),
         tabsContainer: document.querySelector('.chat-tabs'),
+        userTab: document.querySelector('.tab-link[data-tab="users"]'),
+        groupTab: document.querySelector('.tab-link[data-tab="groups"]'),
+        groupListContainer: document.getElementById('group-list-container'),
         conversationsUsers: document.getElementById('conversations-list-users'),
         conversationsGroups: document.getElementById('conversations-list-groups'),
         settingsBtn: document.getElementById('chat-settings-btn'),
-        sidebarContent: document.querySelector('.sidebar-content'),
         settingsPanel: document.getElementById('chat-settings-panel'),
-        groupListContainer: document.getElementById('group-list-container'),
-        groupFormContainer: document.getElementById('group-form-container'),
+        sidebarContent: document.querySelector('.sidebar-content'),
         createGroupShowFormBtn: document.getElementById('create-group-show-form-btn'),
+        groupManagementModal: document.getElementById('groupManagementModalOverlay'),
+        groupModalTitle: document.getElementById('groupModalTitle'),
+        groupModalBody: document.getElementById('groupModalBody'),
         chatWelcome: document.getElementById('chat-welcome'),
         chatWindow: document.getElementById('chat-window'),
         messageList: document.getElementById('message-list'),
         messageForm: document.getElementById('message-form'),
         messageInput: document.getElementById('message-body-input'),
-        unreadBadge: document.getElementById('unread-counter-widget')
+        emojiBtn: document.getElementById('emoji-btn'),
+        emojiPicker: document.getElementById('emoji-picker'),
+        notificationSound: document.getElementById('notification-sound'),
+        sendSound: document.getElementById('send-sound')
     };
 
-    if (!dom.toggleBtn || !dom.widget) return;
+    if (!dom.widget || !dom.toggleBtn) return;
 
-    let activeChat = { type: null, id: null };
-    let conn;
-    let chatSettingsData = { users: [], groups: [] };
+    let api = null;
+    let conn = null;
+    let isInitialized = false;
 
-    // --- API Calls ---
-    const api = {
-        async getConversations() {
-            const res = await fetch(`${config.baseUrl}/messages/get-conversations`);
-            return res.json();
-        },
-        async fetchMessages(type, id) {
-            const fd = new FormData();
-            fd.append('chat_type', type);
-            fd.append('chat_id', id);
-            const res = await fetch(`${config.baseUrl}/messages/fetch`, {
-                method: 'POST',
-                headers: { 'X-CSRF-TOKEN': config.csrfToken },
-                body: fd
-            });
-            return res.json();
-        },
-        async sendMessage(type, id, body) {
-            const fd = new FormData();
-            fd.append('chat_type', type);
-            fd.append('chat_id', id);
-            fd.append('body', body);
-            const res = await fetch(`${config.baseUrl}/messages/send`, {
-                method: 'POST',
-                headers: { 'X-CSRF-TOKEN': config.csrfToken },
-                body: fd
-            });
-            return res.json();
-        },
-        async markAsRead(type, id) {
-            const fd = new FormData();
-            fd.append('chat_type', type);
-            fd.append('chat_id', id);
-            await fetch(`${config.baseUrl}/messages/markread`, {
-                method: 'POST',
-                headers: { 'X-CSRF-TOKEN': config.csrfToken }
-            });
-        },
-        async getUnreadCount() {
-            const res = await fetch(`${config.baseUrl}/messages/unread`);
-            return res.json();
-        },
-        async getChatSettings() {
-            const res = await fetch(`${config.baseUrl}/messages/settings`);
-            return res.json();
-        },
-        async createGroup(name, members) {
-             const res = await fetch(`${config.baseUrl}/messages/groups/create`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': config.csrfToken },
-                body: JSON.stringify({ name, members })
-            });
-            return res.json();
-        },
-        async updateGroup(id, name, members) {
-            const res = await fetch(`${config.baseUrl}/messages/groups/update/${id}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': config.csrfToken },
-                body: JSON.stringify({ name, members })
-            });
-            return res.json();
-        },
-        async deleteGroup(id) {
-            const res = await fetch(`${config.baseUrl}/messages/groups/delete/${id}`, {
-                method: 'POST',
-                headers: { 'X-CSRF-TOKEN': config.csrfToken }
-            });
-            return res.json();
-        }
-    };
+    function initializeChat() {
+        if (isInitialized) return;
+        
+        api = getApi(config);
+        conn = connectWebSocket(config, dom);
+        loadConversations(dom, api);
+        setupEventListeners();
 
-    // --- UI Logic ---
-    const renderConversation = (item, type) => {
-        const li = document.createElement('li');
-        li.dataset.type = type;
-        li.dataset.itemId = item.id;
-        li.innerHTML = `<div class="conv-title">${item.name || item.group_name}</div>`;
-        return li;
-    };
+        isInitialized = true;
+    }
 
-    const renderMessage = (msg) => {
-        const isOwn = msg.sender_id === config.currentUserId;
-        const item = document.createElement('div');
-        item.className = `message-item ${isOwn ? 'own' : ''}`;
-        const date = new Date(msg.created_at).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
-        item.innerHTML = `
-            <div class="meta"><strong>${isOwn ? 'Ви' : msg.sender_name}</strong> <span>${date}</span></div>
-            <div class="body">${msg.body.replace(/\\n/g, '<br>')}</div>
-        `;
-        return item;
-    };
+    function setupEventListeners() {
+        // --- Кнопка закриття віджета ---
+        dom.closeBtn.addEventListener('click', () => {
+            dom.widget.classList.remove('open');
+            if (dom.emojiPicker) dom.emojiPicker.style.display = 'none';
+        });
 
-    const updateUnreadBadge = (count) => {
-        if (dom.unreadBadge) {
-            dom.unreadBadge.textContent = count > 0 ? count : '';
-            dom.unreadBadge.style.display = count > 0 ? 'flex' : 'none';
-        }
-    };
-    
-    const renderGroupForm = (group = null) => {
-        const isEditing = group !== null;
-        const selectedMembers = new Set(isEditing ? group.members : []);
-        const usersHtml = chatSettingsData.users
-            .filter(user => user.id !== config.currentUserId)
-            .map(user => `
-                <label>
-                    <input type="checkbox" value="${user.id}" ${selectedMembers.has(user.id) ? 'checked' : ''}>
-                    ${user.name}
-                </label>
-            `).join('');
-        dom.groupFormContainer.innerHTML = `
-            <form id="group-form" class="group-form">
-                <input type="hidden" name="group_id" value="${isEditing ? group.id : ''}">
-                <input type="text" name="group_name" class="form-control" placeholder="Назва групи" value="${isEditing ? group.group_name : ''}" required>
-                <div class="members-list">${usersHtml}</div>
-                <div class="form-actions">
-                    <button type="button" id="cancel-group-form-btn" class="btn-secondary">Скасувати</button>
-                    <button type="submit" class="btn-primary">${isEditing ? 'Оновити' : 'Створити'}</button>
-                </div>
-            </form>
-        `;
-        dom.groupFormContainer.style.display = 'block';
-    };
-
-    const renderGroupList = () => {
-        dom.groupListContainer.innerHTML = '';
-        if (chatSettingsData.groups.length > 0) {
-            chatSettingsData.groups.forEach(group => {
-                const item = document.createElement('div');
-                item.className = 'group-item';
-                item.dataset.groupId = group.id;
-                item.innerHTML = `
-                    <span>${group.group_name}</span>
-                    <div class="group-actions">
-                        <button class="action-btn edit-group-btn"><i class="fas fa-pencil-alt"></i></button>
-                        <button class="action-btn delete-group-btn"><i class="fas fa-trash"></i></button>
-                    </div>
-                `;
-                dom.groupListContainer.appendChild(item);
-            });
-        } else {
-            dom.groupListContainer.innerHTML = '<p class="empty-list">Ви ще не створили жодної групи.</p>';
-        }
-    };
-
-    const loadSettings = async () => {
-        const result = await api.getChatSettings();
-        if (result.success) {
-            chatSettingsData = result;
-            renderGroupList();
-        }
-    };
-
-    // --- Main Logic ---
-    const loadConversations = async () => {
-        dom.conversationsUsers.innerHTML = '<li>Завантаження...</li>';
-        dom.conversationsGroups.innerHTML = '<li>Завантаження...</li>';
-        const result = await api.getConversations();
-        dom.conversationsUsers.innerHTML = '';
-        dom.conversationsGroups.innerHTML = '';
-        if (result.success) {
-            result.users.forEach(user => dom.conversationsUsers.appendChild(renderConversation(user, 'user')));
-            result.groups.forEach(group => dom.conversationsGroups.appendChild(renderConversation(group, 'group')));
-        } else {
-             dom.conversationsUsers.innerHTML = '<li>Помилка завантаження</li>';
-        }
-    };
-
-    const activateChat = async (type, id, listItem) => {
-        activeChat = { type, id };
-        document.querySelectorAll('.conversation-list li').forEach(li => li.classList.remove('active'));
-        listItem.classList.add('active');
-        dom.chatWelcome.style.display = 'none';
-        dom.chatWindow.style.display = 'flex';
-        const result = await api.fetchMessages(type, id);
-        dom.messageList.innerHTML = '';
-        if (result.success && result.messages) {
-            result.messages.forEach(msg => dom.messageList.appendChild(renderMessage(msg)));
-            dom.messageList.scrollTop = dom.messageList.scrollHeight;
-        }
-        api.markAsRead(type, id);
-        checkNotifications();
-    };
-
-    const checkNotifications = async () => {
-        const result = await api.getUnreadCount();
-        if (result.success && result.counts) {
-            const total = Object.values(result.counts).reduce((sum, count) => sum + count, 0);
-            updateUnreadBadge(total);
-        }
-    };
-
-    const connectWebSocket = () => {
-        conn = new WebSocket(`ws://${config.wsHost}:8080`);
-        conn.onopen = () => {
-            conn.send(JSON.stringify({ type: 'auth', user_id: config.currentUserId }));
-        };
-        conn.onmessage = (e) => {
-            const msg = JSON.parse(e.data);
-            if ((msg.group_id && msg.group_id === activeChat.id) || 
-                (msg.recipient_id && (msg.recipient_id === activeChat.id || msg.sender_id === activeChat.id))) {
-                dom.messageList.appendChild(renderMessage(msg));
-                dom.messageList.scrollTop = dom.messageList.scrollHeight;
-            }
-            checkNotifications();
-        };
-        conn.onclose = () => {
-            setTimeout(connectWebSocket, 5000);
-        };
-    };
-
-    // --- Event Listeners ---
-    dom.toggleBtn.addEventListener('click', () => {
-        dom.widget.classList.toggle('open');
-        if (dom.widget.classList.contains('open')) {
-            loadConversations();
-        }
-    });
-
-    dom.closeBtn.addEventListener('click', () => dom.widget.classList.remove('open'));
-    
-    if (dom.tabsContainer) {
+        // --- Вкладки "Користувачі" / "Групи" ---
         dom.tabsContainer.addEventListener('click', (e) => {
             const tabBtn = e.target.closest('.tab-link');
             if (!tabBtn) return;
             const tabId = tabBtn.dataset.tab;
+
             document.querySelectorAll('.chat-tabs .tab-link').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.list-container .tab-content').forEach(c => c.classList.remove('active'));
             tabBtn.classList.add('active');
-            document.getElementById(`conversations-list-${tabId}`)?.classList.add('active');
+            const contentEl = document.getElementById(`conversations-list-${tabId}`);
+            if (contentEl) contentEl.classList.add('active');
+            
+            saveState(dom);
         });
-    }
 
-    if (dom.settingsBtn) {
-        dom.settingsBtn.addEventListener('click', () => {
-            dom.sidebarContent.classList.toggle('settings-open');
-            if (dom.sidebarContent.classList.contains('settings-open')) {
-                loadSettings();
-            } else {
-                dom.groupFormContainer.style.display = 'none';
+        // --- Списки чатів ---
+        [dom.conversationsUsers, dom.conversationsGroups].forEach(list => {
+            if (list) {
+                list.addEventListener('click', (e) => {
+                    const listItem = e.target.closest('li');
+                    if (listItem && listItem.dataset.itemId) {
+                        saveDraft(dom);
+                        activateChat(listItem.dataset.type, parseInt(listItem.dataset.itemId, 10), listItem, dom, api, config, initTextareaAutoResize);
+                    }
+                });
             }
         });
-    }
-    
-    if(dom.createGroupShowFormBtn) {
-        dom.createGroupShowFormBtn.addEventListener('click', () => renderGroupForm());
-    }
 
-    if (dom.settingsPanel) {
-        dom.settingsPanel.addEventListener('click', async e => {
-            const target = e.target;
-            if (target.id === 'cancel-group-form-btn') {
-                dom.groupFormContainer.style.display = 'none';
-            }
-            const groupItem = target.closest('.group-item');
-            if (!groupItem) return;
-            const groupId = groupItem.dataset.groupId;
-            if (target.closest('.edit-group-btn')) {
-                const group = chatSettingsData.groups.find(g => g.id == groupId);
-                renderGroupForm(group);
-            }
-            if (target.closest('.delete-group-btn')) {
-                if(confirm('Ви впевнені, що хочете видалити групу?')) {
-                    await api.deleteGroup(groupId);
-                    loadSettings();
-                    loadConversations();
-                }
-            }
-        });
-        dom.settingsPanel.addEventListener('submit', async e => {
+        // --- Форма відправки повідомлення ---
+        dom.messageForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            if(e.target.id !== 'group-form') return;
-            const form = e.target;
-            const groupId = form.elements['group_id'].value;
-            const name = form.elements['group_name'].value;
-            const members = Array.from(form.querySelectorAll('input[type="checkbox"]:checked')).map(cb => parseInt(cb.value));
-            if (groupId) {
-                await api.updateGroup(groupId, name, members);
-            } else {
-                await api.createGroup(name, members);
-            }
-            dom.groupFormContainer.style.display = 'none';
-            loadSettings();
-            loadConversations();
+            const body = dom.messageInput.value.trim();
+            if (!body || !state.activeChat.id || !conn || conn.readyState !== WebSocket.OPEN) return;
+            const payload = { type: 'message', sender_id: config.currentUserId, body, chat_type: state.activeChat.type, chat_id: state.activeChat.id };
+            conn.send(JSON.stringify(payload));
+            if (dom.sendSound) { try { dom.sendSound.play(); } catch(err) {} }
+            localStorage.removeItem(`chat_draft_${state.activeChat.type}_${state.activeChat.id}`);
+            dom.messageInput.value = '';
+            initTextareaAutoResize(dom.messageInput, dom.messageForm);
         });
-    }
 
-    [dom.conversationsUsers, dom.conversationsGroups].forEach(list => {
-        if(list) {
-            list.addEventListener('click', (e) => {
-                const listItem = e.target.closest('li');
-                if (listItem && listItem.dataset.itemId) {
-                    activateChat(listItem.dataset.type, parseInt(listItem.dataset.itemId), listItem);
+        dom.messageInput.addEventListener('input', () => saveDraft(dom));
+
+        //-- Налаштування чату ---
+        if (dom.settingsBtn) {
+            dom.settingsBtn.addEventListener('click', () => {
+                dom.sidebarContent.classList.toggle('settings-open');
+                if (dom.sidebarContent.classList.contains('settings-open')) {
+                    loadSettings(dom, api, (data) => { chatSettingsData = data; });
                 }
             });
         }
-    });
 
-    dom.messageForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const body = dom.messageInput.value.trim();
-        if (!body || !activeChat.id) return;
+        //-- Створення групи ---
+        if (dom.createGroupShowFormBtn) {
+            dom.createGroupShowFormBtn.addEventListener('click', () => {
+                showGroupModal(null, dom, api, chatSettingsData, () => {
+                    loadSettings(dom, api, (data) => { chatSettingsData = data; });
+                    loadConversations(dom, api, config);
+                });
+            });
+        }
 
-        const messageBody = body;
-        dom.messageInput.value = '';
-        dom.messageInput.style.height = 'auto';
+        //-- Налаштування групи ---
+        if (dom.settingsPanel) {
+            dom.settingsPanel.addEventListener('click', e => {
+                const groupItem = e.target.closest('.group-item');
+                if (!groupItem) return;
+                const groupId = groupItem.dataset.groupId;
+                const group = chatSettingsData.groups.find(g => g.id == groupId);
+                
+                if (e.target.closest('.edit-group-btn')) {
+                    showGroupModal(group, dom, api, chatSettingsData, () => {
+                        loadSettings(dom, api, (data) => { chatSettingsData = data; });
+                        loadConversations(dom, api, config);
+                    });
+                }
+                
+                if (e.target.closest('.delete-group-btn')) {
+                    if (confirm(`Ви впевнені, що хочете видалити групу "${group.group_name}"?`)) {
+                        api.deleteGroup(groupId).then(result => {
+                            if(result.success) {
+                                loadSettings(dom, api, (data) => { chatSettingsData = data; });
+                                loadConversations(dom, api, config);
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        // --- Логіка Emoji ---
+        if (dom.emojiBtn && dom.emojiPicker) {
+            dom.emojiBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dom.emojiPicker.style.display = dom.emojiPicker.style.display === 'block' ? 'none' : 'block';
+            });
+            dom.emojiPicker.addEventListener('click', (e) => e.stopPropagation());
+            dom.emojiPicker.addEventListener('emoji-click', event => {
+                dom.messageInput.value += event.detail.unicode;
+                dom.messageInput.focus();
+            });
+        }
         
-        const result = await api.sendMessage(activeChat.type, activeChat.id, messageBody);
-        
-        if (result.success) {
-            if (!conn || conn.readyState !== WebSocket.OPEN) {
-                dom.messageList.appendChild(renderMessage(result.message));
-                dom.messageList.scrollTop = dom.messageList.scrollHeight;
+        // Закриття вікна емодзі при кліку поза ним
+        document.body.addEventListener('click', () => {
+            if (dom.emojiPicker && dom.emojiPicker.style.display === 'block') {
+                dom.emojiPicker.style.display = 'none';
             }
-        } else {
-            dom.messageInput.value = messageBody;
-            alert(result.message || 'Помилка відправки повідомлення.');
+        }, true); // Використовуємо capturing, щоб подія спрацювала раніше
+    }
+
+    // --- Головний обробник для відкриття віджета ---
+    dom.toggleBtn.addEventListener('click', () => {
+        dom.widget.classList.toggle('open');
+        dom.toggleBtn.classList.remove('blinking');
+        
+        if (dom.widget.classList.contains('open')) {
+            initializeChat(); // Ініціалізуємо все тільки при першому відкритті
         }
     });
-
-    // --- Initialization ---
-    initTextareaAutoResize(dom.messageInput, dom.messageForm); // <-- КРОК 2: ВИКЛИКАТИ ФУНКЦІЮ
-    connectWebSocket();
-    setInterval(checkNotifications, 30000);
-    checkNotifications();
+    
+    // Ініціалізуємо лише ті частини, що потрібні до відкриття віджету
+    initTextareaAutoResize(dom.messageInput, dom.messageForm);
+    loadState(dom);
+    updateBlinkingUI(dom);
 });

@@ -1,5 +1,6 @@
 <?php
 // mvc/v_main_layout.php
+use App\Core\TokenManager;
 ?>
 <!DOCTYPE html>
 <html lang="uk">
@@ -30,9 +31,10 @@
 </head>
 
 <body data-base-url="<?php echo BASE_URL; ?>" 
-      data-project-url="<?php echo PROJECT_URL; ?>"
-      data-current-user-id="<?php echo htmlspecialchars($currentUser['id'] ?? 0); ?>"
-      data-flash-duration="<?php echo htmlspecialchars($siteSettings['flash_message_duration'] ?? 10); ?>">
+      data-project-url="<?php echo PROJECT_URL; ?>" 
+      data-current-user-id="<?php echo htmlspecialchars($currentUser['id'] ?? 0); ?>" 
+      data-flash-duration="<?php echo htmlspecialchars($siteSettings['flash_message_duration'] ?? 10); ?>" 
+      data-ws-token="<?php echo TokenManager::generateForUser($currentUser['id'] ?? 0); ?>">
     <div class="dashboard-container">
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
@@ -104,17 +106,17 @@
                     <button class="mobile-menu-btn" id="mobile-menu-btn"><i class="fas fa-bars"></i></button>
 
                     <?php if ($this->hasPermission('notes', 'v')): ?>
-                        <button class="action-btn" id="notes-toggle-btn" title="Нотатки">
+                        <button class="action-btn" id="notes-toggle-btn" title="Нотатки [Alt+N]">
                             <i class="fas fa-sticky-note"></i>
                         </button>
                     <?php endif; ?>
                     <?php if ($this->hasPermission('clipboard', 'v')): ?>
-                        <button class="action-btn" id="clipboard-toggle-btn" title="Буфер обміну">
+                        <button class="action-btn" id="clipboard-toggle-btn" title="Буфер обміну [Alt+C]">
                             <i class="fas fa-clipboard"></i>
                         </button>
                     <?php endif; ?>
                     <?php if ($this->hasPermission('chat', 'v')): ?>
-                        <button class="action-btn" id="messages-toggle-btn" title="Повідомлення">
+                        <button class="action-btn" id="messages-toggle-btn" title="Повідомлення [Alt+M]">
                             <i class="fas fa-comments"></i>
                             <span id="unread-counter-widget" class="widget-badge"></span>
                         </button>
@@ -207,7 +209,7 @@
                         <button class="tab-link" data-tab="groups"><i class="fas fa-users"></i> Групи</button>
                     </div>
                     <?php if ($this->hasPermission('chat', 'e')): ?>
-                    <button id="chat-settings-btn" class="action-btn" title="Налаштування чату">
+                    <button id="chat-settings-btn" class="action-btn" title="Налаштування груп">
                         <i class="fas fa-cog"></i>
                     </button>
                     <?php endif; ?>
@@ -217,13 +219,13 @@
                         <ul id="conversations-list-users" class="conversation-list tab-content active"></ul>
                         <ul id="conversations-list-groups" class="conversation-list tab-content"></ul>
                     </div>
-                    <div id="chat-settings-panel" class="chat-settings-panel">
-                        <div class="settings-header">
-                            <h4>Керування групами</h4>
-                            <button id="create-group-show-form-btn" class="btn-primary-small"><i class="fas fa-plus"></i> Створити</button>
-                        </div>
-                        <div id="group-list-container"></div>
-                        <div id="group-form-container" style="display:none;"></div>
+                    <div id="chat-settings-panel" class="settings-panel">
+                        <h3>Керування групами</h3>
+                        <div id="group-list-container">
+                            </div>
+                        <button id="create-group-show-form-btn" class="create-group-show-form-btn">
+                            <i class="fas fa-plus"></i> Створити нову групу
+                        </button>
                     </div>
                 </div>
             </div>
@@ -232,13 +234,19 @@
                 <div id="chat-window" class="chat-window" style="display: none;">
                     <div id="message-list" class="message-list"></div>
                     <form id="message-form" class="message-form">
-                        <textarea id="message-body-input" placeholder="Напишіть повідомлення..." rows="1" required></textarea>
-                        <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                        <div class="message-input-wrapper">
+                            <textarea id="message-body-input" placeholder="Напишіть повідомлення..." rows="1" required></textarea>
+                            <button type="button" id="emoji-btn" class="input-action-btn"><i class="fas fa-smile"></i></button>
+                        </div>
+                        <button type="submit" id="send-message-btn" class="send-btn"><i class="fas fa-paper-plane"></i></button>
                     </form>
                 </div>
             </main>
         </div>
+        <emoji-picker class="light" id="emoji-picker"></emoji-picker>
     </div>
+    <audio id="notification-sound" src="<?php echo PROJECT_URL; ?>/resources/audio/new_message.mp3" preload="auto"></audio>
+    <audio id="send-sound" src="<?php echo PROJECT_URL; ?>/resources/audio/send_message.mp3" preload="auto"></audio>
     <?php endif; ?>
 
     <!-- МОДАЛЬНЕ ВІКНО -->
@@ -251,15 +259,15 @@
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/lightgallery.min.js"></script>
-    
-    <script type="module" src="<?php echo PROJECT_URL; ?>/resources/js/main.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+    <script type="module" src="<?php echo PROJECT_URL; ?>/resources/js/MAIN.js"></script>
 
     <?php if ($this->hasPermission('notes', 'v')): ?>
-        <script type="module" src="<?php echo PROJECT_URL; ?>/resources/js/notes.js"></script>
+        <script type="module" src="<?php echo PROJECT_URL; ?>/resources/js/notes-widget.js"></script>
     <?php endif; ?>
 
     <?php if ($this->hasPermission('clipboard', 'v')): ?>
-        <script type="module" src="<?php echo PROJECT_URL; ?>/resources/js/clipboard.js"></script>
+        <script type="module" src="<?php echo PROJECT_URL; ?>/resources/js/clipboard-widget.js"></script>
     <?php endif; ?>
     
     <?php if ($this->hasPermission('chat', 'v')): ?>

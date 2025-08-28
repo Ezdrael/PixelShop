@@ -1,9 +1,9 @@
 /**
  * Головний скрипт для сторінки перегляду альбому.
  */
-import { initPhotoSelection } from './_ph-al-vi_photo-selection.js';
-import { initAlbumDeleteHandler } from './_ph-al-vi_album-deleter.js';
-import { initLightGallery } from './_ph-al-vi_gallery.js';
+import { initPhotoSelection } from './photo-album-view/photo-selection.js';
+import { initAlbumDeleteHandler } from './photo-album-view/album-deleter.js';
+import { initLightGallery } from './photo-album-view/gallery.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const galleryContainer = document.getElementById('lightgallery-container');

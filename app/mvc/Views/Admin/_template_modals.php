@@ -17,6 +17,17 @@
     </div>
 </div>
 
+<div class="modal-overlay" id="groupManagementModalOverlay">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 id="groupModalTitle">Створення нової групи</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body" id="groupModalBody">
+            </div>
+    </div>
+</div>
+
 <div class="modal-overlay" id="deleteAlbumModalOverlay">
     <div class="modal-box">
         <div class="modal-header">
