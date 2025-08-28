@@ -63,32 +63,38 @@ class MessagesController extends BaseController  {
         $chatType = $_POST['chat_type'] ?? '';
         $chatId = (int)($_POST['chat_id'] ?? 0);
         $body = trim($_POST['body'] ?? '');
-        
-        if (empty($body)) exit();
+
+        if (empty($body)) {
+            // Відправляємо помилку, якщо тіло повідомлення порожнє
+            echo json_encode(['success' => false, 'message' => 'Message body cannot be empty.']);
+            exit();
+        }
 
         $messageData = [
             'sender_id' => $this->currentUser['id'],
             'body' => $body
         ];
-        $channel = '';
 
         if ($chatType === 'group') {
             if (!$this->mMessages->isUserInGroup($this->currentUser['id'], $chatId)) {
-                http_response_code(403); exit();
+                http_response_code(403);
+                exit();
             }
             $messageData['group_id'] = $chatId;
-            $channel = 'private-group-' . $chatId;
-
         } elseif ($chatType === 'user') {
             $messageData['recipient_id'] = $chatId;
-            // Створюємо послідовну назву каналу для пари користувачів
-            $user_ids = [$this->currentUser['id'], $chatId];
-            sort($user_ids);
-            $channel = 'private-chat-' . implode('-', $user_ids);
         }
 
         $newMessage = $this->mMessages->createMessage($messageData);
 
+        if ($newMessage) {
+            // Якщо у вас налаштований WebSocket сервер, тут має бути його виклик для трансляції повідомлення іншим
+            // $webSocket->send(...)
+
+            echo json_encode(['success' => true, 'message' => $newMessage]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to save the message.']);
+        }
         exit();
     }
 

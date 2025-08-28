@@ -1,3 +1,5 @@
+import { initTextareaAutoResize } from './_msg_ui.js'; // <-- КРОК 1: ІМПОРТУВАТИ ФУНКЦІЮ
+
 document.addEventListener('DOMContentLoaded', () => {
     const config = {
         baseUrl: document.body.dataset.baseUrl || '',
@@ -45,7 +47,19 @@ document.addEventListener('DOMContentLoaded', () => {
             fd.append('chat_id', id);
             const res = await fetch(`${config.baseUrl}/messages/fetch`, {
                 method: 'POST',
-                headers: { 'X-CSRF-TOKEN': config.csrfToken }, // <-- ДОДАЙТЕ ЦЕЙ РЯДОК
+                headers: { 'X-CSRF-TOKEN': config.csrfToken },
+                body: fd
+            });
+            return res.json();
+        },
+        async sendMessage(type, id, body) {
+            const fd = new FormData();
+            fd.append('chat_type', type);
+            fd.append('chat_id', id);
+            fd.append('body', body);
+            const res = await fetch(`${config.baseUrl}/messages/send`, {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': config.csrfToken },
                 body: fd
             });
             return res.json();
@@ -54,7 +68,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const fd = new FormData();
             fd.append('chat_type', type);
             fd.append('chat_id', id);
-            await fetch(`${config.baseUrl}/messages/markread`, { method: 'POST', body: fd });
+            await fetch(`${config.baseUrl}/messages/markread`, {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': config.csrfToken }
+            });
         },
         async getUnreadCount() {
             const res = await fetch(`${config.baseUrl}/messages/unread`);
@@ -105,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const date = new Date(msg.created_at).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
         item.innerHTML = `
             <div class="meta"><strong>${isOwn ? 'Ви' : msg.sender_name}</strong> <span>${date}</span></div>
-            <div class="body">${msg.body.replace(/\n/g, '<br>')}</div>
+            <div class="body">${msg.body.replace(/\\n/g, '<br>')}</div>
         `;
         return item;
     };
@@ -305,7 +322,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // !! КЛЮЧОВА ЗМІНА: Додаємо обробники на ОБА списки !!
     [dom.conversationsUsers, dom.conversationsGroups].forEach(list => {
         if(list) {
             list.addEventListener('click', (e) => {
@@ -317,30 +333,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    dom.messageForm.addEventListener('submit', (e) => {
+    dom.messageForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const body = dom.messageInput.value.trim();
-        if (!body || !activeChat.id || !conn || conn.readyState !== WebSocket.OPEN) return;
-        const payload = {
-            type: 'message',
-            sender_id: config.currentUserId,
-            body: body,
-            chat_type: activeChat.type,
-            chat_id: activeChat.id
-        };
-        conn.send(JSON.stringify(payload));
-        dom.messageList.appendChild(renderMessage({
-            sender_id: config.currentUserId,
-            sender_name: 'Ви',
-            body: body,
-            created_at: new Date().toISOString()
-        }));
-        dom.messageList.scrollTop = dom.messageList.scrollHeight;
+        if (!body || !activeChat.id) return;
+
+        const messageBody = body;
         dom.messageInput.value = '';
         dom.messageInput.style.height = 'auto';
+        
+        const result = await api.sendMessage(activeChat.type, activeChat.id, messageBody);
+        
+        if (result.success) {
+            if (!conn || conn.readyState !== WebSocket.OPEN) {
+                dom.messageList.appendChild(renderMessage(result.message));
+                dom.messageList.scrollTop = dom.messageList.scrollHeight;
+            }
+        } else {
+            dom.messageInput.value = messageBody;
+            alert(result.message || 'Помилка відправки повідомлення.');
+        }
     });
 
     // --- Initialization ---
+    initTextareaAutoResize(dom.messageInput, dom.messageForm); // <-- КРОК 2: ВИКЛИКАТИ ФУНКЦІЮ
     connectWebSocket();
     setInterval(checkNotifications, 30000);
     checkNotifications();

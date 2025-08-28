@@ -76,7 +76,7 @@ export function initTextareaAutoResize(textarea, form) {
     textarea.addEventListener('input', adjustTextareaHeight);
     
     textarea.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
+        if (e.key === 'Enter' && e.ctrlKey) {
             e.preventDefault();
             form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
         }
