@@ -65,7 +65,6 @@ class MessagesController extends BaseController  {
         $body = trim($_POST['body'] ?? '');
 
         if (empty($body)) {
-            // Відправляємо помилку, якщо тіло повідомлення порожнє
             echo json_encode(['success' => false, 'message' => 'Message body cannot be empty.']);
             exit();
         }
@@ -77,8 +76,7 @@ class MessagesController extends BaseController  {
 
         if ($chatType === 'group') {
             if (!$this->mMessages->isUserInGroup($this->currentUser['id'], $chatId)) {
-                http_response_code(403);
-                exit();
+                http_response_code(403); exit();
             }
             $messageData['group_id'] = $chatId;
         } elseif ($chatType === 'user') {
@@ -88,8 +86,17 @@ class MessagesController extends BaseController  {
         $newMessage = $this->mMessages->createMessage($messageData);
 
         if ($newMessage) {
-            // Якщо у вас налаштований WebSocket сервер, тут має бути його виклик для трансляції повідомлення іншим
-            // $webSocket->send(...)
+            // --- НОВИЙ КОД: ВІДПРАВКА НА WEBSOCKET-СЕРВЕР ---
+            try {
+                $context = new \ZMQContext();
+                $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'my pusher');
+                $socket->connect("tcp://127.0.0.1:5555");
+                $socket->send(json_encode($newMessage));
+            } catch (\ZMQException $e) {
+                // Якщо сервер не запущено, нічого страшного, просто логуємо помилку
+                error_log("ZMQ Error: " . $e->getMessage());
+            }
+            // --- КІНЕЦЬ НОВОГО КОДУ ---
 
             echo json_encode(['success' => true, 'message' => $newMessage]);
         } else {

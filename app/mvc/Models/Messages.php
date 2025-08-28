@@ -161,4 +161,14 @@ class Messages {
         $stmtGet->execute([$messageId]);
         return $stmtGet->fetch();
     }
+
+    /**
+     * Отримує ID всіх учасників групи.
+     */
+    public function getGroupMembers(int $groupId): array {
+        $sql = "SELECT user_id FROM chat_group_members WHERE group_id = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$groupId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
