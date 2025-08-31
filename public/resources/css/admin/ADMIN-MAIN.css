@@ -73,5 +73,54 @@ body {
     color: #999;
 } /* Робимо іконки дій також сірими */
 
+.user-avatar-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
 
+/* --- Стилі для аватарів у списку чатів --- */
+.conversation-list li {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    /* Змінено відступи для кращого вигляду */
+}
 
+.conv-avatar,
+.conv-avatar-placeholder {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    /* Забороняємо аватару стискатися */
+}
+
+.conv-avatar {
+    object-fit: cover;
+    /* Правильно масштабує зображення */
+}
+
+.conv-avatar-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--border-color);
+    color: var(--secondary-text);
+    font-size: 1.2rem;
+}
+
+/* --- Стилі для аватарів у списку користувачів --- */
+.user-avatar-small {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-avatar-placeholder {
+    font-size: 36px;
+    color: var(--border-color);
+}

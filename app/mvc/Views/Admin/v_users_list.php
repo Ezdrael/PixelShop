@@ -1,8 +1,5 @@
 <?php
-// ===================================================================
-// Файл: mvc/v_users_list.php 🕰️
-// Розміщення: /mvc/v_users_list.php
-// ===================================================================
+// app/Mvc/Views/admin/v_users_list.php
 ?>
 <div class="content-card">
     <div class="form-header">
@@ -19,7 +16,7 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Ім'я</th>
+                <th colspan="2">Ім'я</th>
                 <th>Email</th>
                 <th>Роль</th>
                 <th>Дії</th>
@@ -29,6 +26,15 @@
             <?php foreach ($users as $user): ?>
                 <tr>
                     <td>#<?php echo htmlspecialchars($user['id']); ?></td>
+                    
+                    <td style="width: 50px; padding-right: 0;">
+                        <?php if (!empty($user['avatar_url'])): ?>
+                            <img src="<?php echo htmlspecialchars($user['avatar_url']); ?>" alt="Avatar" class="user-avatar-small">
+                        <?php else: ?>
+                            <i class="fas fa-user-circle user-avatar-placeholder"></i>
+                        <?php endif; ?>
+                    </td>
+                    
                     <td><?php echo htmlspecialchars($user['name']); ?></td>
                     <td><?php echo htmlspecialchars($user['email']); ?></td>
                     <td><?php echo htmlspecialchars($user['role_name']); ?></td>

@@ -55,6 +55,27 @@ function render_permission_icon($permissions, $char) {
                 </select>
             </div>
         </div>
+
+        <div class="form-group-inline">
+            <label for="user-avatar">URL аватара</label>
+            <div class="form-control-wrapper" style="display: flex; align-items: center; gap: 1rem;">
+                <input type="url" id="user-avatar" name="avatar_url" class="form-control" value="<?php echo htmlspecialchars($user['avatar_url'] ?? ''); ?>" placeholder="https://example.com/photo.jpg">
+                <?php if (!empty($user['avatar_url'])): ?>
+                    <img src="<?php echo htmlspecialchars($user['avatar_url']); ?>" alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                <?php else: ?>
+                    <i class="fas fa-user-circle" style="font-size: 40px; color: var(--border-color);"></i>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <div class="form-group-inline">
+            <label for="user-password">Новий пароль</label>
+            <input type="password" id="user-password" name="password" class="form-control" autocomplete="new-password" placeholder="Залиште поля порожніми, щоб не змінювати поточний пароль.">
+        </div>
+        <div class="form-group-inline">
+            <label for="user-password-confirm">Підтвердження пароля</label>
+            <input type="password" id="user-password-confirm" name="password_confirm" class="form-control" autocomplete="new-password" placeholder="Підтвердіть новий пароль.">
+        </div>
         
         <h3 style="margin-top: 2em; margin-bottom: 1em;">
             Дозволи ролі (редагуються <a href="<?php echo BASE_URL; ?>/roles">тут</a>)

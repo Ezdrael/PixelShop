@@ -1,9 +1,17 @@
+// public/resources/js/messages-widget/ui.js
+
 import { state, saveState, loadDraft } from './state.js';
 
-function renderMessage(msg, currentUserId) {
+/**
+ * Створює HTML-елемент для одного повідомлення.
+ * Додає клас .new-message для підсвічування.
+ */
+export function renderMessage(msg, currentUserId) {
     const isOwn = msg.sender_id == currentUserId;
     const item = document.createElement('div');
-    item.className = `message-item ${isOwn ? 'own' : ''}`;
+    const isNew = msg.isNew || msg.is_read === 0;
+    item.className = `message-item ${isOwn ? 'own' : ''} ${isNew ? 'new-message' : ''}`;
+    
     const date = new Date(msg.created_at).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
     item.innerHTML = `
         <div class="meta"><strong>${isOwn ? 'Ви' : msg.sender_name}</strong> <span>${date}</span></div>
@@ -12,52 +20,56 @@ function renderMessage(msg, currentUserId) {
     return item;
 }
 
-function updateBlinkingUI(dom) {
-    document.querySelectorAll('.conversation-list li.blinking').forEach(el => el.classList.remove('blinking'));
-    if(dom.userTab) dom.userTab.classList.remove('blinking');
-    if(dom.groupTab) dom.groupTab.classList.remove('blinking');
+/**
+ * Обробляє нове повідомлення: додає в чат і запускає анімацію.
+ */
+export function handleNewMessage(message, dom, config) {
+    dom.messageList.appendChild(renderMessage(message, config.currentUserId));
+    dom.messageList.scrollTop = dom.messageList.scrollHeight;
+    markMessagesAsRead(dom);
+}
 
+/**
+ * Запускає анімацію згасання для нових повідомлень.
+ */
+export function markMessagesAsRead(dom) {
+    const newMessages = dom.messageList.querySelectorAll('.new-message');
+    if (newMessages.length > 0) {
+        setTimeout(() => {
+            newMessages.forEach(msg => {
+                msg.classList.remove('new-message'); // Прибираємо клас для підсвічування
+                msg.classList.add('is-read');     // Додаємо клас для анімації
+            });
+        }, 300);
+    }
+}
+
+/**
+ * Оновлює миготіння для всіх елементів інтерфейсу.
+ */
+export function updateBlinkingUI(dom) {
+    document.querySelectorAll('.blinking').forEach(el => el.classList.remove('blinking'));
     let hasUserUnread = false;
     let hasGroupUnread = false;
-    
+
     state.unreadConversations.forEach(convId => {
         const [type, id] = convId.split('-');
-        const listItem = document.querySelector(`.conversation-list li[data-type="${type}"][data-item-id="${id}"]`);
+        const listItem = dom.widget.querySelector(`.conversation-list li[data-type="${type}"][data-item-id="${id}"]`);
         if (listItem) listItem.classList.add('blinking');
         
         if (type === 'user') hasUserUnread = true;
         if (type === 'group') hasGroupUnread = true;
     });
-    
-    if(dom.userTab) dom.userTab.classList.toggle('blinking', hasUserUnread);
-    if(dom.groupTab) dom.groupTab.classList.toggle('blinking', hasGroupUnread);
-    if(dom.toggleBtn) dom.toggleBtn.classList.toggle('blinking', state.unreadConversations.size > 0);
+
+    dom.userTab?.classList.toggle('blinking', hasUserUnread);
+    dom.groupTab?.classList.toggle('blinking', hasGroupUnread);
+    document.getElementById('messages-toggle-btn')?.classList.toggle('blinking', state.unreadConversations.size > 0);
 }
 
-async function loadConversations(dom, api) {
-    const result = await api.getConversations();
-    dom.conversationsUsers.innerHTML = '';
-    dom.conversationsGroups.innerHTML = '';
-    if (result.success) {
-        result.users.forEach(user => {
-            const li = document.createElement('li');
-            li.dataset.type = 'user';
-            li.dataset.itemId = user.id;
-            li.innerHTML = `<div class="conv-title">${user.name}</div>`;
-            dom.conversationsUsers.appendChild(li);
-        });
-        result.groups.forEach(group => {
-            const li = document.createElement('li');
-            li.dataset.type = 'group';
-            li.dataset.itemId = group.id;
-            li.innerHTML = `<div class="conv-title">${group.group_name}</div>`;
-            dom.conversationsGroups.appendChild(li);
-        });
-        updateBlinkingUI(dom);
-    }
-}
-
-async function activateChat(type, id, listItem, dom, api, config, initTextareaAutoResize) { // <--- ВИПРАВЛЕНО: Приймаємо 'config'
+/**
+ * Активує вибраний чат, завантажує повідомлення та запускає анімації.
+ */
+export async function activateChat(type, id, listItem, dom, api, config, initTextareaAutoResize) {
     state.activeChat = { type, id };
     document.querySelectorAll('.conversation-list li').forEach(li => li.classList.remove('active'));
     listItem.classList.add('active');
@@ -76,62 +88,60 @@ async function activateChat(type, id, listItem, dom, api, config, initTextareaAu
     const result = await api.fetchMessages(type, id);
     dom.messageList.innerHTML = '';
     if (result.success && result.messages) {
-        // <--- ВИПРАВЛЕНО: Використовуємо 'config' для отримання ID
         result.messages.forEach(msg => dom.messageList.appendChild(renderMessage(msg, config.currentUserId)));
         dom.messageList.scrollTop = dom.messageList.scrollHeight;
     }
+    
+    markMessagesAsRead(dom);
+    dom.messageInput.focus();
 }
 
-// Функція для керування модальним вікном груп (може бути розширена)
-function showGroupModal(group, dom, api, chatSettingsData, onSaveCallback) {
-    const isEditing = group !== null;
-    dom.groupModalTitle.textContent = isEditing ? `Редагування: ${group.group_name}` : 'Створення нової групи';
-    
-    const selectedMembers = new Set(isEditing ? group.members.map(m => m.user_id) : []);
-    const usersHtml = chatSettingsData.users
-        .filter(user => user.id !== config.currentUserId)
-        .map(user => `
-            <label>
-                <input type="checkbox" name="members" value="${user.id}" ${selectedMembers.has(user.id) ? 'checked' : ''}>
-                ${user.name}
-            </label>
-        `).join('');
-    
-    dom.groupModalBody.innerHTML = `
-        <form id="group-form" class="group-form">
-            <input type="hidden" name="group_id" value="${isEditing ? group.id : ''}">
-            <div class="input-group">
-                <label>Назва групи</label>
-                <input type="text" name="group_name" class="form-control" placeholder="Назва" value="${isEditing ? group.group_name : ''}" required>
-            </div>
-            <div class="input-group">
-                <label>Учасники</label>
-                <div class="members-list">${usersHtml}</div>
-            </div>
-            <div class="form-actions">
-                <button type="button" class="modal-btn cancel">Скасувати</button>
-                <button type="submit" class="modal-btn confirm">${isEditing ? 'Оновити' : 'Створити'}</button>
-            </div>
-        </form>
-    `;
-    dom.groupManagementModal.style.display = 'flex';
+/**
+ * Автоматично відкриває перший непрочитаний чат.
+ */
+export function openFirstUnread(dom) {
+    if (state.unreadConversations.size > 0) {
+        const firstUnread = Array.from(state.unreadConversations)[0];
+        const [type, id] = firstUnread.split('-');
 
-    const form = dom.groupModalBody.querySelector('#group-form');
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const groupId = form.elements['group_id'].value;
-        const name = form.elements['group_name'].value;
-        const members = Array.from(form.querySelectorAll('input[type="checkbox"]:checked')).map(cb => parseInt(cb.value));
+        const tabToActivate = dom.widget.querySelector(`.tab-link[data-tab="${type}s"]`);
+        tabToActivate?.click();
+        
+        setTimeout(() => {
+            const chatToActivate = dom.widget.querySelector(`li[data-type="${type}"][data-item-id="${id}"]`);
+            chatToActivate?.click();
+        }, 100);
+    }
+}
 
-        const result = groupId ? await api.updateGroup(groupId, name, members) : await api.createGroup(name, members);
-
+/**
+ * Завантажує та відображає списки користувачів та груп.
+ */
+export async function loadConversations(dom, api, config) {
+    try {
+        const result = await api.getConversations();
+        dom.conversationsUsers.innerHTML = '';
+        dom.conversationsGroups.innerHTML = '';
         if (result.success) {
-            dom.groupManagementModal.style.display = 'none';
-            if(onSaveCallback) onSaveCallback();
-        } else {
-            alert(result.message || "Сталася помилка");
+            result.users.forEach(user => {
+                const li = document.createElement('li');
+                li.dataset.type = 'user';
+                li.dataset.itemId = user.id;
+                const avatarHtml = user.avatar_url ? `<img src="${user.avatar_url}" alt="Avatar" class="conv-avatar">` : '<div class="conv-avatar-placeholder"><i class="fas fa-user"></i></div>';
+                li.innerHTML = `${avatarHtml}<div class="conv-title">${user.name}</div>`;
+                dom.conversationsUsers.appendChild(li);
+            });
+            result.groups.forEach(group => {
+                const li = document.createElement('li');
+                li.dataset.type = 'group';
+                li.dataset.itemId = group.id;
+                li.innerHTML = `<div class="conv-avatar-placeholder"><i class="fas fa-users"></i></div><div class="conv-title">${group.group_name}</div>`;
+                dom.conversationsGroups.appendChild(li);
+            });
+            updateBlinkingUI(dom);
         }
-    });
+    } catch (error) {
+        console.error("Не вдалося завантажити розмови:", error);
+        dom.conversationsUsers.innerHTML = '<li>Помилка завантаження</li>';
+    }
 }
-
-export { renderMessage, updateBlinkingUI, loadConversations, activateChat, showGroupModal };

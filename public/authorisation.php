@@ -4,12 +4,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// --- 1. ВИЗНАЧАЄМО БАЗОВІ ШЛЯХИ ТА ПІДКЛЮЧАЄМО ФАЙЛИ ---
 if (!defined('BASE_PATH')) {
     define('BASE_PATH', dirname(__DIR__));
-}
-if (!defined('ROOT')) {
-    define('ROOT', BASE_PATH . '/app');
 }
 
 require_once BASE_PATH . '/vendor/autoload.php';
@@ -17,37 +13,40 @@ if (file_exists(BASE_PATH . '/config.php')) {
     require_once BASE_PATH . '/config.php';
 }
 
-// ✅ ВИПРАВЛЕНО: Використовуємо новий, правильний шлях до моделі
 use App\Mvc\Models\Users;
 
 $errorMessage = '';
 
-// --- 2. ОБРОБКА POST-ЗАПИТУ ---
+// --- ОНОВЛЕНА ЛОГІКА ПЕРЕВІРКИ ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
 
-    if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        // ✅ ВИПРАВЛЕНО: Використовуємо нову назву класу 'Users'
+    // Перевіряємо, чи заповнені обидва поля
+    if (!empty($email) && !empty($password) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $mUsers = new Users();
         $user = $mUsers->findByEmail($email);
 
-        if ($user) {
-            $token = bin2hex(random_bytes(32));
-            $mUsers->updateToken($user['id'], $token);
+        // Перевіряємо, чи знайдено користувача І чи співпадає пароль
+        if ($user && password_verify($password, $user['password'])) {
+            // Успішна авторизація
+            session_regenerate_id(true); // Захист від фіксації сесії
 
             $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_token'] = $token;
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
-            // ✅ ВИПРАВЛЕНО: Правильне перенаправлення на головну сторінку адмін-панелі
+            // Видаляємо старий токен (він більше не потрібен для входу)
+            $mUsers->clearToken($user['id']); 
+
             $redirectUrl = (defined('PROJECT_URL') ? PROJECT_URL : '') . '/admin/';
             header('Location: ' . $redirectUrl);
             exit();
         } else {
-            $errorMessage = 'Користувача з таким email не знайдено.';
+            // Неправильний email або пароль
+            $errorMessage = 'Неправильний email або пароль.';
         }
     } else {
-        $errorMessage = 'Будь ласка, введіть коректний email.';
+        $errorMessage = 'Будь ласка, заповніть обидва поля коректно.';
     }
 }
 ?>
@@ -64,6 +63,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     
     <link rel="stylesheet" href="<?php echo defined('PROJECT_URL') ? PROJECT_URL : ''; ?>/resources/css/admin/ADMIN-MAIN.css">
+    <style>
+        /* Стилі для сторінки входу (залишаються без змін) */
+        body.login-page { font-family: 'Montserrat', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .login-card { background-color: var(--card-bg); padding: 2.5rem 2rem; border-radius: 16px; box-shadow: 0 10px 25px var(--shadow-color); text-align: center; width: 100%; max-width: 400px; }
+        .login-card h1 { margin: 0 0 1.5rem; font-weight: 600; font-size: 1.8rem; }
+        .login-error-message { color: var(--danger-color); margin-bottom: 1rem; }
+    </style>
 </head>
 <body class="login-page">
 
@@ -71,23 +77,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h1>Вхід в панель</h1>
         
         <form method="POST" action="">
-            <div class="form-group" style="text-align: left;">
+            <div class="form-group-inline">
                 <input type="email" name="email" id="email" class="form-control" placeholder="Email" required>
+            </div>
+            
+            <div class="form-group-inline" style="margin-top: 1rem;">
+                <input type="password" name="password" id="password" class="form-control" placeholder="Пароль" required>
             </div>
 
             <?php if ($errorMessage): ?>
                 <p class="login-error-message"><?php echo htmlspecialchars($errorMessage); ?></p>
             <?php endif; ?>
             
-            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem;">
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1.5rem;">
                 <i class="fas fa-sign-in-alt"></i>
                 <span style="margin-left: 0.5rem;">Увійти</span>
             </button>
         </form>
     </div>
+<?php
+/* !!! ВАЖЛИВО: Замініть 'YourNewSecurePassword123' на ваш новий, надійний пароль !!!
+$newPassword = 'Soto1408';
 
+$hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+
+echo "Ваш новий хеш пароля:<br><br>";
+echo "<textarea rows='4' cols='70' readonly onclick='this.select();' style='font-size: 14px; padding: 10px;'>" . htmlspecialchars($hashedPassword) . "</textarea>";
+echo "<p>Скопіюйте цей хеш. Після використання не забудьте видалити цей файл (`generate_hash.php`).</p>";
+*/
+?>
 </body>
 </html>
+
+
 
 
 <style>

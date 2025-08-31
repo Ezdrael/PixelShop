@@ -16,8 +16,8 @@ export function initPhotoSelection(config, deletePhotosCallback) {
     let selectionMode = false;
     let selectedPhotos = new Set();
 
+    // Оновлюємо інтерфейс
     const updateUI = () => {
-        // ✅ ВИПРАВЛЕНО: Використовуємо правильний клас 'selection-mode-active'
         galleryContainer.classList.toggle('selection-mode-active', selectionMode);
         
         actionsBar.style.display = selectionMode ? 'flex' : 'none';
@@ -44,7 +44,9 @@ export function initPhotoSelection(config, deletePhotosCallback) {
             selectAllBtn.title = allSelected ? 'Зняти виділення з усіх' : 'Виділити всі';
         }
     };
+    
 
+    // Слухаємо кліки по кнопці перемикання режиму вибору
     toggleBtn.addEventListener('click', () => {
         selectionMode = !selectionMode;
         if (!selectionMode) {
@@ -54,6 +56,7 @@ export function initPhotoSelection(config, deletePhotosCallback) {
         updateUI();
     });
 
+    // Слухаємо кліки по галереї
     galleryContainer.addEventListener('click', (event) => {
         if (!selectionMode) return;
         if (event.target.closest('.photo-selection-label')) return;
@@ -69,6 +72,7 @@ export function initPhotoSelection(config, deletePhotosCallback) {
         }
     });
 
+    // Слухаємо зміни у чекбоксах
     galleryContainer.addEventListener('change', (event) => {
         const checkbox = event.target;
         if (checkbox.classList.contains('photo-selection-checkbox')) {
@@ -82,6 +86,7 @@ export function initPhotoSelection(config, deletePhotosCallback) {
         }
     });
 
+    // Видалити вибрані фото
     if (deleteSelectedBtn) {
         deleteSelectedBtn.addEventListener('click', () => {
             if (selectedPhotos.size > 0) {
@@ -90,6 +95,7 @@ export function initPhotoSelection(config, deletePhotosCallback) {
         });
     }
 
+    // Виділити все
     if (selectAllBtn) {
         selectAllBtn.addEventListener('click', () => {
             if (!selectionMode) return;

@@ -1,9 +1,6 @@
-/* ===================================================================
-   Файл:      photo-album.css
-   Призначення: Усі стилі для сторінки перегляду одного альбому.
-   =================================================================== */
+/* public/resources/css/admin/photo-album.css (Фінальна версія) */
 
-/* --- 1. Загальна сітка для галерей --- */
+/* --- 1. Загальні сітки --- */
 .album-gallery,
 .photo-gallery {
     display: grid;
@@ -15,7 +12,7 @@
 .album-thumbnail {
     text-decoration: none;
     color: var(--primary-text);
-    transition: transform 0.2s ease-in-out;
+    transition: transform 0.2s;
     text-align: center;
 }
 
@@ -56,17 +53,16 @@
 .gallery-item-wrapper {
     position: relative;
     cursor: pointer;
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--sidebar-hover-bg);
 }
 
 .gallery-item {
     display: block;
     width: 100%;
-    aspect-ratio: 1 / 1;
-    border-radius: 8px;
-    overflow: hidden;
-    background-color: var(--sidebar-hover-bg);
-    position: relative;
-    /* Необхідно для позиціонування псевдо-елемента */
+    height: 100%;
 }
 
 .gallery-item img {
@@ -75,14 +71,13 @@
     object-fit: cover;
     transition: transform 0.3s ease;
     display: block;
-    /* ✅ ВИПРАВЛЕНО: Прибирає небажаний відступ знизу */
 }
 
 .gallery-item:hover img {
     transform: scale(1.05);
 }
 
-/* --- 4. Режим вибору фото та елементи керування --- */
+/* --- 4. Елементи керування вибором --- */
 .photo-gallery-header {
     display: flex;
     justify-content: space-between;
@@ -120,7 +115,7 @@
     text-align: center;
 }
 
-/* --- 5. Логіка та стилі для кастомних чекбоксів --- */
+/* --- 5. Логіка та стилі для вибору (ВИПРАВЛЕНО) --- */
 .photo-selection-label {
     display: none;
     position: absolute;
@@ -180,15 +175,53 @@
     display: block;
 }
 
-/* --- 6. ✅ ВИПРАВЛЕНО: Візуальні ефекти для режиму вибору --- */
 
-/* Блокуємо кліки на посилання, щоб відкривався не лайтбокс */
+/* Прибираємо курсор "заборонено" з посилання */
 .selection-mode-active .gallery-item {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+/* Застосовуємо чорно-білий фільтр до всіх зображень у режимі вибору */
+.selection-mode-active .gallery-item img {
+    filter: grayscale(100%);
+    /* Робить зображення повністю чорно-білим */
+    transition: filter 0.3s ease-in-out;
+    /* Плавний перехід */
+}
+
+/* Видаляємо чорно-білий фільтр для вибраних фото */
+.selection-mode-active .gallery-item-wrapper.is-selected .gallery-item img {
+    filter: grayscale(25%);
+    /* Повертає зображення до кольорового */
+}
+
+/* Стилі оверлея та рамки для вибраних фото залишаються без змін */
+.selection-mode-active .gallery-item-wrapper.is-selected .gallery-item {
+    outline: 3px solid var(--accent-color);
+    outline-offset: -3px;
+    border-radius: 8px;
+}
+
+/* Додатково: Прибираємо затемнення (якщо воно було раніше) */
+.selection-mode-active .gallery-item::after {
+    opacity: 0;
+    /* Оверлей більше не потрібен для затемнення, тому робимо його невидимим */
+}
+
+/* Прибираємо курсор "заборонено" з посилання */
+.selection-mode-active .gallery-item {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+/* Робимо так, щоб оверлей не перехоплював кліки */
+.selection-mode-active .gallery-item::after {
     pointer-events: none;
 }
 
-/* Створюємо напівпрозорий оверлей на самому посиланні <a> */
-.selection-mode-active a.gallery-item::after {
+/* Створюємо затемнений оверлей для ВСІХ фото в режимі вибору */
+.selection-mode-active .gallery-item::after {
     content: '';
     position: absolute;
     top: 0;
@@ -196,21 +229,22 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    /* Напівпрозорий чорний */
     opacity: 1;
     transition: opacity 0.2s ease-in-out;
     pointer-events: none;
     border-radius: 8px;
+    pointer-events: none;
 }
 
-/* Коли фото вибране, робимо оверлей повністю прозорим */
-/* Цей селектор тепер працює, бо <label> та <a> є сусідами */
-.selection-mode-active .photo-selection-label input:checked~a.gallery-item::after {
+/* А тепер "висвітлюємо" фото, якщо його батьківський елемент має клас .is-selected */
+.selection-mode-active .gallery-item-wrapper.is-selected .gallery-item::after {
     opacity: 0;
 }
 
-/* Додаємо яскраву рамку до вибраного елемента */
-.selection-mode-active .photo-selection-label input:checked~a.gallery-item {
+/* Додаємо рамку до вибраного елемента, орієнтуючись на клас .is-selected */
+.selection-mode-active .gallery-item-wrapper.is-selected .gallery-item {
     outline: 3px solid var(--accent-color);
     outline-offset: -3px;
+    border-radius: 8px;
+    /* Додаємо для краси */
 }

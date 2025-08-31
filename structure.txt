@@ -1,0 +1,1418 @@
+Folder PATH listing
+Volume serial number is 5C32-CB74
+C:.
+|   .env.example
+|   chat-server.php
+|   composer.json
+|   composer.lock
+|   config.php
+|   start-chat.bat
+|   structuer.bat
+|   structure.txt
+|   
++---app
+|   +---core
+|   |       Controller.php
+|   |       CurrencyRateService.php
+|   |       DB.php
+|   |       Router.php
+|   |       TokenManager.php
+|   |       View.php
+|   |       
+|   +---mvc
+|   |   +---Controllers
+|   |   |   +---Admin
+|   |   |   |       ArrivalsController.php
+|   |   |   |       BaseController.php
+|   |   |   |       CategoriesController.php
+|   |   |   |       ClipboardController.php
+|   |   |   |       CurrenciesController.php
+|   |   |   |       GoodsController.php
+|   |   |   |       MainController.php
+|   |   |   |       MessagesController.php
+|   |   |   |       NotesController.php
+|   |   |   |       PhotoalbumsController.php
+|   |   |   |       PostController.php
+|   |   |   |       RolesController.php
+|   |   |   |       SettingsController.php
+|   |   |   |       TransfersController.php
+|   |   |   |       UsersController.php
+|   |   |   |       WarehousesController.php
+|   |   |   |       WriteoffsController.php
+|   |   |   |       
+|   |   |   \---Public
+|   |   |           HomeController.php
+|   |   |           ProductController.php
+|   |   |           PublicBaseController.php
+|   |   |           
+|   |   +---Models
+|   |   |       Arrivals.php
+|   |   |       Categories.php
+|   |   |       Clipboard.php
+|   |   |       Currencies.php
+|   |   |       Goods.php
+|   |   |       Main.php
+|   |   |       Messages.php
+|   |   |       Notes.php
+|   |   |       Photoalbums.php
+|   |   |       Photos.php
+|   |   |       Post.php
+|   |   |       Roles.php
+|   |   |       Settings.php
+|   |   |       Transfers.php
+|   |   |       Users.php
+|   |   |       Warehouses.php
+|   |   |       Writeoffs.php
+|   |   |       
+|   |   \---Views
+|   |       \---Admin
+|   |               v_arrivals_list.php
+|   |               v_arrival_add.php
+|   |               v_arrival_edit.php
+|   |               v_arrival_single.php
+|   |               v_categories_list.php
+|   |               v_category_add.php
+|   |               v_category_edit.php
+|   |               v_category_single.php
+|   |               v_currencies_list.php
+|   |               v_goods_list.php
+|   |               v_good_add.php
+|   |               v_good_edit.php
+|   |               v_good_single.php
+|   |               v_main_layout.php
+|   |               v_photo_albums_list.php
+|   |               v_photo_album_add.php
+|   |               v_photo_album_edit.php
+|   |               v_photo_album_single.php
+|   |               v_photo_upload.php
+|   |               v_roles_list.php
+|   |               v_role_add.php
+|   |               v_role_edit.php
+|   |               v_role_single.php
+|   |               v_settings.php
+|   |               v_simple_page.php
+|   |               v_transfers_list.php
+|   |               v_transfer_add.php
+|   |               v_transfer_edit.php
+|   |               v_transfer_single.php
+|   |               v_users_list.php
+|   |               v_user_add.php
+|   |               v_user_edit.php
+|   |               v_user_single.php
+|   |               v_warehouses_list.php
+|   |               v_warehouse_add.php
+|   |               v_warehouse_edit.php
+|   |               v_warehouse_single.php
+|   |               v_writeoffs_list.php
+|   |               v_writeoff_add.php
+|   |               v_writeoff_edit.php
+|   |               _template_breadcrumbs.php
+|   |               _template_modals.php
+|   |               _template_permissions_table.php
+|   |               
+|   \---routes
+|           admin.php
+|           web.php
+|           
++---database
+|       create_tables.sql
+|       fil_tables.sql
+|       
++---public
+|   |   .htaccess
+|   |   authorisation.php
+|   |   favicon.ico
+|   |   index.php
+|   |   logout.php
+|   |   
+|   +---install
+|   |       demo_data.sql
+|   |       index.php
+|   |       schema.sql
+|   |       
+|   +---resources
+|   |   +---audio
+|   |   |       new_message.mp3
+|   |   |       send_message.mp3
+|   |   |       
+|   |   +---css
+|   |   |   \---admin
+|   |   |       |   ADMIN-MAIN.css
+|   |   |       |   photo-album.css
+|   |   |       |   _components.css
+|   |   |       |   _forms.css
+|   |   |       |   _layout.css
+|   |   |       |   _tables.css
+|   |   |       |   
+|   |   |       +---components
+|   |   |       |       cards.css
+|   |   |       |       galleries.css
+|   |   |       |       modals.css
+|   |   |       |       navigation.css
+|   |   |       |       ui_elements.css
+|   |   |       |       
+|   |   |       \---widgets
+|   |   |               _widget-chat.css
+|   |   |               _widget-clipboard.css
+|   |   |               _widget-notes.css
+|   |   |               
+|   |   +---img
+|   |   |   +---layout
+|   |   |   |       bg.jpeg
+|   |   |   |       
+|   |   |   \---products
+|   |   |           10.jfif
+|   |   |           11.jfif
+|   |   |           12.jfif
+|   |   |           13.jfif
+|   |   |           14.jfif
+|   |   |           16.jfif
+|   |   |           17.jfif
+|   |   |           18.jfif
+|   |   |           19.jfif
+|   |   |           20.png
+|   |   |           21.png
+|   |   |           22.png
+|   |   |           23.png
+|   |   |           29.png
+|   |   |           30.png
+|   |   |           31.png
+|   |   |           32.png
+|   |   |           33.jpg
+|   |   |           34.jpg
+|   |   |           35.png
+|   |   |           36.jpg
+|   |   |           37.jpg
+|   |   |           38.jpg
+|   |   |           39.jpg
+|   |   |           40.jpg
+|   |   |           42.jpeg
+|   |   |           8.jfif
+|   |   |           9.jfif
+|   |   |           
+|   |   \---js
+|   |       |   clipboard-widget.js
+|   |       |   MAIN.js
+|   |       |   messages-widget.js
+|   |       |   notes-widget.js
+|   |       |   photo-album-list.js
+|   |       |   photo-album-view.js
+|   |       |   _main_hotkeys.js
+|   |       |   
+|   |       +---main
+|   |       |       breadcrumbs.js
+|   |       |       modal-handlers.js
+|   |       |       ui-handlers.js
+|   |       |       
+|   |       +---messages-widget
+|   |       |       api.js
+|   |       |       msg_ui.js
+|   |       |       state.js
+|   |       |       ui.js
+|   |       |       websocket.js
+|   |       |       
+|   |       \---photo-album-view
+|   |               album-deleter.js
+|   |               gallery.js
+|   |               photo-selection.js
+|   |               
+|   \---themes
+|       \---default
+|           +---assets
+|           |   +---css
+|           |   |       home.css
+|           |   |       PUBLIC-MAIN.css
+|           |   |       
+|           |   +---img
+|           |   |   +---layout
+|           |   |   |       bg.jpeg
+|           |   |   |       
+|           |   |   \---slider
+|           |   |           slide1.jpg
+|           |   |           slide2.jpg
+|           |   |           
+|           |   \---js
+|           \---templates
+|                   404.html.twig
+|                   home.html.twig
+|                   layout.html.twig
+|                   product.html.twig
+|                   
++---storage
+|       ws_tokens.json
+|       
+\---vendor
+    |   autoload.php
+    |   
+    +---cboden
+    |   \---ratchet
+    |       |   .gitignore
+    |       |   CHANGELOG.md
+    |       |   composer.json
+    |       |   LICENSE
+    |       |   Makefile
+    |       |   phpunit.xml.dist
+    |       |   README.md
+    |       |   SECURITY.md
+    |       |   
+    |       +---.github
+    |       |   \---workflows
+    |       |           ci.yml
+    |       |           
+    |       +---src
+    |       |   \---Ratchet
+    |       |       |   AbstractConnectionDecorator.php
+    |       |       |   App.php
+    |       |       |   ComponentInterface.php
+    |       |       |   ConnectionInterface.php
+    |       |       |   MessageComponentInterface.php
+    |       |       |   MessageInterface.php
+    |       |       |   
+    |       |       +---Http
+    |       |       |       CloseResponseTrait.php
+    |       |       |       HttpRequestParser.php
+    |       |       |       HttpServer.php
+    |       |       |       HttpServerInterface.php
+    |       |       |       NoOpHttpServerController.php
+    |       |       |       OriginCheck.php
+    |       |       |       Router.php
+    |       |       |       
+    |       |       +---Server
+    |       |       |       EchoServer.php
+    |       |       |       FlashPolicy.php
+    |       |       |       IoConnection.php
+    |       |       |       IoServer.php
+    |       |       |       IpBlackList.php
+    |       |       |       
+    |       |       +---Session
+    |       |       |   |   SessionProvider.php
+    |       |       |   |   
+    |       |       |   +---Serialize
+    |       |       |   |       HandlerInterface.php
+    |       |       |   |       PhpBinaryHandler.php
+    |       |       |   |       PhpHandler.php
+    |       |       |   |       
+    |       |       |   \---Storage
+    |       |       |       |   VirtualSessionStorage.php
+    |       |       |       |   
+    |       |       |       \---Proxy
+    |       |       |               VirtualProxy.php
+    |       |       |               
+    |       |       +---Wamp
+    |       |       |       Exception.php
+    |       |       |       JsonException.php
+    |       |       |       ServerProtocol.php
+    |       |       |       Topic.php
+    |       |       |       TopicManager.php
+    |       |       |       WampConnection.php
+    |       |       |       WampServer.php
+    |       |       |       WampServerInterface.php
+    |       |       |       
+    |       |       \---WebSocket
+    |       |               ConnContext.php
+    |       |               MessageCallableInterface.php
+    |       |               MessageComponentInterface.php
+    |       |               WsConnection.php
+    |       |               WsServer.php
+    |       |               WsServerInterface.php
+    |       |               
+    |       \---tests
+    |           |   bootstrap.php
+    |           |   
+    |           +---autobahn
+    |           |   |   fuzzingclient-all.json
+    |           |   |   fuzzingclient-profile.json
+    |           |   |   fuzzingclient-quick.json
+    |           |   |   
+    |           |   \---bin
+    |           |           fuzzingserver.php
+    |           |           
+    |           +---helpers
+    |           |   \---Ratchet
+    |           |       |   AbstractMessageComponentTestCase.php
+    |           |       |   NullComponent.php
+    |           |       |   
+    |           |       +---Mock
+    |           |       |       Component.php
+    |           |       |       Connection.php
+    |           |       |       ConnectionDecorator.php
+    |           |       |       WampComponent.php
+    |           |       |       
+    |           |       +---Wamp
+    |           |       |   \---Stub
+    |           |       |           WsWampServerInterface.php
+    |           |       |           
+    |           |       \---WebSocket
+    |           |           \---Stub
+    |           |                   WsMessageComponentInterface.php
+    |           |                   
+    |           \---unit
+    |               |   AbstractConnectionDecoratorTest.php
+    |               |   
+    |               +---Http
+    |               |       HttpRequestParserTest.php
+    |               |       HttpServerTest.php
+    |               |       OriginCheckTest.php
+    |               |       RouterTest.php
+    |               |       
+    |               +---Server
+    |               |       EchoServerTest.php
+    |               |       FlashPolicyComponentTest.php
+    |               |       IoConnectionTest.php
+    |               |       IoServerTest.php
+    |               |       IpBlackListComponentTest.php
+    |               |       
+    |               +---Session
+    |               |   |   SessionComponentTest.php
+    |               |   |   
+    |               |   +---Serialize
+    |               |   |       PhpHandlerTest.php
+    |               |   |       
+    |               |   \---Storage
+    |               |           VirtualSessionStoragePDOTest.php
+    |               |           
+    |               \---Wamp
+    |                       ServerProtocolTest.php
+    |                       TopicManagerTest.php
+    |                       TopicTest.php
+    |                       WampConnectionTest.php
+    |                       WampServerTest.php
+    |                       
+    +---composer
+    |       autoload_classmap.php
+    |       autoload_files.php
+    |       autoload_namespaces.php
+    |       autoload_psr4.php
+    |       autoload_real.php
+    |       autoload_static.php
+    |       ClassLoader.php
+    |       installed.json
+    |       installed.php
+    |       InstalledVersions.php
+    |       LICENSE
+    |       platform_check.php
+    |       
+    +---evenement
+    |   \---evenement
+    |       |   .gitattributes
+    |       |   composer.json
+    |       |   LICENSE
+    |       |   README.md
+    |       |   
+    |       \---src
+    |               EventEmitter.php
+    |               EventEmitterInterface.php
+    |               EventEmitterTrait.php
+    |               
+    +---graham-campbell
+    |   \---result-type
+    |       |   composer.json
+    |       |   LICENSE
+    |       |   
+    |       \---src
+    |               Error.php
+    |               Result.php
+    |               Success.php
+    |               
+    +---guzzlehttp
+    |   \---psr7
+    |       |   CHANGELOG.md
+    |       |   composer.json
+    |       |   LICENSE
+    |       |   README.md
+    |       |   
+    |       \---src
+    |           |   AppendStream.php
+    |           |   BufferStream.php
+    |           |   CachingStream.php
+    |           |   DroppingStream.php
+    |           |   FnStream.php
+    |           |   Header.php
+    |           |   HttpFactory.php
+    |           |   InflateStream.php
+    |           |   LazyOpenStream.php
+    |           |   LimitStream.php
+    |           |   Message.php
+    |           |   MessageTrait.php
+    |           |   MimeType.php
+    |           |   MultipartStream.php
+    |           |   NoSeekStream.php
+    |           |   PumpStream.php
+    |           |   Query.php
+    |           |   Request.php
+    |           |   Response.php
+    |           |   Rfc7230.php
+    |           |   ServerRequest.php
+    |           |   Stream.php
+    |           |   StreamDecoratorTrait.php
+    |           |   StreamWrapper.php
+    |           |   UploadedFile.php
+    |           |   Uri.php
+    |           |   UriComparator.php
+    |           |   UriNormalizer.php
+    |           |   UriResolver.php
+    |           |   Utils.php
+    |           |   
+    |           \---Exception
+    |                   MalformedUriException.php
+    |                   
+    +---phpoption
+    |   \---phpoption
+    |       |   composer.json
+    |       |   LICENSE
+    |       |   
+    |       \---src
+    |           \---PhpOption
+    |                   LazyOption.php
+    |                   None.php
+    |                   Option.php
+    |                   Some.php
+    |                   
+    +---psr
+    |   +---http-factory
+    |   |   |   composer.json
+    |   |   |   LICENSE
+    |   |   |   README.md
+    |   |   |   
+    |   |   \---src
+    |   |           RequestFactoryInterface.php
+    |   |           ResponseFactoryInterface.php
+    |   |           ServerRequestFactoryInterface.php
+    |   |           StreamFactoryInterface.php
+    |   |           UploadedFileFactoryInterface.php
+    |   |           UriFactoryInterface.php
+    |   |           
+    |   \---http-message
+    |       |   CHANGELOG.md
+    |       |   composer.json
+    |       |   LICENSE
+    |       |   README.md
+    |       |   
+    |       +---docs
+    |       |       PSR7-Interfaces.md
+    |       |       PSR7-Usage.md
+    |       |       
+    |       \---src
+    |               MessageInterface.php
+    |               RequestInterface.php
+    |               ResponseInterface.php
+    |               ServerRequestInterface.php
+    |               StreamInterface.php
+    |               UploadedFileInterface.php
+    |               UriInterface.php
+    |               
+    +---ralouphie
+    |   \---getallheaders
+    |       |   composer.json
+    |       |   LICENSE
+    |       |   README.md
+    |       |   
+    |       \---src
+    |               getallheaders.php
+    |               
+    +---ratchet
+    |   \---rfc6455
+    |       |   .gitignore
+    |       |   composer.json
+    |       |   LICENSE
+    |       |   phpunit.xml.dist
+    |       |   README.md
+    |       |   
+    |       +---.github
+    |       |   \---workflows
+    |       |           ci.yml
+    |       |           
+    |       +---src
+    |       |   +---Handshake
+    |       |   |       ClientNegotiator.php
+    |       |   |       InvalidPermessageDeflateOptionsException.php
+    |       |   |       NegotiatorInterface.php
+    |       |   |       PermessageDeflateOptions.php
+    |       |   |       RequestVerifier.php
+    |       |   |       ResponseVerifier.php
+    |       |   |       ServerNegotiator.php
+    |       |   |       
+    |       |   \---Messaging
+    |       |           CloseFrameChecker.php
+    |       |           DataInterface.php
+    |       |           Frame.php
+    |       |           FrameInterface.php
+    |       |           Message.php
+    |       |           MessageBuffer.php
+    |       |           MessageInterface.php
+    |       |           
+    |       \---tests
+    |           |   AbResultsTest.php
+    |           |   bootstrap.php
+    |           |   
+    |           +---ab
+    |           |       clientRunner.php
+    |           |       docker_bootstrap.sh
+    |           |       fuzzingclient.json
+    |           |       fuzzingclient_skip_deflate.json
+    |           |       fuzzingserver.json
+    |           |       fuzzingserver_skip_deflate.json
+    |           |       run_ab_tests.sh
+    |           |       startServer.php
+    |           |       
+    |           \---unit
+    |               +---Handshake
+    |               |       PermessageDeflateOptionsTest.php
+    |               |       RequestVerifierTest.php
+    |               |       ResponseVerifierTest.php
+    |               |       ServerNegotiatorTest.php
+    |               |       
+    |               \---Messaging
+    |                       FrameTest.php
+    |                       MessageBufferTest.php
+    |                       MessageTest.php
+    |                       
+    +---react
+    |   +---cache
+    |   |   |   CHANGELOG.md
+    |   |   |   composer.json
+    |   |   |   LICENSE
+    |   |   |   README.md
+    |   |   |   
+    |   |   \---src
+    |   |           ArrayCache.php
+    |   |           CacheInterface.php
+    |   |           
+    |   +---dns
+    |   |   |   CHANGELOG.md
+    |   |   |   composer.json
+    |   |   |   LICENSE
+    |   |   |   README.md
+    |   |   |   
+    |   |   \---src
+    |   |       |   BadServerException.php
+    |   |       |   RecordNotFoundException.php
+    |   |       |   
+    |   |       +---Config
+    |   |       |       Config.php
+    |   |       |       HostsFile.php
+    |   |       |       
+    |   |       +---Model
+    |   |       |       Message.php
+    |   |       |       Record.php
+    |   |       |       
+    |   |       +---Protocol
+    |   |       |       BinaryDumper.php
+    |   |       |       Parser.php
+    |   |       |       
+    |   |       +---Query
+    |   |       |       CachingExecutor.php
+    |   |       |       CancellationException.php
+    |   |       |       CoopExecutor.php
+    |   |       |       ExecutorInterface.php
+    |   |       |       FallbackExecutor.php
+    |   |       |       HostsFileExecutor.php
+    |   |       |       Query.php
+    |   |       |       RetryExecutor.php
+    |   |       |       SelectiveTransportExecutor.php
+    |   |       |       TcpTransportExecutor.php
+    |   |       |       TimeoutException.php
+    |   |       |       TimeoutExecutor.php
+    |   |       |       UdpTransportExecutor.php
+    |   |       |       
+    |   |       \---Resolver
+    |   |               Factory.php
+    |   |               Resolver.php
+    |   |               ResolverInterface.php
+    |   |               
+    |   +---event-loop
+    |   |   |   CHANGELOG.md
+    |   |   |   composer.json
+    |   |   |   LICENSE
+    |   |   |   README.md
+    |   |   |   
+    |   |   \---src
+    |   |       |   ExtEventLoop.php
+    |   |       |   ExtEvLoop.php
+    |   |       |   ExtLibeventLoop.php
+    |   |       |   ExtLibevLoop.php
+    |   |       |   ExtUvLoop.php
+    |   |       |   Factory.php
+    |   |       |   Loop.php
+    |   |       |   LoopInterface.php
+    |   |       |   SignalsHandler.php
+    |   |       |   StreamSelectLoop.php
+    |   |       |   TimerInterface.php
+    |   |       |   
+    |   |       +---Tick
+    |   |       |       FutureTickQueue.php
+    |   |       |       
+    |   |       \---Timer
+    |   |               Timer.php
+    |   |               Timers.php
+    |   |               
+    |   +---promise
+    |   |   |   CHANGELOG.md
+    |   |   |   composer.json
+    |   |   |   LICENSE
+    |   |   |   README.md
+    |   |   |   
+    |   |   \---src
+    |   |       |   Deferred.php
+    |   |       |   functions.php
+    |   |       |   functions_include.php
+    |   |       |   Promise.php
+    |   |       |   PromiseInterface.php
+    |   |       |   
+    |   |       +---Exception
+    |   |       |       CompositeException.php
+    |   |       |       LengthException.php
+    |   |       |       
+    |   |       \---Internal
+    |   |               CancellationQueue.php
+    |   |               FulfilledPromise.php
+    |   |               RejectedPromise.php
+    |   |               
+    |   +---socket
+    |   |   |   CHANGELOG.md
+    |   |   |   composer.json
+    |   |   |   LICENSE
+    |   |   |   README.md
+    |   |   |   
+    |   |   \---src
+    |   |           Connection.php
+    |   |           ConnectionInterface.php
+    |   |           Connector.php
+    |   |           ConnectorInterface.php
+    |   |           DnsConnector.php
+    |   |           FdServer.php
+    |   |           FixedUriConnector.php
+    |   |           HappyEyeBallsConnectionBuilder.php
+    |   |           HappyEyeBallsConnector.php
+    |   |           LimitingServer.php
+    |   |           SecureConnector.php
+    |   |           SecureServer.php
+    |   |           Server.php
+    |   |           ServerInterface.php
+    |   |           SocketServer.php
+    |   |           StreamEncryption.php
+    |   |           TcpConnector.php
+    |   |           TcpServer.php
+    |   |           TimeoutConnector.php
+    |   |           UnixConnector.php
+    |   |           UnixServer.php
+    |   |           
+    |   \---stream
+    |       |   CHANGELOG.md
+    |       |   composer.json
+    |       |   LICENSE
+    |       |   README.md
+    |       |   
+    |       \---src
+    |               CompositeStream.php
+    |               DuplexResourceStream.php
+    |               DuplexStreamInterface.php
+    |               ReadableResourceStream.php
+    |               ReadableStreamInterface.php
+    |               ThroughStream.php
+    |               Util.php
+    |               WritableResourceStream.php
+    |               WritableStreamInterface.php
+    |               
+    +---symfony
+    |   +---deprecation-contracts
+    |   |       CHANGELOG.md
+    |   |       composer.json
+    |   |       function.php
+    |   |       LICENSE
+    |   |       README.md
+    |   |       
+    |   +---http-foundation
+    |   |   |   AcceptHeader.php
+    |   |   |   AcceptHeaderItem.php
+    |   |   |   BinaryFileResponse.php
+    |   |   |   ChainRequestMatcher.php
+    |   |   |   CHANGELOG.md
+    |   |   |   composer.json
+    |   |   |   Cookie.php
+    |   |   |   ExpressionRequestMatcher.php
+    |   |   |   FileBag.php
+    |   |   |   HeaderBag.php
+    |   |   |   HeaderUtils.php
+    |   |   |   InputBag.php
+    |   |   |   IpUtils.php
+    |   |   |   JsonResponse.php
+    |   |   |   LICENSE
+    |   |   |   ParameterBag.php
+    |   |   |   README.md
+    |   |   |   RedirectResponse.php
+    |   |   |   Request.php
+    |   |   |   RequestMatcher.php
+    |   |   |   RequestMatcherInterface.php
+    |   |   |   RequestStack.php
+    |   |   |   Response.php
+    |   |   |   ResponseHeaderBag.php
+    |   |   |   ServerBag.php
+    |   |   |   StreamedJsonResponse.php
+    |   |   |   StreamedResponse.php
+    |   |   |   UriSigner.php
+    |   |   |   UrlHelper.php
+    |   |   |   
+    |   |   +---Exception
+    |   |   |       BadRequestException.php
+    |   |   |       ConflictingHeadersException.php
+    |   |   |       JsonException.php
+    |   |   |       RequestExceptionInterface.php
+    |   |   |       SessionNotFoundException.php
+    |   |   |       SuspiciousOperationException.php
+    |   |   |       UnexpectedValueException.php
+    |   |   |       
+    |   |   +---File
+    |   |   |   |   File.php
+    |   |   |   |   Stream.php
+    |   |   |   |   UploadedFile.php
+    |   |   |   |   
+    |   |   |   \---Exception
+    |   |   |           AccessDeniedException.php
+    |   |   |           CannotWriteFileException.php
+    |   |   |           ExtensionFileException.php
+    |   |   |           FileException.php
+    |   |   |           FileNotFoundException.php
+    |   |   |           FormSizeFileException.php
+    |   |   |           IniSizeFileException.php
+    |   |   |           NoFileException.php
+    |   |   |           NoTmpDirFileException.php
+    |   |   |           PartialFileException.php
+    |   |   |           UnexpectedTypeException.php
+    |   |   |           UploadException.php
+    |   |   |           
+    |   |   +---RateLimiter
+    |   |   |       AbstractRequestRateLimiter.php
+    |   |   |       PeekableRequestRateLimiterInterface.php
+    |   |   |       RequestRateLimiterInterface.php
+    |   |   |       
+    |   |   +---RequestMatcher
+    |   |   |       AttributesRequestMatcher.php
+    |   |   |       ExpressionRequestMatcher.php
+    |   |   |       HostRequestMatcher.php
+    |   |   |       IpsRequestMatcher.php
+    |   |   |       IsJsonRequestMatcher.php
+    |   |   |       MethodRequestMatcher.php
+    |   |   |       PathRequestMatcher.php
+    |   |   |       PortRequestMatcher.php
+    |   |   |       SchemeRequestMatcher.php
+    |   |   |       
+    |   |   +---Session
+    |   |   |   |   FlashBagAwareSessionInterface.php
+    |   |   |   |   Session.php
+    |   |   |   |   SessionBagInterface.php
+    |   |   |   |   SessionBagProxy.php
+    |   |   |   |   SessionFactory.php
+    |   |   |   |   SessionFactoryInterface.php
+    |   |   |   |   SessionInterface.php
+    |   |   |   |   SessionUtils.php
+    |   |   |   |   
+    |   |   |   +---Attribute
+    |   |   |   |       AttributeBag.php
+    |   |   |   |       AttributeBagInterface.php
+    |   |   |   |       
+    |   |   |   +---Flash
+    |   |   |   |       AutoExpireFlashBag.php
+    |   |   |   |       FlashBag.php
+    |   |   |   |       FlashBagInterface.php
+    |   |   |   |       
+    |   |   |   \---Storage
+    |   |   |       |   MetadataBag.php
+    |   |   |       |   MockArraySessionStorage.php
+    |   |   |       |   MockFileSessionStorage.php
+    |   |   |       |   MockFileSessionStorageFactory.php
+    |   |   |       |   NativeSessionStorage.php
+    |   |   |       |   NativeSessionStorageFactory.php
+    |   |   |       |   PhpBridgeSessionStorage.php
+    |   |   |       |   PhpBridgeSessionStorageFactory.php
+    |   |   |       |   SessionStorageFactoryInterface.php
+    |   |   |       |   SessionStorageInterface.php
+    |   |   |       |   
+    |   |   |       +---Handler
+    |   |   |       |       AbstractSessionHandler.php
+    |   |   |       |       IdentityMarshaller.php
+    |   |   |       |       MarshallingSessionHandler.php
+    |   |   |       |       MemcachedSessionHandler.php
+    |   |   |       |       MigratingSessionHandler.php
+    |   |   |       |       MongoDbSessionHandler.php
+    |   |   |       |       NativeFileSessionHandler.php
+    |   |   |       |       NullSessionHandler.php
+    |   |   |       |       PdoSessionHandler.php
+    |   |   |       |       RedisSessionHandler.php
+    |   |   |       |       SessionHandlerFactory.php
+    |   |   |       |       StrictSessionHandler.php
+    |   |   |       |       
+    |   |   |       \---Proxy
+    |   |   |               AbstractProxy.php
+    |   |   |               SessionHandlerProxy.php
+    |   |   |               
+    |   |   \---Test
+    |   |       \---Constraint
+    |   |               RequestAttributeValueSame.php
+    |   |               ResponseCookieValueSame.php
+    |   |               ResponseFormatSame.php
+    |   |               ResponseHasCookie.php
+    |   |               ResponseHasHeader.php
+    |   |               ResponseHeaderLocationSame.php
+    |   |               ResponseHeaderSame.php
+    |   |               ResponseIsRedirected.php
+    |   |               ResponseIsSuccessful.php
+    |   |               ResponseIsUnprocessable.php
+    |   |               ResponseStatusCodeSame.php
+    |   |               
+    |   +---polyfill-ctype
+    |   |       bootstrap.php
+    |   |       bootstrap80.php
+    |   |       composer.json
+    |   |       Ctype.php
+    |   |       LICENSE
+    |   |       README.md
+    |   |       
+    |   +---polyfill-mbstring
+    |   |   |   bootstrap.php
+    |   |   |   bootstrap80.php
+    |   |   |   composer.json
+    |   |   |   LICENSE
+    |   |   |   Mbstring.php
+    |   |   |   README.md
+    |   |   |   
+    |   |   \---Resources
+    |   |       \---unidata
+    |   |               caseFolding.php
+    |   |               lowerCase.php
+    |   |               titleCaseRegexp.php
+    |   |               upperCase.php
+    |   |               
+    |   +---polyfill-php80
+    |   |   |   bootstrap.php
+    |   |   |   composer.json
+    |   |   |   LICENSE
+    |   |   |   Php80.php
+    |   |   |   PhpToken.php
+    |   |   |   README.md
+    |   |   |   
+    |   |   \---Resources
+    |   |       \---stubs
+    |   |               Attribute.php
+    |   |               PhpToken.php
+    |   |               Stringable.php
+    |   |               UnhandledMatchError.php
+    |   |               ValueError.php
+    |   |               
+    |   +---polyfill-php83
+    |   |   |   bootstrap.php
+    |   |   |   bootstrap81.php
+    |   |   |   composer.json
+    |   |   |   LICENSE
+    |   |   |   Php83.php
+    |   |   |   README.md
+    |   |   |   
+    |   |   \---Resources
+    |   |       \---stubs
+    |   |               DateError.php
+    |   |               DateException.php
+    |   |               DateInvalidOperationException.php
+    |   |               DateInvalidTimeZoneException.php
+    |   |               DateMalformedIntervalStringException.php
+    |   |               DateMalformedPeriodStringException.php
+    |   |               DateMalformedStringException.php
+    |   |               DateObjectError.php
+    |   |               DateRangeError.php
+    |   |               Override.php
+    |   |               SQLite3Exception.php
+    |   |               
+    |   \---routing
+    |       |   Alias.php
+    |       |   CHANGELOG.md
+    |       |   CompiledRoute.php
+    |       |   composer.json
+    |       |   LICENSE
+    |       |   README.md
+    |       |   RequestContext.php
+    |       |   RequestContextAwareInterface.php
+    |       |   Route.php
+    |       |   RouteCollection.php
+    |       |   RouteCompiler.php
+    |       |   RouteCompilerInterface.php
+    |       |   Router.php
+    |       |   RouterInterface.php
+    |       |   
+    |       +---Annotation
+    |       |       Route.php
+    |       |       
+    |       +---Attribute
+    |       |       Route.php
+    |       |       
+    |       +---DependencyInjection
+    |       |       AddExpressionLanguageProvidersPass.php
+    |       |       RoutingResolverPass.php
+    |       |       
+    |       +---Exception
+    |       |       ExceptionInterface.php
+    |       |       InvalidArgumentException.php
+    |       |       InvalidParameterException.php
+    |       |       MethodNotAllowedException.php
+    |       |       MissingMandatoryParametersException.php
+    |       |       NoConfigurationException.php
+    |       |       ResourceNotFoundException.php
+    |       |       RouteCircularReferenceException.php
+    |       |       RouteNotFoundException.php
+    |       |       RuntimeException.php
+    |       |       
+    |       +---Generator
+    |       |   |   CompiledUrlGenerator.php
+    |       |   |   ConfigurableRequirementsInterface.php
+    |       |   |   UrlGenerator.php
+    |       |   |   UrlGeneratorInterface.php
+    |       |   |   
+    |       |   \---Dumper
+    |       |           CompiledUrlGeneratorDumper.php
+    |       |           GeneratorDumper.php
+    |       |           GeneratorDumperInterface.php
+    |       |           
+    |       +---Loader
+    |       |   |   AnnotationClassLoader.php
+    |       |   |   AnnotationDirectoryLoader.php
+    |       |   |   AnnotationFileLoader.php
+    |       |   |   AttributeClassLoader.php
+    |       |   |   AttributeDirectoryLoader.php
+    |       |   |   AttributeFileLoader.php
+    |       |   |   ClosureLoader.php
+    |       |   |   ContainerLoader.php
+    |       |   |   DirectoryLoader.php
+    |       |   |   GlobFileLoader.php
+    |       |   |   ObjectLoader.php
+    |       |   |   PhpFileLoader.php
+    |       |   |   Psr4DirectoryLoader.php
+    |       |   |   XmlFileLoader.php
+    |       |   |   YamlFileLoader.php
+    |       |   |   
+    |       |   +---Configurator
+    |       |   |   |   AliasConfigurator.php
+    |       |   |   |   CollectionConfigurator.php
+    |       |   |   |   ImportConfigurator.php
+    |       |   |   |   RouteConfigurator.php
+    |       |   |   |   RoutingConfigurator.php
+    |       |   |   |   
+    |       |   |   \---Traits
+    |       |   |           AddTrait.php
+    |       |   |           HostTrait.php
+    |       |   |           LocalizedRouteTrait.php
+    |       |   |           PrefixTrait.php
+    |       |   |           RouteTrait.php
+    |       |   |           
+    |       |   \---schema
+    |       |       \---routing
+    |       |               routing-1.0.xsd
+    |       |               
+    |       +---Matcher
+    |       |   |   CompiledUrlMatcher.php
+    |       |   |   ExpressionLanguageProvider.php
+    |       |   |   RedirectableUrlMatcher.php
+    |       |   |   RedirectableUrlMatcherInterface.php
+    |       |   |   RequestMatcherInterface.php
+    |       |   |   TraceableUrlMatcher.php
+    |       |   |   UrlMatcher.php
+    |       |   |   UrlMatcherInterface.php
+    |       |   |   
+    |       |   \---Dumper
+    |       |           CompiledUrlMatcherDumper.php
+    |       |           CompiledUrlMatcherTrait.php
+    |       |           MatcherDumper.php
+    |       |           MatcherDumperInterface.php
+    |       |           StaticPrefixCollection.php
+    |       |           
+    |       \---Requirement
+    |               EnumRequirement.php
+    |               Requirement.php
+    |               
+    +---twig
+    |   \---twig
+    |       |   CHANGELOG
+    |       |   composer.json
+    |       |   LICENSE
+    |       |   phpstan-baseline.neon
+    |       |   phpstan.neon.dist
+    |       |   README.rst
+    |       |   
+    |       \---src
+    |           |   AbstractTwigCallable.php
+    |           |   Compiler.php
+    |           |   DeprecatedCallableInfo.php
+    |           |   Environment.php
+    |           |   ExpressionParser.php
+    |           |   ExtensionSet.php
+    |           |   FileExtensionEscapingStrategy.php
+    |           |   Lexer.php
+    |           |   Markup.php
+    |           |   NodeTraverser.php
+    |           |   OperatorPrecedenceChange.php
+    |           |   Parser.php
+    |           |   Source.php
+    |           |   Template.php
+    |           |   TemplateWrapper.php
+    |           |   Token.php
+    |           |   TokenStream.php
+    |           |   TwigCallableInterface.php
+    |           |   TwigFilter.php
+    |           |   TwigFunction.php
+    |           |   TwigTest.php
+    |           |   
+    |           +---Attribute
+    |           |       AsTwigFilter.php
+    |           |       AsTwigFunction.php
+    |           |       AsTwigTest.php
+    |           |       FirstClassTwigCallableReady.php
+    |           |       YieldReady.php
+    |           |       
+    |           +---Cache
+    |           |       CacheInterface.php
+    |           |       ChainCache.php
+    |           |       FilesystemCache.php
+    |           |       NullCache.php
+    |           |       ReadOnlyFilesystemCache.php
+    |           |       RemovableCacheInterface.php
+    |           |       
+    |           +---Error
+    |           |       Error.php
+    |           |       LoaderError.php
+    |           |       RuntimeError.php
+    |           |       SyntaxError.php
+    |           |       
+    |           +---ExpressionParser
+    |           |   |   AbstractExpressionParser.php
+    |           |   |   ExpressionParserDescriptionInterface.php
+    |           |   |   ExpressionParserInterface.php
+    |           |   |   ExpressionParsers.php
+    |           |   |   ExpressionParserType.php
+    |           |   |   InfixAssociativity.php
+    |           |   |   InfixExpressionParserInterface.php
+    |           |   |   PrecedenceChange.php
+    |           |   |   PrefixExpressionParserInterface.php
+    |           |   |   
+    |           |   +---Infix
+    |           |   |       ArgumentsTrait.php
+    |           |   |       ArrowExpressionParser.php
+    |           |   |       BinaryOperatorExpressionParser.php
+    |           |   |       ConditionalTernaryExpressionParser.php
+    |           |   |       DotExpressionParser.php
+    |           |   |       FilterExpressionParser.php
+    |           |   |       FunctionExpressionParser.php
+    |           |   |       IsExpressionParser.php
+    |           |   |       IsNotExpressionParser.php
+    |           |   |       SquareBracketExpressionParser.php
+    |           |   |       
+    |           |   \---Prefix
+    |           |           GroupingExpressionParser.php
+    |           |           LiteralExpressionParser.php
+    |           |           UnaryOperatorExpressionParser.php
+    |           |           
+    |           +---Extension
+    |           |       AbstractExtension.php
+    |           |       AttributeExtension.php
+    |           |       CoreExtension.php
+    |           |       DebugExtension.php
+    |           |       EscaperExtension.php
+    |           |       ExtensionInterface.php
+    |           |       GlobalsInterface.php
+    |           |       LastModifiedExtensionInterface.php
+    |           |       OptimizerExtension.php
+    |           |       ProfilerExtension.php
+    |           |       RuntimeExtensionInterface.php
+    |           |       SandboxExtension.php
+    |           |       StagingExtension.php
+    |           |       StringLoaderExtension.php
+    |           |       YieldNotReadyExtension.php
+    |           |       
+    |           +---Loader
+    |           |       ArrayLoader.php
+    |           |       ChainLoader.php
+    |           |       FilesystemLoader.php
+    |           |       LoaderInterface.php
+    |           |       
+    |           +---Node
+    |           |   |   AutoEscapeNode.php
+    |           |   |   BlockNode.php
+    |           |   |   BlockReferenceNode.php
+    |           |   |   BodyNode.php
+    |           |   |   CaptureNode.php
+    |           |   |   CheckSecurityCallNode.php
+    |           |   |   CheckSecurityNode.php
+    |           |   |   CheckToStringNode.php
+    |           |   |   DeprecatedNode.php
+    |           |   |   DoNode.php
+    |           |   |   EmbedNode.php
+    |           |   |   EmptyNode.php
+    |           |   |   FlushNode.php
+    |           |   |   ForElseNode.php
+    |           |   |   ForLoopNode.php
+    |           |   |   ForNode.php
+    |           |   |   IfNode.php
+    |           |   |   ImportNode.php
+    |           |   |   IncludeNode.php
+    |           |   |   MacroNode.php
+    |           |   |   ModuleNode.php
+    |           |   |   NameDeprecation.php
+    |           |   |   Node.php
+    |           |   |   NodeCaptureInterface.php
+    |           |   |   NodeOutputInterface.php
+    |           |   |   Nodes.php
+    |           |   |   PrintNode.php
+    |           |   |   SandboxNode.php
+    |           |   |   SetNode.php
+    |           |   |   TextNode.php
+    |           |   |   TypesNode.php
+    |           |   |   WithNode.php
+    |           |   |   
+    |           |   \---Expression
+    |           |       |   AbstractExpression.php
+    |           |       |   ArrayExpression.php
+    |           |       |   ArrowFunctionExpression.php
+    |           |       |   AssignNameExpression.php
+    |           |       |   BlockReferenceExpression.php
+    |           |       |   CallExpression.php
+    |           |       |   ConditionalExpression.php
+    |           |       |   ConstantExpression.php
+    |           |       |   FilterExpression.php
+    |           |       |   FunctionExpression.php
+    |           |       |   GetAttrExpression.php
+    |           |       |   InlinePrint.php
+    |           |       |   ListExpression.php
+    |           |       |   MacroReferenceExpression.php
+    |           |       |   MethodCallExpression.php
+    |           |       |   NameExpression.php
+    |           |       |   NullCoalesceExpression.php
+    |           |       |   OperatorEscapeInterface.php
+    |           |       |   ParentExpression.php
+    |           |       |   ReturnArrayInterface.php
+    |           |       |   ReturnBoolInterface.php
+    |           |       |   ReturnNumberInterface.php
+    |           |       |   ReturnPrimitiveTypeInterface.php
+    |           |       |   ReturnStringInterface.php
+    |           |       |   SupportDefinedTestDeprecationTrait.php
+    |           |       |   SupportDefinedTestInterface.php
+    |           |       |   SupportDefinedTestTrait.php
+    |           |       |   TempNameExpression.php
+    |           |       |   TestExpression.php
+    |           |       |   VariadicExpression.php
+    |           |       |   
+    |           |       +---Binary
+    |           |       |       AbstractBinary.php
+    |           |       |       AddBinary.php
+    |           |       |       AndBinary.php
+    |           |       |       BinaryInterface.php
+    |           |       |       BitwiseAndBinary.php
+    |           |       |       BitwiseOrBinary.php
+    |           |       |       BitwiseXorBinary.php
+    |           |       |       ConcatBinary.php
+    |           |       |       DivBinary.php
+    |           |       |       ElvisBinary.php
+    |           |       |       EndsWithBinary.php
+    |           |       |       EqualBinary.php
+    |           |       |       FloorDivBinary.php
+    |           |       |       GreaterBinary.php
+    |           |       |       GreaterEqualBinary.php
+    |           |       |       HasEveryBinary.php
+    |           |       |       HasSomeBinary.php
+    |           |       |       InBinary.php
+    |           |       |       LessBinary.php
+    |           |       |       LessEqualBinary.php
+    |           |       |       MatchesBinary.php
+    |           |       |       ModBinary.php
+    |           |       |       MulBinary.php
+    |           |       |       NotEqualBinary.php
+    |           |       |       NotInBinary.php
+    |           |       |       NullCoalesceBinary.php
+    |           |       |       OrBinary.php
+    |           |       |       PowerBinary.php
+    |           |       |       RangeBinary.php
+    |           |       |       SpaceshipBinary.php
+    |           |       |       StartsWithBinary.php
+    |           |       |       SubBinary.php
+    |           |       |       XorBinary.php
+    |           |       |       
+    |           |       +---Filter
+    |           |       |       DefaultFilter.php
+    |           |       |       RawFilter.php
+    |           |       |       
+    |           |       +---FunctionNode
+    |           |       |       EnumCasesFunction.php
+    |           |       |       EnumFunction.php
+    |           |       |       
+    |           |       +---Ternary
+    |           |       |       ConditionalTernary.php
+    |           |       |       
+    |           |       +---Test
+    |           |       |       ConstantTest.php
+    |           |       |       DefinedTest.php
+    |           |       |       DivisiblebyTest.php
+    |           |       |       EvenTest.php
+    |           |       |       NullTest.php
+    |           |       |       OddTest.php
+    |           |       |       SameasTest.php
+    |           |       |       TrueTest.php
+    |           |       |       
+    |           |       +---Unary
+    |           |       |       AbstractUnary.php
+    |           |       |       NegUnary.php
+    |           |       |       NotUnary.php
+    |           |       |       PosUnary.php
+    |           |       |       SpreadUnary.php
+    |           |       |       StringCastUnary.php
+    |           |       |       UnaryInterface.php
+    |           |       |       
+    |           |       \---Variable
+    |           |               AssignContextVariable.php
+    |           |               AssignTemplateVariable.php
+    |           |               ContextVariable.php
+    |           |               LocalVariable.php
+    |           |               TemplateVariable.php
+    |           |               
+    |           +---NodeVisitor
+    |           |       AbstractNodeVisitor.php
+    |           |       EscaperNodeVisitor.php
+    |           |       NodeVisitorInterface.php
+    |           |       OptimizerNodeVisitor.php
+    |           |       SafeAnalysisNodeVisitor.php
+    |           |       SandboxNodeVisitor.php
+    |           |       YieldNotReadyNodeVisitor.php
+    |           |       
+    |           +---Profiler
+    |           |   |   Profile.php
+    |           |   |   
+    |           |   +---Dumper
+    |           |   |       BaseDumper.php
+    |           |   |       BlackfireDumper.php
+    |           |   |       HtmlDumper.php
+    |           |   |       TextDumper.php
+    |           |   |       
+    |           |   +---Node
+    |           |   |       EnterProfileNode.php
+    |           |   |       LeaveProfileNode.php
+    |           |   |       
+    |           |   \---NodeVisitor
+    |           |           ProfilerNodeVisitor.php
+    |           |           
+    |           +---Resources
+    |           |       core.php
+    |           |       debug.php
+    |           |       escaper.php
+    |           |       string_loader.php
+    |           |       
+    |           +---Runtime
+    |           |       EscaperRuntime.php
+    |           |       
+    |           +---RuntimeLoader
+    |           |       ContainerRuntimeLoader.php
+    |           |       FactoryRuntimeLoader.php
+    |           |       RuntimeLoaderInterface.php
+    |           |       
+    |           +---Sandbox
+    |           |       SecurityError.php
+    |           |       SecurityNotAllowedFilterError.php
+    |           |       SecurityNotAllowedFunctionError.php
+    |           |       SecurityNotAllowedMethodError.php
+    |           |       SecurityNotAllowedPropertyError.php
+    |           |       SecurityNotAllowedTagError.php
+    |           |       SecurityPolicy.php
+    |           |       SecurityPolicyInterface.php
+    |           |       SourcePolicyInterface.php
+    |           |       
+    |           +---Test
+    |           |       IntegrationTestCase.php
+    |           |       NodeTestCase.php
+    |           |       
+    |           +---TokenParser
+    |           |       AbstractTokenParser.php
+    |           |       ApplyTokenParser.php
+    |           |       AutoEscapeTokenParser.php
+    |           |       BlockTokenParser.php
+    |           |       DeprecatedTokenParser.php
+    |           |       DoTokenParser.php
+    |           |       EmbedTokenParser.php
+    |           |       ExtendsTokenParser.php
+    |           |       FlushTokenParser.php
+    |           |       ForTokenParser.php
+    |           |       FromTokenParser.php
+    |           |       GuardTokenParser.php
+    |           |       IfTokenParser.php
+    |           |       ImportTokenParser.php
+    |           |       IncludeTokenParser.php
+    |           |       MacroTokenParser.php
+    |           |       SandboxTokenParser.php
+    |           |       SetTokenParser.php
+    |           |       TokenParserInterface.php
+    |           |       TypesTokenParser.php
+    |           |       UseTokenParser.php
+    |           |       WithTokenParser.php
+    |           |       
+    |           \---Util
+    |                   CallableArgumentsExtractor.php
+    |                   DeprecationCollector.php
+    |                   ReflectionCallable.php
+    |                   TemplateDirIterator.php
+    |                   
+    \---vlucas
+        \---phpdotenv
+            |   composer.json
+            |   LICENSE
+            |   
+            \---src
+                |   Dotenv.php
+                |   Validator.php
+                |   
+                +---Exception
+                |       ExceptionInterface.php
+                |       InvalidEncodingException.php
+                |       InvalidFileException.php
+                |       InvalidPathException.php
+                |       ValidationException.php
+                |       
+                +---Loader
+                |       Loader.php
+                |       LoaderInterface.php
+                |       Resolver.php
+                |       
+                +---Parser
+                |       Entry.php
+                |       EntryParser.php
+                |       Lexer.php
+                |       Lines.php
+                |       Parser.php
+                |       ParserInterface.php
+                |       Value.php
+                |       
+                +---Repository
+                |   |   AdapterRepository.php
+                |   |   RepositoryBuilder.php
+                |   |   RepositoryInterface.php
+                |   |   
+                |   \---Adapter
+                |           AdapterInterface.php
+                |           ApacheAdapter.php
+                |           ArrayAdapter.php
+                |           EnvConstAdapter.php
+                |           GuardedWriter.php
+                |           ImmutableWriter.php
+                |           MultiReader.php
+                |           MultiWriter.php
+                |           PutenvAdapter.php
+                |           ReaderInterface.php
+                |           ReplacingWriter.php
+                |           ServerConstAdapter.php
+                |           WriterInterface.php
+                |           
+                +---Store
+                |   |   FileStore.php
+                |   |   StoreBuilder.php
+                |   |   StoreInterface.php
+                |   |   StringStore.php
+                |   |   
+                |   \---File
+                |           Paths.php
+                |           Reader.php
+                |           
+                \---Util
+                        Regex.php
+                        Str.php
+                        

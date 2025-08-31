@@ -80,14 +80,47 @@ class Users {
     }
 
     public function update($id, $data) {
-        $stmt = $this->db->prepare("UPDATE users SET name = ?, email = ?, role_id = ? WHERE id = ?");
-        return $stmt->execute([$data['name'], $data['email'], $data['role_id'], $id]);
+        $fields = [];
+        $params = [];
+
+        // Динамічно формуємо список полів для оновлення
+        foreach ($data as $key => $value) {
+            // Дозволяємо оновлювати лише певні поля для безпеки
+            if (in_array($key, ['name', 'email', 'role_id', 'password', 'avatar_url'])) {
+                $fields[] = "`{$key}` = ?";
+
+                if ($key === 'password') {
+                    $params[] = password_hash($value, PASSWORD_DEFAULT);
+                } else {
+                    // Для avatar_url зберігаємо NULL, якщо рядок порожній
+                    $params[] = ($key === 'avatar_url' && empty($value)) ? null : $value;
+                }
+            }
+        }
+
+        if (empty($fields)) {
+            return false;
+        }
+
+        $params[] = (int)$id;
+
+        $sql = "UPDATE users SET " . implode(', ', $fields) . " WHERE id = ?";
+
+        try {
+            $stmt = $this->db->prepare($sql);
+            return $stmt->execute($params);
+        } catch (\PDOException $e) {
+            error_log("User update failed: " . $e->getMessage());
+            return false;
+        }
     }
 
     public function add($data) {
         $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
-        $stmt = $this->db->prepare("INSERT INTO users (name, email, password, role_id) VALUES (?, ?, ?, ?)");
-        return $stmt->execute([$data['name'], $data['email'], $hashedPassword, $data['role_id']]);
+        $avatarUrl = !empty($data['avatar_url']) ? $data['avatar_url'] : null;
+
+        $stmt = $this->db->prepare("INSERT INTO users (name, email, password, role_id, avatar_url) VALUES (?, ?, ?, ?, ?)");
+        return $stmt->execute([$data['name'], $data['email'], $hashedPassword, $data['role_id'], $avatarUrl]);
     }
 
     /**

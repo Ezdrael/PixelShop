@@ -125,7 +125,11 @@ use App\Core\TokenManager;
                 <div class="header-right">
                     <div class="user-profile" id="user-profile-toggle">
                         <span class="user-name"><?php echo htmlspecialchars($currentUser['name'] ?? 'Гість'); ?></span>
-                        <i class="fas fa-user-circle user-avatar"></i>
+                        <?php if (!empty($currentUser['avatar_url'])): ?>
+                            <img src="<?php echo htmlspecialchars($currentUser['avatar_url']); ?>" alt="Avatar" class="user-avatar-img">
+                        <?php else: ?>
+                            <i class="fas fa-user-circle user-avatar"></i>
+                        <?php endif; ?>
                         <div class="user-dropdown" id="user-dropdown">
                             <a href="<?php echo PROJECT_URL; ?>/logout.php" class="dropdown-item">
                                 <i class="fas fa-sign-out-alt"></i>
@@ -159,7 +163,7 @@ use App\Core\TokenManager;
     <div id="notes-widget" class="notes-widget">
         <div class="notes-header">
             <h3><i class="fas fa-sticky-note"></i> Мої нотатки</h3>
-            <button class="notes-close-btn">&times;</button>
+            <button class="notes-close-btn" title="Esc">&times;</button>
         </div>
         <div class="notes-body">
             <ul id="notes-list" class="notes-list">
@@ -186,7 +190,7 @@ use App\Core\TokenManager;
                 </button>
                 <?php endif; ?>
             </div>
-            <button class="clipboard-close-btn">&times;</button>
+            <button class="clipboard-close-btn" title="Esc">&times;</button>
         </div>
         <div class="clipboard-body">
             <ul id="clipboard-list" class="clipboard-list"></ul>
@@ -199,7 +203,7 @@ use App\Core\TokenManager;
     <div id="messages-widget" class="messages-widget">
         <div class="messages-header">
             <h3><i class="fas fa-comments"></i> Повідомлення</h3>
-            <button class="messages-close-btn">&times;</button>
+            <button class="messages-close-btn" title="Esc">&times;</button>
         </div>
         <div class="messages-body">
             <div class="conversations-sidebar">
@@ -219,14 +223,15 @@ use App\Core\TokenManager;
                         <ul id="conversations-list-users" class="conversation-list tab-content active"></ul>
                         <ul id="conversations-list-groups" class="conversation-list tab-content"></ul>
                     </div>
-                    <div id="chat-settings-panel" class="settings-panel">
-                        <h3>Керування групами</h3>
-                        <div id="group-list-container">
+                    <?php if ($this->hasPermission('chat', 'e')): ?>
+                        <div id="chat-settings-panel" class="chat-settings-panel">
+                            <div class="settings-header">
+                                <h4>Керування групами</h4>
+                                <button id="create-group-show-form-btn" class="btn-primary-small"><i class="fas fa-plus"></i> Створити</button>
                             </div>
-                        <button id="create-group-show-form-btn" class="create-group-show-form-btn">
-                            <i class="fas fa-plus"></i> Створити нову групу
-                        </button>
-                    </div>
+                            <div id="group-list-container"></div>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
             <main class="chat-main">

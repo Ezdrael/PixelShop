@@ -1,5 +1,5 @@
 <?php
-// mvc/c_messages.php
+// app/mvc/Controllers/Admin/MessagesController.php
 namespace App\Mvc\Controllers\Admin;
 
 use App\Mvc\Models\Messages;
@@ -142,7 +142,15 @@ class MessagesController extends BaseController  {
 
         $groups = $this->mMessages->getGroupsForUser($this->currentUser['id']);
         $allUsers = $this->mUsers->getAll();
+
+        // -- ДОДАНО ПЕРЕВІРКУ --
+        // Переконуємося, що $allUsers є масивом, щоб уникнути помилок
+        if (!is_array($allUsers)) {
+            $allUsers = []; // Якщо ні, встановлюємо як порожній масив
+        }
+
         $users = array_filter($allUsers, fn($user) => $user['id'] != $this->currentUser['id']);
+        
         echo json_encode([
             'success' => true,
             'users' => array_values($users), // Переіндексовуємо масив

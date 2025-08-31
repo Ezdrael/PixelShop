@@ -2,33 +2,49 @@
 
 export function initHotkeys() {
     document.addEventListener('keydown', (event) => {
-        // --- Відкриваємо віджети комбінацією Alt + Клавіша ---
+
+        // --- Відкриваємо віджети комбінацією Alt + Клавіша (без змін) ---
         if (event.altKey) {
-            switch (event.key.toLowerCase()) {
-                case 'm': // M for Messages (Повідомлення)
+            switch (event.code) {
+                case 'KeyM':
                     event.preventDefault();
                     document.getElementById('messages-toggle-btn')?.click();
                     break;
-                case 'n': // N for Notes (Нотатки)
+                case 'KeyN':
                     event.preventDefault();
                     document.getElementById('notes-toggle-btn')?.click();
                     break;
-                case 'c': // C for Clipboard (Буфер обміну)
+                case 'KeyC':
                     event.preventDefault();
                     document.getElementById('clipboard-toggle-btn')?.click();
                     break;
             }
         }
 
-        // --- Закриваємо будь-який активний віджет по клавіші Escape ---
-        if (event.key === 'Escape') {
-            // Знаходимо будь-який віджет, що має клас .open
+        // --- ОНОВЛЕНА ЛОГІКА ДЛЯ КЛАВІШІ ESCAPE ---
+        if (event.code === 'Escape') {
+            event.preventDefault(); // Запобігаємо стандартній поведінці браузера
+
+            // 1. Спочатку перевіряємо, чи є відкритий віджет
             const openWidget = document.querySelector('.notes-widget.open, .clipboard-widget.open, .messages-widget.open');
-            
             if (openWidget) {
-                event.preventDefault();
-                // Знаходимо всередині нього кнопку закриття і натискаємо на неї
+                // Якщо віджет є, закриваємо його і більше нічого не робимо
                 openWidget.querySelector('.notes-close-btn, .clipboard-close-btn, .messages-close-btn')?.click();
+                return; // Зупиняємо виконання подальшого коду
+            }
+
+            // 2. Якщо віджетів немає, перевіряємо, чи активний режим вибору фото
+            const galleryContainer = document.getElementById('lightgallery-container');
+            if (galleryContainer && galleryContainer.classList.contains('selection-mode-active')) {
+                // Якщо режим активний, "натискаємо" на кнопку скасування
+                document.getElementById('toggle-selection-mode')?.click();
+                return; // Зупиняємо виконання
+            }
+            
+            // Тут можна додати закриття інших елементів, наприклад, модальних вікон
+            const openModal = document.querySelector('.modal-overlay[style*="display: flex"]');
+            if(openModal) {
+                 openModal.querySelector('.modal-close, .cancel')?.click();
             }
         }
     });

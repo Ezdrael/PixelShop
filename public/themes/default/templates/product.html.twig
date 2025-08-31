@@ -1,0 +1,43 @@
+{# themes/default/templates/product.html.twig #}
+{% extends "layout.html.twig" %}
+
+{% block content %}
+<div class="product-page" style="padding: 2rem 0;">
+    <div class="container">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start;">
+            
+            {# Ліва колонка: Галерея зображень #}
+            <div>
+                <div class="product-main-image" style="background-color: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 12px; display: flex; align-items: center; justify-content: center; height: 450px; font-size: 4rem; color: #cbd5e1;">
+                    {# Тут буде головне зображення товару #}
+                    <i class="fas fa-camera"></i>
+                </div>
+                {# Тут буде галерея мініатюр #}
+            </div>
+
+            {# Права колонка: Інформація про товар #}
+            <div>
+                <h1 style="font-size: 2.5rem; font-weight: 600; margin-bottom: 1rem;">{{ good.name }}</h1>
+                
+                <div class="product-price" style="font-size: 2.5rem; font-weight: 700; color: #e67e22; margin-bottom: 2rem;">
+                    {{ good.price|number_format(0, '.', ' ') }} грн
+                </div>
+
+                <div class="product-actions" style="margin-bottom: 2rem;">
+                    <button type="button" style="background-color: #e67e22; color: #ffffff; padding: 1rem 2.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 1.1rem; border: none; cursor: pointer;">
+                        <i class="fas fa-shopping-cart"></i> Додати в кошик
+                    </button>
+                </div>
+
+                <div class="product-description">
+                    <h3 style="border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 1rem;">Опис</h3>
+                    <p style="line-height: 1.8; color: #34495e;">
+                        {{ good.description|nl2br }}
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

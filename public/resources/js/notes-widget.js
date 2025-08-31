@@ -5,17 +5,19 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const dom = {
-        toggleBtn: document.getElementById('notes-toggle-btn'),
         widget: document.getElementById('notes-widget'),
-        closeBtn: document.querySelector('.notes-close-btn'),
         notesList: document.getElementById('notes-list'),
         newNoteContent: document.getElementById('new-note-content'),
-        addNoteBtn: document.getElementById('add-note-btn')
+        addNoteBtn: document.getElementById('add-note-btn'),
+        deleteModal: document.getElementById('deleteModalOverlay'),
+        modalTitle: document.getElementById('modalTitle'),
+        modalBody: document.getElementById('modalBody'),
+        modalConfirmBtn: document.getElementById('modalConfirmBtn')
     };
 
     if (!dom.widget) return;
 
-    // --- API Calls (без змін) ---
+    // --- API Calls ---
     const api = {
         async getNotes() {
             const res = await fetch(`${config.baseUrl}/notes/get`);
@@ -50,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderNote = (note) => {
         const li = document.createElement('li');
         li.dataset.noteId = note.id;
-        // !! КЛЮЧОВА ЗМІНА: Оновлено HTML-структуру кнопок !!
         li.innerHTML = `
             <div class="note-content">${note.content.replace(/\n/g, '<br>')}</div>
             <div class="note-actions">
@@ -61,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <textarea class="form-control">${note.content}</textarea>
                 <div class="note-edit-actions">
                     <button class="btn-secondary note-cancel-btn"><i class="fa-solid fa-xmark"></i>Скасувати</button>
-                    <button class="btn-primary note-save-btn"><i class="fas fa-save"></i> Зберегти</button>
+                    <button class="btn-primary note-save-btn" title="Ctrl+Enter"><i class="fas fa-save"></i> Зберегти</button>
                 </div>
             </div>
         `;
@@ -88,16 +89,19 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     // --- Event Handlers ---
-    dom.toggleBtn.addEventListener('click', () => {
-        dom.widget.classList.toggle('open');
-        if (dom.widget.classList.contains('open')) {
-            loadNotes();
-            setTimeout(() => dom.newNoteContent.focus(), 100); 
+    
+    // Завантажуємо нотатки, коли віджет стає видимим (сигнал від ui-handlers.js)
+    const observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+            if (mutation.attributeName === 'class' && dom.widget.classList.contains('open')) {
+                loadNotes();
+                setTimeout(() => dom.newNoteContent?.focus(), 100);
+            }
         }
     });
-    
-    dom.closeBtn.addEventListener('click', () => dom.widget.classList.remove('open'));
+    observer.observe(dom.widget, { attributes: true });
 
+    // Обробники для додавання, видалення та редагування нотаток
     if (dom.addNoteBtn) {
         const addNewNote = async () => {
             const content = dom.newNoteContent.value.trim();
@@ -111,27 +115,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert(result.message || 'Помилка створення нотатки');
             }
         };
-
-        // Обробник для кнопки "Додати"
         dom.addNoteBtn.addEventListener('click', addNewNote);
-
-        // Обробник для відправки по Ctrl+Enter
         dom.newNoteContent.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && e.ctrlKey) {
-                e.preventDefault(); // Запобігаємо створенню нового рядка
-                addNewNote();     // Викликаємо ту ж функцію, що й кнопка
+                e.preventDefault();
+                addNewNote();
             }
         });
     }
-    
+
     dom.notesList.addEventListener('click', async (e) => {
         const target = e.target;
         const li = target.closest('li');
         if (!li) return;
         const noteId = li.dataset.noteId;
-
         if (target.closest('.note-delete-btn')) {
-            if (confirm('Ви впевнені, що хочете видалити нотатку?')) {
+            const noteContent = li.querySelector('.note-content').textContent;
+            dom.modalTitle.textContent = 'Підтвердження видалення';
+            dom.modalBody.innerHTML = `<p>Ви впевнені, що хочете видалити нотатку?</p><blockquote style="margin-top: 1rem; padding: 0.5rem 1rem; background-color: #f8f9fa; border-left: 3px solid #e2e8f0; font-style: italic;">${noteContent}</blockquote>`;
+            dom.deleteModal.style.display = 'flex';
+            dom.modalConfirmBtn.addEventListener('click', async function handleDelete() {
+                dom.deleteModal.style.display = 'none';
                 const result = await api.deleteNote(noteId);
                 if (result.success) {
                     li.remove();
@@ -139,26 +143,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     alert(result.message || 'Помилка видалення');
                 }
-            }
+            }, { once: true });
         }
-
-        if (target.closest('.note-edit-btn')) {
+        if (e.target.closest('.note-edit-btn')) {
             li.querySelector('.note-content').style.display = 'none';
             li.querySelector('.note-actions').style.display = 'none';
-            li.querySelector('.note-edit-form').style.display = 'flex';
+            const editForm = li.querySelector('.note-edit-form');
+            editForm.style.display = 'flex';
+            const textarea = editForm.querySelector('textarea');
+            if (textarea) {
+                textarea.focus();
+                textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+            }
         }
-
         if (target.closest('.note-cancel-btn')) {
             li.querySelector('.note-content').style.display = 'block';
             li.querySelector('.note-actions').style.display = 'flex';
             li.querySelector('.note-edit-form').style.display = 'none';
         }
-
         if (target.closest('.note-save-btn')) {
             const textarea = li.querySelector('.note-edit-form textarea');
             const newContent = textarea.value.trim();
             if (!newContent) return;
-
             const result = await api.updateNote(noteId, newContent);
             if (result.success) {
                 li.querySelector('.note-content').innerHTML = result.note.content.replace(/\n/g, '<br>');
@@ -167,6 +173,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 li.querySelector('.note-edit-form').style.display = 'none';
             } else {
                 alert(result.message || 'Помилка збереження');
+            }
+        }
+    });
+
+    dom.notesList.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && e.ctrlKey) {
+            if (e.target.tagName === 'TEXTAREA' && e.target.closest('.note-edit-form')) {
+                e.preventDefault();
+                const noteItem = e.target.closest('li');
+                noteItem.querySelector('.note-save-btn')?.click();
             }
         }
     });

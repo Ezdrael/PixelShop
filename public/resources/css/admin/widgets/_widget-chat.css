@@ -69,6 +69,7 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .conv-sidebar-header {
@@ -119,6 +120,14 @@
 .list-container {
     flex-grow: 1;
     overflow-y: auto;
+    min-height: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+/* Для Chrome, Safari, Opera та нових версій Edge */
+.list-container::-webkit-scrollbar {
+    display: none;
 }
 
 .tab-content {
@@ -494,4 +503,52 @@ emoji-picker {
     text-decoration: none;
     /* Прибираємо закреслення для самого бейджа */
     display: inline-block;
+}
+
+/* === НОВІ СТИЛІ ДЛЯ НЕПРОЧИТАНИХ ПОВІДОМЛЕНЬ === */
+
+/* Стиль для нового, ще не прочитаного повідомлення */
+.message-item.new-message .body {
+    background-color: #ffe8a8;
+    /* Колір підсвічування */
+    color: #333;
+    /* Темний текст для кращої читабельності */
+    transition: background-color 3s ease-out;
+    /* Анімація згасання */
+}
+
+/* Стиль для свого власного нового повідомлення */
+.message-item.new-message.own .body {
+    background-color: #ffc107;
+    /* Більш насичений колір для своїх повідомлень */
+}
+
+/* Клас, який прибирає підсвічування, запускаючи анімацію */
+.message-item.is-read .body {
+    background-color: var(--sidebar-hover-bg);
+}
+
+.message-item.is-read.own .body {
+    background-color: var(--accent-color);
+    color: #fff;
+}
+
+/* Анімація миготіння для елементів з непрочитаними повідомленнями */
+@keyframes blinker-animation {
+    50% {
+        opacity: 0.5;
+        background-color: #fffbeb;
+    }
+}
+
+.blinking {
+    animation: blinker-animation 1.5s linear infinite;
+}
+
+.chat-tabs .tab-link.blinking {
+    animation: none;
+    /* Для табів краще просто змінити колір */
+    background-color: #fffbeb;
+    color: var(--warning-color);
+    font-weight: 700;
 }

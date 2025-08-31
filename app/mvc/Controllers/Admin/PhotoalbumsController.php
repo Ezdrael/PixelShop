@@ -104,31 +104,49 @@ class PhotoalbumsController extends BaseController  {
     }
 
     public function editAction() {
-        if (!$this->hasPermission('albums', 'e')) {
-            return $this->showAccessDenied();
+    if (!$this->hasPermission('albums', 'e')) {
+        return $this->showAccessDenied();
+    }
+    
+    $id = (int)($this->params['id'] ?? 0);
+    $album = $this->mAlbums->getById($id);
+
+    if (!$album) {
+        header('Location: ' . BASE_URL . '/albums');
+        exit();
+    }
+
+    $this->title = 'Редагування альбому: ' . htmlspecialchars($album['name']);
+
+    // === ДОДАНО ВІДСУТНІЙ БЛОК КОДУ ===
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+            die('CSRF Error');
         }
         
-        $id = (int)($this->params['id'] ?? 0);
-        $album = $this->mAlbums->getById($id);
-
-        if (!$album) {
-            header('Location: ' . BASE_URL . '/albums');
-            exit();
+        if (!empty(trim($_POST['name']))) {
+            if ($this->mAlbums->update($id, $_POST)) {
+                $_SESSION['flash_message'] = ['type' => 'success', 'text' => 'Дані альбому успішно оновлено.'];
+            } else {
+                $_SESSION['flash_message'] = ['type' => 'error', 'text' => 'Не вдалося оновити дані альбому.'];
+            }
+        } else {
+            $_SESSION['flash_message'] = ['type' => 'error', 'text' => 'Назва альбому не може бути порожньою.'];
         }
-
-        $this->title = 'Редагування альбому: ' . htmlspecialchars($album['name']);
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-             // ... (код обробки POST-запиту без змін) ...
-        }
-
-        $availableParents = $this->mAlbums->getAvailableParentAlbums($id);
-
-        $this->render('v_photo_album_edit', [
-            'album' => $album,
-            'albums' => $availableParents // Передаємо у шаблон відфільтрований список
-        ]);
+        
+        // Перенаправляємо назад на сторінку редагування, щоб показати повідомлення
+        header('Location: ' . BASE_URL . '/albums/edit/' . $id);
+        exit();
     }
+    // === КІНЕЦЬ НОВОГО БЛОКУ ===
+
+    $availableParents = $this->mAlbums->getAvailableParentAlbums($id);
+
+    $this->render('v_photo_album_edit', [
+        'album' => $album,
+        'albums' => $availableParents
+    ]);
+}
 
     public function uploadAction() {
         if (!$this->hasPermission('albums', 'a')) {

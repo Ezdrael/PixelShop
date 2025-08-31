@@ -6,14 +6,16 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const dom = {
-        toggleBtn: document.getElementById('clipboard-toggle-btn'),
         widget: document.getElementById('clipboard-widget'),
-        closeBtn: document.querySelector('.clipboard-close-btn'),
         list: document.getElementById('clipboard-list'),
-        clearBtn: document.getElementById('clear-clipboard-btn')
+        clearBtn: document.getElementById('clear-clipboard-btn'),
+        deleteModal: document.getElementById('deleteModalOverlay'),
+        modalTitle: document.getElementById('modalTitle'),
+        modalBody: document.getElementById('modalBody'),
+        modalConfirmBtn: document.getElementById('modalConfirmBtn')
     };
 
-    if (!dom.toggleBtn || !dom.widget) return;
+    if (!dom.widget) return;
 
     let lastCopiedText = '';
 
@@ -77,7 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('copy', () => {
         if (!config.hasAddPermission) return;
         
-        // !! КЛЮЧОВА ЗМІНА: Перевіряємо, чи джерело копіювання не знаходиться всередині віджета !!
         const selection = document.getSelection();
         const isCopyingFromWidget = selection.anchorNode && dom.widget.contains(selection.anchorNode.parentElement);
         
@@ -95,29 +96,38 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Обробники подій для віджета ---
-    dom.toggleBtn.addEventListener('click', () => {
-        dom.widget.classList.toggle('open');
-        if (dom.widget.classList.contains('open')) {
-            loadItems();
+    // --- Обробники подій для внутрішньої логіки віджета ---
+    
+    // Завантажуємо дані, коли віджет стає видимим
+    const observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+            if (mutation.attributeName === 'class' && dom.widget.classList.contains('open')) {
+                loadItems();
+            }
         }
     });
-    
-    dom.closeBtn.addEventListener('click', () => dom.widget.classList.remove('open'));
+    observer.observe(dom.widget, { attributes: true });
 
+    // Обробник для кнопки очищення буфера
     if (dom.clearBtn) {
-        dom.clearBtn.addEventListener('click', async () => {
-            if (confirm('Ви впевнені, що хочете повністю очистити буфер обміну?')) {
+        dom.clearBtn.addEventListener('click', () => {
+            dom.modalTitle.textContent = 'Очищення буфера обміну';
+            dom.modalBody.innerHTML = '<p>Ви впевнені, що хочете повністю очистити буфер обміну? Ця дія є незворотною.</p>';
+            dom.deleteModal.style.display = 'flex';
+
+            dom.modalConfirmBtn.addEventListener('click', async function handleClear() {
+                dom.deleteModal.style.display = 'none';
                 const result = await api.clearItems();
                 if (result.success) {
                     loadItems();
                 } else {
                     alert('Не вдалося очистити буфер.');
                 }
-            }
+            }, { once: true });
         });
     }
 
+    // Обробник для копіювання з буфера
     dom.list.addEventListener('click', (e) => {
         const copyBtn = e.target.closest('.clipboard-copy-btn');
         if (!copyBtn) return;
@@ -125,9 +135,9 @@ document.addEventListener('DOMContentLoaded', () => {
         navigator.clipboard.writeText(content).then(() => {
             copyBtn.innerHTML = '<i class="fas fa-check"></i>';
             setTimeout(() => {
-                dom.widget.classList.remove('open');
+                // Не закриваємо віджет автоматично, щоб користувач міг скопіювати декілька елементів
                 copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
-            }, 300);
+            }, 800);
         });
     });
 });

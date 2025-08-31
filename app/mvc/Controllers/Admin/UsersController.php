@@ -43,36 +43,52 @@ class UsersController  extends BaseController {
             return $this->showAccessDenied();
         }
 
-        $id = $this->params['id'] ?? 0;
+        $id = (int)($this->params['id'] ?? 0);
+        $redirectUrl = BASE_URL . '/users/edit/' . $id;
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-                die('Не вдалося перевірити CSRF токен!'); // Або показати сторінку з помилкою
+                die('Не вдалося перевірити CSRF токен!');
             }
+
             $data = [
                 'name' => trim($_POST['name'] ?? ''),
                 'email' => trim($_POST['email'] ?? ''),
-                'role_id' => (int)($_POST['role_id'] ?? 0)
+                'role_id' => (int)($_POST['role_id'] ?? 0),
+                'avatar_url' => filter_var(trim($_POST['avatar_url'] ?? ''), FILTER_VALIDATE_URL) ? trim($_POST['avatar_url']) : '' // Валідація URL
             ];
 
-            if (!empty($data['name']) && filter_var($data['email'], FILTER_VALIDATE_EMAIL) && $data['role_id'] > 0) {
-                if ($this->mUsers->emailExists($data['email'], (int)$id)) {
+            $password = $_POST['password'] ?? '';
+            $password_confirm = $_POST['password_confirm'] ?? '';
+
+            if (!empty($password)) {
+                if ($password !== $password_confirm) {
+                    $_SESSION['flash_message'] = ['type' => 'error', 'text' => 'Паролі не співпадають.'];
+                    header('Location: ' . $redirectUrl);
+                    exit();
+                }
+                $data['password'] = $password;
+            }
+
+            if (!empty($data['name']) && filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+                if ($this->mUsers->emailExists($data['email'], $id)) {
                     $_SESSION['flash_message'] = ['type' => 'error', 'text' => 'Користувач з таким email вже існує.'];
                 } else {
-                    if ($this->mUsers->update((int)$id, $data)) {
+                    if ($this->mUsers->update($id, $data)) {
                         $_SESSION['flash_message'] = ['type' => 'success', 'text' => 'Дані користувача успішно оновлено.'];
                     } else {
                         $_SESSION['flash_message'] = ['type' => 'error', 'text' => 'Не вдалося оновити дані користувача.'];
                     }
                 }
             } else {
-                $_SESSION['flash_message'] = ['type' => 'error', 'text' => 'Будь ласка, заповніть всі поля коректно.'];
+                $_SESSION['flash_message'] = ['type' => 'error', 'text' => 'Будь ласка, заповніть поля "Ім\'я" та "Email" коректно.'];
             }
-            header('Location: ' . BASE_URL . '/users/edit/' . $id);
+
+            header('Location: ' . $redirectUrl);
             exit();
         }
 
-        $user = $this->mUsers->getById((int)$id);
+        $user = $this->mUsers->getById($id);
         $roles = $this->mRoles->getAll();
         $this->title = 'Редагування користувача';
         $this->render('v_user_edit', ['user' => $user, 'roles' => $roles]);
@@ -85,13 +101,14 @@ class UsersController  extends BaseController {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-                die('Не вдалося перевірити CSRF токен!'); // Або показати сторінку з помилкою
+                die('Не вдалося перевірити CSRF токен!');
             }
             $data = [
                 'name' => trim($_POST['name'] ?? ''),
                 'email' => trim($_POST['email'] ?? ''),
                 'password' => $_POST['password'] ?? '',
-                'role_id' => (int)($_POST['role_id'] ?? 0)
+                'role_id' => (int)($_POST['role_id'] ?? 0),
+                'avatar_url' => filter_var(trim($_POST['avatar_url'] ?? ''), FILTER_VALIDATE_URL) ? trim($_POST['avatar_url']) : '' // Валідація URL
             ];
 
             if (!empty($data['name']) && filter_var($data['email'], FILTER_VALIDATE_EMAIL) && !empty($data['password']) && $data['role_id'] > 0) {
@@ -107,7 +124,7 @@ class UsersController  extends BaseController {
                     }
                 }
             } else {
-                $_SESSION['flash_message'] = ['type' => 'error', 'text' => 'Будь ласка, заповніть всі поля.'];
+                $_SESSION['flash_message'] = ['type' => 'error', 'text' => 'Будь ласка, заповніть всі обов\'язкові поля.'];
             }
             header('Location: ' . BASE_URL . '/users/add');
             exit();

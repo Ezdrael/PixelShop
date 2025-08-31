@@ -1,6 +1,6 @@
 <?php
 // ===================================================================
-// Файл: mvc/v_user_add.php 🆕
+// Файл: mvc/v_user_add.php 
 // Розміщення: /mvc/v_user_add.php
 // Призначення: Вигляд для сторінки додавання нового користувача.
 // ===================================================================
@@ -47,6 +47,11 @@
                         </option>
                     <?php endforeach; ?>
                 </select>
+            </div>
+
+            <div class="form-group-inline">
+                <label for="user-avatar">URL аватара</label>
+                <input type="url" id="user-avatar" name="avatar_url" class="form-control" placeholder="https://example.com/photo.jpg">
             </div>
         </div>
     </form>

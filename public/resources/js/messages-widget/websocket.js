@@ -1,7 +1,7 @@
 // public/resources/js/messages-widget/websocket.js
 
 import { state, saveState } from './state.js';
-import { renderMessage, updateBlinkingUI } from './ui.js';
+import * as ui from './ui.js';
 
 export function connectWebSocket(config, dom) {
     const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
@@ -16,17 +16,20 @@ export function connectWebSocket(config, dom) {
         const msg = JSON.parse(e.data);
         const isMyMessage = msg.sender_id == config.currentUserId;
         
+        msg.isNew = true; // Позначаємо, що це нове повідомлення для підсвічування
+
         if (!isMyMessage) {
             try { dom.notificationSound.play(); } catch(err) {}
+            
             const convId = msg.group_id ? `group-${msg.group_id}` : `user-${msg.sender_id}`;
 
-            if (!dom.widget.classList.contains('open') || 
-                (state.activeChat.type === 'user' && state.activeChat.id != msg.sender_id) || 
-                (state.activeChat.type === 'group' && state.activeChat.id != msg.group_id)) {
-                
+            const isActiveChat = (state.activeChat.type === 'user' && state.activeChat.id == msg.sender_id) ||
+                                (state.activeChat.type === 'group' && state.activeChat.id == msg.group_id);
+
+            if (!dom.widget.classList.contains('open') || !isActiveChat) {
                 state.unreadConversations.add(convId);
                 saveState(dom);
-                updateBlinkingUI(dom);
+                ui.updateBlinkingUI(dom);
             }
         }
 
@@ -34,8 +37,7 @@ export function connectWebSocket(config, dom) {
         const isRelevantGroup = msg.group_id && state.activeChat.type === 'group' && msg.group_id == state.activeChat.id;
 
         if (isRelevantPrivate || isRelevantGroup) {
-            dom.messageList.appendChild(renderMessage(msg, config.currentUserId));
-            dom.messageList.scrollTop = dom.messageList.scrollHeight;
+            ui.handleNewMessage(msg, dom, config);
         }
     };
 

@@ -1,6 +1,6 @@
 <?php
     //Підключаємо специфічні стилі та скрипти для цієї сторінки
-    $this->addCSS(PROJECT_URL . '/resources/css/photo-album.css');
+    $this->addCSS(PROJECT_URL . '/resources/css/admin/photo-album.css');
     $this->addJS(PROJECT_URL . '/resources/js/photo-album-view.js');
 
     $breadcrumbs = [ ['name' => 'Фотоальбоми', 'url' => BASE_URL . '/albums'] ];
@@ -20,7 +20,6 @@
     <div class="form-header">
         <div>
             <h2>Альбом: <?php echo htmlspecialchars($album['name']); ?></h2>
-            <p><?php echo htmlspecialchars($album['description']); ?></p>
         </div>
         <div class="actions-cell">
             <?php if ($this->hasPermission('albums', 'a')): ?>
@@ -44,6 +43,8 @@
             <a href="<?php echo BASE_URL; ?>/albums" class="action-btn" title="До списку альбомів"><i class="fas fa-arrow-left"></i></a>
         </div>
     </div>
+
+    <p><?php echo htmlspecialchars($album['description']); ?></p>
     
     <?php if (!empty($children)): ?>
     <div class="info-section">

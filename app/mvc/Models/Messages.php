@@ -1,5 +1,5 @@
 <?php
-// mvc/m_messages.php
+// app/mvc/Models/Messages.php
 namespace App\Mvc\Models;
 
 use App\Core\DB;
