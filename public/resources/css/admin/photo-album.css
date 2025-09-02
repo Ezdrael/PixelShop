@@ -248,3 +248,45 @@
     border-radius: 8px;
     /* Додаємо для краси */
 }
+
+/* === НОВІ СТИЛІ ДЛЯ КНОПКИ СТВОРЕННЯ АЛЬБОМУ === */
+.album-thumbnail.add-album-btn .album-cover-preview {
+    background-color: #f0fdf4;
+    /* Світло-зелений фон */
+    border-color: var(--success-color);
+    /* Зелена рамка */
+}
+
+.album-thumbnail.add-album-btn .album-cover-preview i {
+    color: var(--success-color);
+    /* Зелена іконка */
+    font-size: 2.5rem;
+    transition: transform 0.2s ease;
+}
+
+.album-thumbnail.add-album-btn:hover .album-cover-preview i {
+    transform: scale(1.1);
+    /* Ефект збільшення при наведенні */
+}
+
+/* === НОВІ СТИЛІ ДЛЯ ЗОВНІШНЬОЇ КНОПКИ === */
+#external-set-cover-btn {
+    position: fixed;
+    /* Позиціонування відносно вікна браузера */
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    /* Центрування по горизонталі */
+    z-index: 1100;
+    /* Має бути вище, ніж z-index слайдера (зазвичай 1050) */
+
+    /* Плавна поява та зникнення */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+#external-set-cover-btn.visible {
+    opacity: 1;
+    visibility: visible;
+}

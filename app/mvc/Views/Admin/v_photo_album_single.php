@@ -3,14 +3,24 @@
     $this->addCSS(PROJECT_URL . '/resources/css/admin/photo-album.css');
     $this->addJS(PROJECT_URL . '/resources/js/photo-album-view.js');
 
-    $breadcrumbs = [ ['name' => 'Фотоальбоми', 'url' => BASE_URL . '/albums'] ];
+    $breadcrumbs = [
+        ['name' => 'Фотоальбоми', 'url' => BASE_URL . '/albums', 'id' => 0]
+    ];
     if (isset($ancestors)) {
         foreach ($ancestors as $ancestor) {
-            $breadcrumbs[] = [ 'name' => $ancestor['name'], 'url' => BASE_URL . '/albums/view/' . $ancestor['id'] ];
+            $breadcrumbs[] = [
+                'name' => $ancestor['name'],
+                'url' => BASE_URL . '/albums/view/' . $ancestor['id'],
+                'id' => $ancestor['id']
+            ];
         }
     }
     if (isset($album)) {
-        $breadcrumbs[] = ['name' => $album['name'], 'url' => BASE_URL . '/albums/view/' . $album['id']];
+        $breadcrumbs[] = [
+            'name' => $album['name'],
+            'url' => BASE_URL . '/albums/view/' . $album['id'],
+            'id' => $album['id']
+        ];
     }
 
     include '_template_breadcrumbs.php';
@@ -23,30 +33,36 @@
         </div>
         <div class="actions-cell">
             <?php if ($this->hasPermission('albums', 'a')): ?>
-                <a href="<?php echo BASE_URL; ?>/albums/upload/<?php echo $album['id']; ?>" class="action-btn save" title="Завантажити фото"><i class="fas fa-upload"></i></a>
+                <a id="upload-photo-btn" href="<?php echo BASE_URL; ?>/albums/upload/<?php echo $album['id']; ?>" class="action-btn save" title="Завантажити фото [Alt+U]"><i class="fas fa-upload"></i></a>
             <?php endif; ?>
-            <?php if ($this->hasPermission('albums', 'e')): ?>
-                <a href="<?php echo BASE_URL; ?>/albums/edit/<?php echo $album['id']; ?>" class="action-btn" title="Редагувати альбом"><i class="fas fa-pencil-alt"></i></a>
-            <?php endif; ?>
-            
-            <?php if ($this->hasPermission('albums', 'd')): ?>
-            <?php $isAlbumEmpty = empty($photos) && empty($children); ?>
-            <button class="action-btn delete delete-album-btn"
-                    title="Видалити альбом"
-                    data-album-id="<?php echo $album['id']; ?>"
-                    data-album-name="<?php echo htmlspecialchars($album['name']); ?>"
-                    data-is-empty="<?php echo $isAlbumEmpty ? 'true' : 'false'; ?>">
-                <i class="fas fa-trash"></i>
-            </button>
-        <?php endif; ?>
 
-            <a href="<?php echo BASE_URL; ?>/albums" class="action-btn" title="До списку альбомів"><i class="fas fa-arrow-left"></i></a>
+            <?php if ($this->hasPermission('albums', 'e')): ?>
+                <a id="edit-album-btn" href="<?php echo BASE_URL; ?>/albums/edit/<?php echo $album['id']; ?>" class="action-btn" title="Редагувати альбом [Alt+E]"><i class="fas fa-pencil-alt"></i></a>
+            <?php endif; ?>
+
+            <?php if ($this->hasPermission('albums', 'd')): ?>
+                <?php $isAlbumEmpty = empty($photos) && empty($children); ?>
+                <button id="delete-album-btn" class="action-btn delete delete-album-btn"
+                        title="Видалити альбом [Alt+Delete]"
+                        data-album-id="<?php echo $album['id']; ?>"
+                        data-album-name="<?php echo htmlspecialchars($album['name']); ?>"
+                        data-is-empty="<?php echo $isAlbumEmpty ? 'true' : 'false'; ?>">
+                    <i class="fas fa-trash"></i>
+                </button>
+            <?php endif; ?>
+
+            <a id="back-to-list-btn" href="<?php echo BASE_URL; ?>/albums" class="action-btn" title="До списку альбомів [Esc]"><i class="fas fa-arrow-left"></i></a>
         </div>
     </div>
 
-    <p><?php echo htmlspecialchars($album['description']); ?></p>
+    <p>
+        <?php if (!empty($album['description'])): ?>
+            <?php echo nl2br(htmlspecialchars($album['description'])); ?>
+        <?php else: ?>
+            <em>Опис відсутній.</em>
+        <?php endif; ?>
+    </p>
     
-    <?php if (!empty($children)): ?>
     <div class="info-section">
         <h3><i class="fas fa-folder"></i> Вкладені альбоми</h3>
         <div class="album-gallery">
@@ -62,9 +78,16 @@
                     <div class="album-name"><?php echo htmlspecialchars($child['name']); ?></div>
                 </a>
             <?php endforeach; ?>
+            <?php if ($this->hasPermission('albums', 'a')): ?>
+                <a href="<?php echo BASE_URL . '/albums/add?parent_id=' . $album['id']; ?>" class="album-thumbnail add-album-btn">
+                    <div class="album-cover-preview">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="album-name">Створити альбом</div>
+                </a>
+            <?php endif; ?>
         </div>
     </div>
-    <?php endif; ?>
 
     <div class="info-section">
         <div class="photo-gallery-header">
@@ -81,9 +104,12 @@
         </div>
 
         <div id="lightgallery-container" 
-             class="photo-gallery" 
-             data-album-id="<?php echo $album['id']; ?>" 
-             data-csrf-token="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
+            class="photo-gallery" 
+            data-album-id="<?php echo $album['id']; ?>" 
+            
+            data-can-edit="<?php echo $this->hasPermission('albums', 'e') ? 'true' : 'false'; ?>"
+            data-can-delete="<?php echo $this->hasPermission('albums', 'd') ? 'true' : 'false'; ?>"
+        >
 
             <?php if (!empty($photos)): foreach ($photos as $photo): ?>
                 <div class="gallery-item-wrapper" data-photo-id="<?php echo $photo['id']; ?>">
@@ -108,4 +134,3 @@
 </div>
 
 <script type="module" src="<?php echo BASE_URL; ?>/resources/js/photo-album-view.js"></script>
-

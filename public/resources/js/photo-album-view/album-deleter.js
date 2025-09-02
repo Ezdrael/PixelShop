@@ -4,19 +4,17 @@
  * Ініціалізує всю логіку, пов'язану з видаленням альбомів.
  */
 export function initAlbumDeleteHandler() {
-    // --- 1. Знаходимо всі необхідні елементи на сторінці ---
     const simpleModal = document.getElementById('deleteModalOverlay');
     const complexModal = document.getElementById('deleteAlbumModalOverlay');
     const baseUrl = document.body.dataset.baseUrl || '';
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-    // Перевірка, чи існують модальні вікна
-    if (!simpleModal || !complexModal) {
-        console.error("Модальні вікна для видалення не знайдено!");
-        return;
-    }
+    if (!simpleModal || !complexModal) return;
 
-    // --- 2. Універсальна функція для відправки запиту на видалення ---
+    /**
+     * === ОНОВЛЕНА ФУНКЦІЯ З РОЗШИРЕНИМ ДЕБАГОМ ===
+     * Універсальна функція для відправки запиту на видалення.
+     */
     const performDeleteRequest = async (albumId, payload) => {
         document.body.style.cursor = 'wait';
         try {
@@ -29,16 +27,34 @@ export function initAlbumDeleteHandler() {
                 body: JSON.stringify(payload)
             });
 
-            const result = await response.json();
-            if (result.success) {
-                sessionStorage.setItem('flashMessage', JSON.stringify({ type: 'success', text: 'Альбом успішно видалено.' }));
-                window.location.href = `${baseUrl}/albums`;
-            } else {
-                alert(`Помилка: ${result.message || 'Не вдалося виконати дію.'}`);
+            // Спочатку отримуємо відповідь як текст, щоб проаналізувати її
+            const responseText = await response.text();
+
+            // Перевіряємо, чи відповідь успішна (статус 2xx)
+            if (!response.ok) {
+                // Якщо ні, виводимо весь HTML помилки в консоль
+                console.error('Помилка сервера (HTTP статус ' + response.status + '). Повна відповідь:', responseText);
+                throw new Error(`Сервер повернув помилку: ${response.status}`);
             }
+
+            // Якщо відповідь успішна, намагаємося розпарсити її як JSON
+            try {
+                const result = JSON.parse(responseText);
+                if (result.success) {
+                    sessionStorage.setItem('flashMessage', JSON.stringify({ type: 'success', text: 'Альбом успішно видалено.' }));
+                    window.location.href = `${baseUrl}/albums`;
+                } else {
+                    alert(`Помилка від сервера: ${result.message || 'Не вдалося виконати дію.'}`);
+                }
+            } catch (jsonError) {
+                // Цей блок спрацює, якщо сервер повернув успішний статус, але не JSON (наприклад, HTML-сторінку)
+                console.error('Помилка розбору JSON. Оригінальна відповідь від сервера:', responseText);
+                throw new Error('Сервер повернув некоректну відповідь (не JSON).');
+            }
+
         } catch (error) {
             console.error('Помилка під час видалення альбому:', error);
-            alert('Сталася непередбачувана помилка. Перевірте консоль (F12).');
+            alert('Сталася непередбачувана помилка. Подробиці виведено в консоль розробника (F12).');
         } finally {
             document.body.style.cursor = 'default';
         }
@@ -46,49 +62,73 @@ export function initAlbumDeleteHandler() {
 
     // --- 3. Функції для показу відповідних модальних вікон ---
 
-    // Для порожніх альбомів
     const showSimpleDeleteModal = (albumId, albumName) => {
         const modalTitle = simpleModal.querySelector('#modalTitle');
         const modalBody = simpleModal.querySelector('#modalBody');
         const confirmBtn = simpleModal.querySelector('#modalConfirmBtn');
-
+        
         modalTitle.textContent = 'Підтвердження видалення';
         modalBody.innerHTML = `<p>Ви впевнені, що хочете видалити порожній альбом <strong>"${albumName}"</strong>?</p>`;
         
-        // Використовуємо { once: true }, щоб обробник спрацював лише один раз
-        confirmBtn.addEventListener('click', () => {
+        // Створюємо новий обробник, щоб уникнути старих
+        const newConfirmBtn = confirmBtn.cloneNode(true);
+        confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+        newConfirmBtn.addEventListener('click', () => {
             performDeleteRequest(albumId, { action: 'delete_empty' });
-        }, { once: true });
+        });
 
         simpleModal.style.display = 'flex';
     };
 
-    // Для альбомів з вмістом
     const showComplexDeleteModal = async (albumId, albumName) => {
         const modalText = complexModal.querySelector('#deleteAlbumModalText');
         const targetSelect = complexModal.querySelector('select[name="target_album_id"]');
         const confirmBtn = complexModal.querySelector('#confirmAlbumDeleteBtn');
         
         modalText.innerHTML = `Альбом <strong>"${albumName}"</strong> не порожній. Що зробити з його вмістом?`;
-        targetSelect.innerHTML = '<option>Завантаження...</option>';
+        targetSelect.innerHTML = '<option>Завантаження списку альбомів...</option>';
+
+        // --- ДОДАНО: Рекурсивна функція для побудови дерева опцій ---
+        const buildAlbumOptions = (albums, level = 0) => {
+            let html = '';
+            const indent = '— '.repeat(level); // Створюємо відступ для ієрархії
+
+            albums.forEach(album => {
+                html += `<option value="${album.id}">${indent}${album.name}</option>`;
+                if (album.children && album.children.length > 0) {
+                    html += buildAlbumOptions(album.children, level + 1);
+                }
+            });
+            return html;
+        };
+        // --- Кінець нової функції ---
 
         try {
             const response = await fetch(`${baseUrl}/albums/get-for-move?exclude=${albumId}`);
             const data = await response.json();
-            if (data.success && data.albums.length > 0) {
-                targetSelect.innerHTML = data.albums.map(album => `<option value="${album.id}">${album.name}</option>`).join('');
+
+            if (data.success && data.albums && data.albums.length > 0) {
+                // Викликаємо нашу нову функцію для побудови дерева
+                targetSelect.innerHTML = buildAlbumOptions(data.albums);
+                complexModal.querySelector('input[value="move_content"]').disabled = false;
                 targetSelect.disabled = false;
             } else {
-                targetSelect.innerHTML = '<option value="">Немає куди переміщувати</option>';
+                targetSelect.innerHTML = '<option value="">Немає доступних альбомів для переміщення</option>';
+                complexModal.querySelector('input[value="move_content"]').disabled = true;
                 targetSelect.disabled = true;
                 complexModal.querySelector('input[value="delete_content"]').checked = true;
             }
         } catch (error) {
+            console.error("Помилка завантаження списку альбомів:", error);
             targetSelect.innerHTML = '<option value="">Помилка завантаження</option>';
             targetSelect.disabled = true;
         }
+        
+        const newConfirmBtn = confirmBtn.cloneNode(true);
+        confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
 
-        confirmBtn.addEventListener('click', () => {
+        newConfirmBtn.addEventListener('click', () => {
             const action = complexModal.querySelector('input[name="delete_action"]:checked').value;
             const targetAlbumId = targetSelect.value;
 
@@ -97,29 +137,20 @@ export function initAlbumDeleteHandler() {
                 return;
             }
             performDeleteRequest(albumId, { action, target_album_id: targetAlbumId });
-        }, { once: true });
+        });
 
         complexModal.style.display = 'flex';
     };
 
-    // --- 4. Головний обробник подій, який все запускає ---
+    // --- 4. Головний обробник подій ---
     document.body.addEventListener('click', (event) => {
         const deleteButton = event.target.closest('.delete-album-btn');
         if (!deleteButton) return;
-
         const { albumId, albumName, isEmpty } = deleteButton.dataset;
-        
         if (isEmpty === 'true') {
             showSimpleDeleteModal(albumId, albumName);
         } else {
             showComplexDeleteModal(albumId, albumName);
         }
-    });
-
-    // Налаштовуємо закриття для обох модальних вікон
-    [simpleModal, complexModal].forEach(modal => {
-        const closeModal = () => modal.style.display = 'none';
-        modal.querySelectorAll('.modal-close, .cancel').forEach(btn => btn.addEventListener('click', closeModal));
-        modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
     });
 }

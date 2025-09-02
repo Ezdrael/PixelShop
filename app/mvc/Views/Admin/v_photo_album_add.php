@@ -1,11 +1,32 @@
+<?php
+//app/mvc/Views/Admin/v_photo_album_add.php
+
+/**
+ * Рекурсивна функція для генерації <option> з ієрархічними відступами.
+ */
+function renderAlbumOptions($albums, $level = 0, $selectedId = 0) {
+    $indent = str_repeat('&nbsp;&nbsp;&nbsp;', $level); // Створюємо відступ
+    foreach ($albums as $album) {
+        // Перевіряємо, чи потрібно вибрати цю опцію
+        $isSelected = ($album['id'] == $selectedId) ? 'selected' : '';
+        echo "<option value=\"{$album['id']}\" {$isSelected}>{$indent}" . htmlspecialchars($album['name']) . "</option>";
+
+        // Якщо є дочірні альбоми, викликаємо функцію для них
+        if (isset($album['children']) && !empty($album['children'])) {
+            renderAlbumOptions($album['children'], $level + 1, $selectedId);
+        }
+    }
+}
+?>
+
 <div class="content-card">
     <form action="" method="POST">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
         <div class="form-header">
             <h2><?php echo $this->title; ?></h2>
             <div class="actions-cell">
-                <button type="submit" class="action-btn save" title="Зберегти"><i class="fas fa-save"></i></button>
-                <a href="<?php echo BASE_URL; ?>/albums" class="action-btn" title="До списку альбомів"><i class="fas fa-arrow-left"></i></a>
+                <button type="submit" id="save-album-btn" class="action-btn save" title="Зберегти [Ctrl+Enter]"><i class="fas fa-save"></i></button>
+                <a href="<?php echo BASE_URL; ?>/albums" id="back-to-list-btn" class="action-btn" title="До списку альбомів [Esc]"><i class="fas fa-arrow-left"></i></a>
             </div>
         </div>
         
@@ -22,13 +43,12 @@
                 <div class="form-control-wrapper">
                     <select id="album-parent" name="parent_id" class="form-control">
                         <option value="0">-- Немає (кореневий альбом) --</option>
-                        <?php foreach($albums as $cat): ?>
-                            <?php // Заборона робити альбом дочірнім для самого себе
-                            if (isset($album) && $album['id'] == $cat['id']) continue; ?>
-                            <option value="<?php echo $cat['id']; ?>" <?php if (isset($album) && $album['parent_id'] == $cat['id']) echo 'selected'; ?>>
-                                <?php echo htmlspecialchars($cat['name']); ?>
-                            </option>
-                        <?php endforeach; ?>
+                        <?php
+                            // Визначаємо, який ID має бути вибраний за замовчуванням
+                            $selectedParentId = $album['parent_id'] ?? ($preselected_parent_id ?? 0);
+                            // Викликаємо нашу нову функцію для побудови списку
+                            renderAlbumOptions($albumsTree, 0, $selectedParentId);
+                        ?>
                     </select>
                 </div>
             </div>
@@ -42,3 +62,21 @@
         </div>
     </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('keydown', (event) => {
+        // Якщо фокус на полі вводу, реагуємо тільки на Ctrl+Enter
+        if (event.key === 'Enter' && event.ctrlKey) {
+            event.preventDefault();
+            document.getElementById('save-album-btn')?.click();
+        }
+
+        // Якщо фокус не на полі вводу, слухаємо Esc
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            document.getElementById('back-to-list-btn')?.click();
+        }
+    });
+});
+</script>

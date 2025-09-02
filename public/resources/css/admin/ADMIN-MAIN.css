@@ -1,20 +1,23 @@
-/* ===================================================================
-   Файл:      main.css
-   Призначення: Головний файл стилів.
-   =================================================================== */
+/* public/resources/css/admin/ADMIN-MAIN.css (Оновлена версія) */
 
 /* --- 1. ІМПОРТ БАЗОВИХ МОДУЛІВ --- */
 @import url('_layout.css');
 @import url('_tables.css');
 @import url('_forms.css');
-@import url('_components.css');
 
-/* --- 2. ІМПОРТ НОВИХ МОДУЛІВ ДЛЯ ВІДЖЕТІВ --- */
+/* --- 2. ІМПОРТ КОМПОНЕНТІВ (тепер напряму) --- */
+@import url('./components/navigation.css');
+@import url('./components/cards.css');
+@import url('./components/modals.css');
+@import url('./components/ui_elements.css');
+@import url('./components/galleries.css');
+
+/* --- 3. ІМПОРТ ВІДЖЕТІВ --- */
 @import url('widgets/_widget-chat.css');
 @import url('widgets/_widget-notes.css');
 @import url('widgets/_widget-clipboard.css');
 
-/* --- 3. ГЛОБАЛЬНІ ЗМІННІ ТА СТИЛІ --- */
+/* --- 4. ГЛОБАЛЬНІ ЗМІННІ ТА СТИЛІ --- */
 :root {
     --bg-color: #f1f5f9;
     --sidebar-bg: #ffffff;
@@ -29,6 +32,10 @@
     --border-color: #e2e8f0;
     --shadow-color: rgba(0, 0, 0, 0.05);
     --sidebar-hover-bg: #f1f5f9;
+    --accent-color-hover: #2563eb;
+    --danger-color-hover: #dc2626;
+    --warning-color-hover: #d97706;
+    --border-color-hover: #cbd5e1;
 }
 
 * {

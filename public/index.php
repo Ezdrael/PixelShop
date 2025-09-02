@@ -25,6 +25,21 @@ define('ROOT', BASE_PATH . '/app');
 require_once BASE_PATH . '/vendor/autoload.php';
 require_once BASE_PATH . '/config.php';
 
+// Встановлюємо часовий пояс для всього додатку з налаштувань
+try {
+    $db = App\Core\DB::getInstance();
+    $stmt = $db->query("SELECT setting_value FROM settings WHERE setting_key = 'site_timezone'");
+    $timezone = $stmt->fetchColumn();
+    if ($timezone && in_array($timezone, timezone_identifiers_list())) {
+        date_default_timezone_set($timezone);
+    } else {
+        date_default_timezone_set('Europe/Kyiv'); // Запасний варіант, якщо налаштування відсутнє
+    }
+} catch (Exception $e) {
+    // Якщо підключення до БД не вдалося (напр., під час інсталяції), встановлюємо запасний варіант
+    date_default_timezone_set('Europe/Kyiv');
+}
+
 use App\Mvc\Models\Users;
 
 // Отримуємо повний URI запиту
@@ -59,3 +74,5 @@ if (preg_match('/^admin/', $requestUri)) {
     define('BASE_URL', PROJECT_URL);
     require_once BASE_PATH . '/app/routes/web.php';
 }
+
+

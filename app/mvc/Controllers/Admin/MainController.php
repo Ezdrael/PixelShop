@@ -22,11 +22,4 @@ class MainController extends BaseController  {
         $content = "<p>Це проста MVC система, створена для демонстрації.</p>";
         $this->render('v_simple_page', ['page_content' => $content]);
     }
-    
-    public function notFoundAction() {
-        header("HTTP/1.0 404 Not Found");
-        $this->title = '404 - Сторінку не знайдено';
-        $content = "<p>На жаль, сторінку, яку ви шукали, не існує.</p>";
-        $this->render('v_simple_page', ['page_content' => $content]);
-    }
 }

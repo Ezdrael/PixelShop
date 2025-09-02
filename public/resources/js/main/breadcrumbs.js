@@ -1,37 +1,77 @@
-/* ===================================================================
-   Файл:      _main_breadcrumbs.js
-   Призначення: Керування "липкими" хлібними крихтами.
-   =================================================================== */
+// public/resources/js/main/breadcrumbs.js
 
-/**
- * Допоміжна функція для перевірки, чи є один шлях префіксом іншого.
- * @param {Array} shortPath - Короткий шлях
- * @param {Array} longPath - Довгий шлях
- * @returns {boolean}
- */
-function isPathPrefix(shortPath, longPath) {
-    if (shortPath.length > longPath.length) {
-        return false;
-    }
-    for (let i = 0; i < shortPath.length; i++) {
-        if (shortPath[i].url !== longPath[i].url) {
-            return false;
+function findNodeById(tree, nodeId) {
+    if (nodeId == 0 || nodeId === null) return { children: tree };
+    for (const node of tree) {
+        if (node.id == nodeId) return node;
+        if (node.children) {
+            const found = findNodeById(node.children, nodeId);
+            if (found) return found;
         }
     }
-    return true;
+    return null;
+}
+
+function buildAlbumTreeHTML(albums, baseUrl, isSubmenu = false) {
+    const ulClass = isSubmenu ? 'album-tree-level submenu' : 'album-tree-level';
+    let html = `<ul class="${ulClass}">`;
+    for (const album of albums) {
+        const hasChildren = album.children && album.children.length > 0;
+        html += `<li class="${hasChildren ? 'has-submenu' : ''}">`;
+        html += `<a href="${baseUrl}/albums/view/${album.id}">${album.name}</a>`;
+        if (hasChildren) {
+            html += buildAlbumTreeHTML(album.children, baseUrl, true);
+        }
+        html += '</li>';
+    }
+    html += '</ul>';
+    return html;
 }
 
 /**
- * Рендерить хлібні крихти на сторінці.
- * @param {Array} path - Масив об'єктів для побудови шляху.
- * @param {string} currentPageUrl - URL поточної сторінки для виділення активного елемента.
+ * НОВА ФУНКЦІЯ: Обробляє позиціонування меню
  */
-function renderBreadcrumbs(path, currentPageUrl) {
+function handleMenuPositioning() {
+    const menuItems = document.querySelectorAll('.breadcrumb-dropdown .has-submenu');
+
+    menuItems.forEach(item => {
+        const submenu = item.querySelector(':scope > .submenu');
+        if (!submenu) return;
+
+        item.addEventListener('mouseenter', () => {
+            // 1. Показуємо меню, щоб отримати його розміри
+            submenu.classList.add('is-visible');
+            
+            // 2. Вимірюємо положення меню та ширину вікна
+            const rect = submenu.getBoundingClientRect();
+            const viewportWidth = window.innerWidth;
+
+            // 3. Перевіряємо, чи виходить меню за правий край екрану
+            if (rect.right > viewportWidth) {
+                // Якщо так, додаємо клас для відкриття вліво
+                item.classList.add('opens-left');
+                submenu.classList.add('opens-left');
+            } else {
+                // Інакше, прибираємо клас (на випадок зміни розміру вікна)
+                item.classList.remove('opens-left');
+                submenu.classList.remove('opens-left');
+            }
+        });
+
+        item.addEventListener('mouseleave', () => {
+            // Ховаємо меню, коли курсор залишає батьківський елемент
+            submenu.classList.remove('is-visible');
+        });
+    });
+}
+
+
+function renderBreadcrumbs(path, currentPageUrl, albumTree) {
     const container = document.getElementById('breadcrumbs-container');
     if (!container || !Array.isArray(path)) return;
-    
     container.innerHTML = '';
-    
+    const baseUrl = document.body.dataset.baseUrl || '';
+
     path.forEach((crumb, index) => {
         if (index > 0) {
             const separator = document.createElement('span');
@@ -39,76 +79,47 @@ function renderBreadcrumbs(path, currentPageUrl) {
             separator.textContent = '/';
             container.appendChild(separator);
         }
-
+        const crumbWrapper = document.createElement('div');
+        crumbWrapper.className = 'breadcrumb-item';
         const crumbUrl = crumb.url ? crumb.url.replace(/\/$/, "") : null;
         const isActive = crumbUrl === currentPageUrl;
-        
         let element;
-        if (crumb.url && !isActive) { // Робимо активний елемент неклікабельним
+        if (crumb.url && !isActive) {
             element = document.createElement('a');
             element.href = crumb.url;
         } else {
             element = document.createElement('span');
         }
-
         element.textContent = crumb.name;
-        if (isActive) {
-            element.classList.add('active');
+        if (isActive) element.classList.add('active');
+        crumbWrapper.appendChild(element);
+
+        const parentNode = findNodeById(albumTree, crumb.id);
+        const children = parentNode ? parentNode.children || [] : [];
+        if (children.length > 0) {
+            const dropdown = document.createElement('div');
+            dropdown.className = 'breadcrumb-dropdown';
+            dropdown.innerHTML = buildAlbumTreeHTML(children, baseUrl);
+            crumbWrapper.appendChild(dropdown);
         }
-        
-        container.appendChild(element);
+        container.appendChild(crumbWrapper);
     });
+
+    // ВИКЛИКАЄМО НАШУ НОВУ ФУНКЦІЮ ПІСЛЯ СТВОРЕННЯ МЕНЮ
+    handleMenuPositioning();
 }
 
-/**
- * Ініціалізує логіку хлібних крихт: зчитує дані, обробляє "липкість" та рендерить.
- */
 export function initBreadcrumbs() {
     const dataElement = document.getElementById('breadcrumbs-data');
-    if (!dataElement) return;
+    const treeElement = document.getElementById('album-tree-data');
+    if (!dataElement || !treeElement) return;
 
     try {
         const currentPath = JSON.parse(dataElement.textContent);
-        if (!Array.isArray(currentPath)) return;
-
-        const savedPathStr = sessionStorage.getItem('stickyBreadcrumbs');
-        const savedPath = savedPathStr ? JSON.parse(savedPathStr) : [];
-        
-        let finalPath = currentPath;
-
-        // --- НОВА, ВИПРАВЛЕНА ЛОГІКА ---
-        // Перевіряємо, чи ми знаходимось в тій самій секції (наприклад, "Фотоальбоми")
-        const isSameBranch = savedPath.length > 0 && currentPath.length > 0 &&
-                             savedPath[0].url === currentPath[0].url;
-
-        if (isSameBranch) {
-            // Якщо поточний шлях - це частина збереженого (тобто, ми піднялися вгору),
-            // то продовжуємо показувати довший, збережений шлях.
-            if (isPathPrefix(currentPath, savedPath)) {
-                finalPath = savedPath;
-            } else {
-                // В іншому випадку (перехід в іншу гілку або глибше),
-                // поточний шлях стає новим основним.
-                finalPath = currentPath;
-            }
-        } else {
-            // Якщо ми перейшли в зовсім іншу секцію (напр., з Альбомів в Користувачі),
-            // поточний шлях стає основним.
-            finalPath = currentPath;
-        }
-        
-        // Зберігаємо остаточний шлях у sessionStorage для наступних переходів
-        sessionStorage.setItem('stickyBreadcrumbs', JSON.stringify(finalPath));
-
-        // Рендеримо крихти
+        const albumTree = JSON.parse(treeElement.textContent);
         const cleanCurrentUrl = (window.location.origin + window.location.pathname).replace(/\/$/, "");
-        renderBreadcrumbs(finalPath, cleanCurrentUrl);
-
+        renderBreadcrumbs(currentPath, cleanCurrentUrl, albumTree);
     } catch (e) {
         console.error("Помилка обробки хлібних крихт:", e);
-        // У випадку помилки, просто рендеримо поточний шлях
-        const currentPath = JSON.parse(dataElement.textContent);
-        const cleanCurrentUrl = (window.location.origin + window.location.pathname).replace(/\/$/, "");
-        renderBreadcrumbs(currentPath, cleanCurrentUrl);
     }
 }

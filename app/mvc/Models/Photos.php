@@ -109,4 +109,20 @@ class Photos {
             return false;
         }
     }
+
+    /**
+     * Переміщує групу фотографій в інший альбом.
+     */
+    public function movePhotos(array $photoIds, int $targetAlbumId): bool
+    {
+        if (empty($photoIds) || $targetAlbumId <= 0) {
+            return false;
+        }
+        $placeholders = implode(',', array_fill(0, count($photoIds), '?'));
+        $sql = "UPDATE photos SET album_id = ? WHERE id IN ($placeholders)";
+
+        $params = array_merge([$targetAlbumId], $photoIds);
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute($params);
+    }
 }

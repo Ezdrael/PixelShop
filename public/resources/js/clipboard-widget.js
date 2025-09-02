@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!dom.widget) return;
 
+    let isCopyingFromWidget = false;
     let lastCopiedText = '';
 
     const api = {
@@ -77,13 +78,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- ОСНОВНА ЛОГІКА: Відстеження копіювання ---
     document.addEventListener('copy', () => {
+        if (isCopyingFromWidget) { // <-- ДОДАЙТЕ ЦЮ ПЕРЕВІРКУ
+            return;
+        }
+
         if (!config.hasAddPermission) return;
         
         const selection = document.getSelection();
-        const isCopyingFromWidget = selection.anchorNode && dom.widget.contains(selection.anchorNode.parentElement);
         
-        if (isCopyingFromWidget) {
-            return; // Ігноруємо копіювання з самого буфера обміну
+        // Попередню перевірку можна залишити як додатковий захист
+        const isSelectionInsideWidget = selection.anchorNode && dom.widget.contains(selection.anchorNode.parentElement);
+        if (isSelectionInsideWidget) {
+            return;
         }
 
         const selectedText = selection.toString().trim();
@@ -129,15 +135,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Обробник для копіювання з буфера
     dom.list.addEventListener('click', (e) => {
+
         const copyBtn = e.target.closest('.clipboard-copy-btn');
         if (!copyBtn) return;
+
         const content = copyBtn.dataset.content;
-        navigator.clipboard.writeText(content).then(() => {
-            copyBtn.innerHTML = '<i class="fas fa-check"></i>';
-            setTimeout(() => {
-                // Не закриваємо віджет автоматично, щоб користувач міг скопіювати декілька елементів
-                copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
-            }, 800);
-        });
+        isCopyingFromWidget = true;
+
+        const copyToClipboard = (text) => {
+            if (navigator.clipboard && window.isSecureContext) {
+                return navigator.clipboard.writeText(text);
+            } else {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed'; // Запобігаємо прокрутці
+                textArea.style.opacity = '0';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                } catch (err) {
+                    console.error('Не вдалося скопіювати текст: ', err);
+                }
+                document.body.removeChild(textArea);
+            }
+        };
+
+        copyToClipboard(content);
+
+        copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+        setTimeout(() => {
+            copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+        }, 800);
+
+        setTimeout(() => { isCopyingFromWidget = false; }, 100);
     });
 });

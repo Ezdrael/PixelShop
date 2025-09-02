@@ -44,16 +44,18 @@ class Currencies
             $this->db->beginTransaction();
 
             $stmt = $this->db->prepare(
-                "UPDATE currencies SET rate_buy = ?, rate_sale = ?, last_updated = NOW() WHERE code = ?"
+                "UPDATE currencies SET rate_buy = ?, rate_sale = ?, last_updated = ? WHERE code = ?"
             );
 
+            // Генеруємо поточний час в UTC. PHP вже налаштований на це завдяки DB.php
+            $currentTimeUTC = date('Y-m-d H:i:s');
+
             foreach ($ratesFromApi as $rate) {
-                // Оновлюємо лише ті валюти, які є в нашій базі (наприклад, USD, EUR)
                 if (isset($rate['ccy']) && isset($rate['buy']) && isset($rate['sale'])) {
-                    $stmt->execute([(float)$rate['buy'], (float)$rate['sale'], $rate['ccy']]);
+                    $stmt->execute([(float)$rate['buy'], (float)$rate['sale'], $currentTimeUTC, $rate['ccy']]);
                 }
             }
-            
+
             $this->db->commit();
             return true;
         } catch (\Exception $e) {

@@ -3,12 +3,12 @@
 ?>
 <div class="content-card" style="text-align: center; padding: 3rem 1rem;">
 
-    <img src="<?php echo PROJECT_URL; ?>/resources/img/layout/you_shell_not_pass.png" alt="Помилка 404" style="max-width: 300px; margin-bottom: 2rem;">
+    <img src="<?php echo PROJECT_URL; ?>/resources/img/layout/404.png" alt="Помилка 404" style="max-width: 300px; margin-bottom: 2rem;">
 
-    <h2 style="font-size: 2.5rem; margin: 0 0 1rem 0; color: var(--primary-text);">Помилка доступу</h2>
+    <h2 style="font-size: 2.5rem; margin: 0 0 1rem 0; color: var(--primary-text);">Сторінку не знайдено</h2>
     <p style="font-size: 1.1rem; color: var(--secondary-text); margin-bottom: 2.5rem;">
-        На жаль, ви не маєте доступу до цієї сторінки.<br>
-        Можливо, вам потрібно увійти в систему або у вас недостатньо прав.
+        На жаль, ми не змогли знайти сторінку, яку ви шукали.<br>
+        Можливо, її було видалено, або адреса була введена неправильно.
     </p>
 
     <button id="go-back-btn" class="btn-primary" style="padding: 1rem 2.5rem; font-size: 1.1rem;">

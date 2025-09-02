@@ -1,69 +1,95 @@
 // public/resources/js/photo-album-view/gallery.js
 
 /**
- * Ініціалізує LightGallery з кастомними кнопками "Зробити обкладинкою" та "Видалити".
+ * ✅ ФІНАЛЬНА ВЕРСІЯ З ПЕРЕВІРКОЮ ПРАВ ДОСТУПУ
  */
-export function initLightGallery(config, deletePhotos) {
-    // Перевіряємо, чи бібліотека LightGallery завантажилась
-    if (typeof lightGallery === 'undefined') {
-        console.error('LightGallery library is not loaded.');
+export function initLightGallery(config, deletePhotosCallback, movePhotoCallback) {
+    const galleryContainer = config.galleryContainer;
+    if (typeof lightGallery === 'undefined' || !galleryContainer) {
+        console.error('LightGallery не ініціалізовано або контейнер не знайдено.');
         return;
     }
 
-    // Ініціалізуємо галерею
-    const lg = lightGallery(config.galleryContainer, {
+    const lg = lightGallery(galleryContainer, {
         selector: '.gallery-item',
         speed: 500,
-        download: false, // Вимикаємо стандартну кнопку завантаження
-        getCaptionFromTitleOrAlt: false
+        download: false,
     });
 
-    // === ГОЛОВНЕ ВИПРАВЛЕННЯ: Додаємо кнопки ПІСЛЯ ініціалізації галереї ===
-    // Слухаємо подію 'lgAfterOpen', яка спрацьовує, коли слайдер відкрито
-    config.galleryContainer.addEventListener('lgAfterOpen', (event) => {
+    galleryContainer.addEventListener('lgAfterOpen', (event) => {
         const lightGalleryInstance = event.detail.instance;
-        const currentSlide = lightGalleryInstance.getSlideItem(lightGalleryInstance.index);
-        
-        // Знаходимо панель інструментів у відкритому слайдері
         const toolbar = lightGalleryInstance.outer.querySelector('.lg-toolbar');
-        if (!toolbar) return;
 
-        // --- Кнопка "Зробити обкладинкою" ---
-        const setCoverBtn = document.createElement('button');
-        setCoverBtn.className = 'lg-icon';
-        setCoverBtn.id = 'lg-set-cover';
-        setCoverBtn.setAttribute('aria-label', 'Зробити обкладинкою');
-        setCoverBtn.innerHTML = '<i class="fas fa-bookmark"></i>';
+        if (!toolbar || toolbar.querySelector('#lg-custom-buttons')) return;
+
+        // ✅ Отримуємо права доступу з data-атрибутів
+        const canEdit = galleryContainer.dataset.canEdit === 'true';
+        const canDelete = galleryContainer.dataset.canDelete === 'true';
+
+        const buttonContainer = document.createElement('div');
+        buttonContainer.id = 'lg-custom-buttons';
+        buttonContainer.style.display = 'flex';
+        buttonContainer.style.gap = '10px';
+
+        const createButton = (iconClass, title, onClick, color = 'white') => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'lg-icon';
+            btn.title = title;
+            btn.setAttribute('aria-label', title);
+            btn.innerHTML = `<i class="${iconClass}" style="font-size: 18px; color: ${color};"></i>`;
+            btn.onclick = onClick;
+            return btn;
+        };
+
+        const getCurrentSlideData = () => {
+            const slide = lightGalleryInstance.getSlideItem(lightGalleryInstance.index);
+            return {
+                photoId: slide.dataset.photoId,
+                albumId: slide.dataset.albumId,
+            };
+        };
         
-        setCoverBtn.onclick = async () => {
-            const photoId = currentSlide.dataset.photoId;
-            const albumId = currentSlide.dataset.albumId;
-            const response = await fetch(`${config.baseUrl}/albums/set-cover/${albumId}/${photoId}`, {
-                method: 'POST',
-                headers: { 'X-CSRF-TOKEN': config.csrfToken }
+        // ✅ Створюємо кнопки "Встановити обкладинку" та "Перемістити" ТІЛЬКИ ЯКЩО є права на редагування
+        if (canEdit) {
+            const setCoverBtn = createButton('fas fa-image', 'Встановити як обкладинку', async () => {
+                const { photoId, albumId } = getCurrentSlideData();
+                try {
+                    const response = await fetch(`${config.baseUrl}/albums/set-cover/${albumId}/${photoId}`, {
+                        method: 'POST', headers: { 'X-CSRF-TOKEN': config.csrfToken }
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        config.showFlashMessage('success', 'Обкладинку оновлено.');
+                        window.location.reload();
+                    } else { alert(result.message || 'Помилка.'); }
+                } catch (e) { console.error(e); alert('Сталася помилка.'); }
             });
-            const result = await response.json();
-            if (result.success) {
-                config.showFlashMessage('success', 'Обкладинку альбому оновлено.');
-                lightGalleryInstance.closeGallery();
-            } else {
-                alert(result.message || 'Не вдалося встановити обкладинку.');
-            }
-        };
-        toolbar.appendChild(setCoverBtn);
 
-        // --- Кнопка "Видалити" ---
-        const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'lg-icon';
-        deleteBtn.id = 'lg-delete-photo';
-        deleteBtn.setAttribute('aria-label', 'Видалити фото');
-        deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+            const moveBtn = createButton('fas fa-arrows-alt', 'Перемістити фото', () => {
+                const { photoId } = getCurrentSlideData();
+                lightGalleryInstance.closeGallery();
+                setTimeout(() => movePhotoCallback([photoId]), 150);
+            });
+
+            buttonContainer.appendChild(setCoverBtn);
+            buttonContainer.appendChild(moveBtn);
+        }
+
+        // ✅ Створюємо кнопку "Видалити" ТІЛЬКИ ЯКЩО є права на видалення
+        if (canDelete) {
+            const deleteBtn = createButton('fas fa-trash', 'Видалити фото', () => {
+                const { photoId } = getCurrentSlideData();
+                lightGalleryInstance.closeGallery();
+                setTimeout(() => deletePhotosCallback([photoId]), 150);
+            }, 'var(--danger-color)');
+            
+            buttonContainer.appendChild(deleteBtn);
+        }
         
-        deleteBtn.onclick = () => {
-            const photoId = currentSlide.dataset.photoId;
-            deletePhotos([photoId]); // Використовуємо функцію видалення з головного скрипта
-            lightGalleryInstance.closeGallery();
-        };
-        toolbar.appendChild(deleteBtn);
+        // Додаємо контейнер з кнопками на панель інструментів, лише якщо він не порожній
+        if (buttonContainer.hasChildNodes()) {
+            toolbar.appendChild(buttonContainer);
+        }
     });
 }

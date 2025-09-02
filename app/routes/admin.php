@@ -49,6 +49,8 @@ $router->add('goods/getByWarehouse', ['controller' => 'Goods', 'action' => 'getB
 $router->add('goods/getWarehousesForGood', ['controller' => 'Goods', 'action' => 'getWarehousesForGood']);
 
 $router->add('warehouses', ['controller' => 'Warehouses', 'action' => 'index']);
+$router->add('warehouses/index', ['controller' => 'Warehouses', 'action' => 'index']);
+$router->add('warehouses/add', ['controller' => 'Warehouses', 'action' => 'add']);
 $router->add('warehouses/watch/(?P<id>\d+)', ['controller' => 'Warehouses', 'action' => 'watch']);
 $router->add('warehouses/edit/(?P<id>\d+)', ['controller' => 'Warehouses', 'action' => 'edit']);
 $router->add('warehouses/delete/(?P<id>\d+)', ['controller' => 'Warehouses', 'action' => 'delete']);
@@ -79,15 +81,15 @@ $router->add('transfers/watch/(?P<ids>[\d,]+)', ['controller' => 'Transfers', 'a
 $router->add('transfers/cancel/(?P<ids>[\d,]+)', ['controller' => 'Transfers', 'action' => 'cancel']);
 
 $router->add('albums', ['controller' => 'PhotoAlbums', 'action' => 'index']);
-$router->add('albums/view/(?P<id>\d+)', ['controller' => 'PhotoAlbums', 'action' => 'viewAlbum']);
 $router->add('albums/add', ['controller' => 'PhotoAlbums', 'action' => 'add']);
-$router->add('albums/edit/(?P<id>\d+)', ['controller' => 'PhotoAlbums', 'action' => 'edit']);
-$router->add('albums/upload/(?P<id>\d+)', ['controller' => 'PhotoAlbums', 'action' => 'upload']);
+$router->add('albums/delete/(?P<id>\d+)', ['controller' => 'PhotoAlbums', 'action' => 'delete']);
 $router->add('albums/delete-photo/(?P<id>\d+)', ['controller' => 'PhotoAlbums', 'action' => 'deletePhoto']);
+$router->add('albums/edit/(?P<id>\d+)', ['controller' => 'PhotoAlbums', 'action' => 'edit']);
 $router->add('albums/get-for-move', ['controller' => 'PhotoAlbums', 'action' => 'getAlbumsForMove']);
+$router->add('albums/view/(?P<id>\d+)', ['controller' => 'PhotoAlbums', 'action' => 'viewAlbum']);
 $router->add('albums/set-cover/(?P<albumId>\d+)/(?P<photoId>\d+)', ['controller' => 'PhotoAlbums', 'action' => 'setCover']);
-$router->add('albums/get-for-move', ['controller' => 'PhotoAlbums', 'action' => 'getAlbumsForMove']);
-$router->add('albums', ['controller' => 'PhotoAlbums', 'action' => 'index']);
+$router->add('albums/upload/(?P<id>\d+)', ['controller' => 'PhotoAlbums', 'action' => 'upload']);
+$router->add('photos/move', ['controller' => 'PhotoAlbums', 'action' => 'movePhotos']);
 
 $router->add('settings', ['controller' => 'Settings', 'action' => 'index']); 
 
@@ -110,9 +112,14 @@ $router->add('clipboard/get', ['controller' => 'Clipboard', 'action' => 'get']);
 $router->add('clipboard/add', ['controller' => 'Clipboard', 'action' => 'add']);
 $router->add('clipboard/clear', ['controller' => 'Clipboard', 'action' => 'clear']);
 
-// "Відрізаємо" префікс 'admin/' від URL
-$requestUri = trim($_SERVER['REQUEST_URI'], '/');
+$router->add('account/settings', ['controller' => 'Account', 'action' => 'settings']);
+
+// 1. Отримуємо URI і ВІДРІЗАЄМО GET-ПАРАМЕТРИ (все, що після знаку '?')
+$requestUri = strtok($_SERVER['REQUEST_URI'], '?');
+
+// 2. "Відрізаємо" префікс 'admin/' від URL
+$requestUri = trim($requestUri, '/');
 $admin_route = preg_replace('/^admin\/?/', '', $requestUri);
 
-// Запускаємо роутер з контекстом 'Admin'
+// 3. Запускаємо роутер з контекстом 'Admin'
 $router->dispatch($admin_route, 'Admin');

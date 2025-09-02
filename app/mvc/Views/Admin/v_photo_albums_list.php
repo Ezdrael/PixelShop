@@ -1,5 +1,5 @@
 <?php
-    $breadcrumbs = [['name' => 'Фотоальбоми', 'url' => BASE_URL . '/albums']];
+    $breadcrumbs = [['name' => 'Фотоальбоми', 'url' => BASE_URL . '/albums', 'id' => 0]];
     include '_template_breadcrumbs.php';
 
     function renderAlbumTree($albums, $controller, $mAlbums, $level = 0) {
@@ -26,6 +26,9 @@
                . '</span>';
 
             echo '<div class="actions-cell">';
+            if ($controller->hasPermission('albums', 'a')) { 
+                echo '<a href="' . BASE_URL . '/albums/upload/' . $album['id'] . '" class="action-btn save" title="Завантажити фото"><i class="fas fa-upload"></i></a>';
+            }
             if ($controller->hasPermission('albums', 'v')) {
                 echo '<a href="' . BASE_URL . '/albums/view/' . $album['id'] . '" class="action-btn" title="Переглянути"><i class="fas fa-eye"></i></a>';
             }
@@ -60,7 +63,7 @@
         <h2>Фотоальбоми</h2>
         <div class="actions-cell">
              <?php if ($this->hasPermission('albums', 'a')): ?>
-                <a href="<?php echo BASE_URL . '/albums/add'; ?>" class="action-btn save" title="Створити альбом"><i class="fas fa-plus"></i></a>
+                <a id="create-album-btn" href="<?php echo BASE_URL . '/albums/add'; ?>" class="action-btn save" title="Створити альбом [Alt+=]"><i class="fas fa-plus"></i></a>
             <?php endif; ?>
         </div>
     </div>

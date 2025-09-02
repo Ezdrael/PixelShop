@@ -1,9 +1,6 @@
-/* ===================================================================
-   Файл:      _comp_modals.css
-   Призначення: Модальні вікна та флеш-повідомлення.
-   =================================================================== */
+/* public/resources/css/admin/components/modals.css (Фінальна версія) */
 
-/* --- Модальне вікно --- */
+/* --- Базові стилі модального вікна --- */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -22,8 +19,9 @@
     border-radius: 12px;
     width: 100%;
     max-width: 450px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 30px var(--shadow-color);
     animation: fadeIn 0.3s ease-out;
+    border-top: 5px solid var(--accent-color);
 }
 
 @keyframes fadeIn {
@@ -71,11 +69,12 @@
     gap: 0.75rem;
     padding: 1rem 1.5rem;
     border-top: 1px solid var(--border-color);
-    background-color: #f9fafb;
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
+    background-color: var(--sidebar-hover-bg);
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
 }
 
+/* --- Нова система кнопок --- */
 .modal-btn {
     padding: 0.6rem 1.2rem;
     font-size: 0.9rem;
@@ -86,25 +85,57 @@
     transition: background-color 0.2s;
 }
 
-.modal-btn.confirm {
+/* Зелена кнопка (підтвердження, позитивна дія) */
+.modal-btn--confirm {
     background-color: var(--success-color);
     color: #fff;
 }
 
-.modal-btn.confirm:hover {
-    background-color: #16a34a;
+.modal-btn--confirm:hover {
+    background-color: #15803d;
+    /* Темніший зелений, якщо немає --success-color-hover */
 }
 
-.modal-btn.cancel {
+/* Червона кнопка (небезпечна дія) */
+.modal-btn--danger {
     background-color: var(--danger-color);
     color: #fff;
 }
 
-.modal-btn.cancel:hover {
-    background-color: #dc2626;
+.modal-btn--danger:hover {
+    background-color: var(--danger-color-hover);
 }
 
-/* --- Флеш-повідомлення --- */
+/* Сіра кнопка (скасування) */
+.modal-btn--cancel {
+    background-color: var(--border-color);
+    color: var(--primary-text);
+}
+
+.modal-btn--cancel:hover {
+    background-color: var(--border-color-hover);
+}
+
+
+/* --- Стилі для модального вікна помилки (помаранчеве) --- */
+.modal-box--error {
+    border-top-color: var(--warning-color);
+}
+
+.modal-box--error .modal-header h3 {
+    color: var(--warning-color);
+}
+
+.modal-box--error .modal-btn--confirm {
+    /* Кнопка "ОК" у вікні помилки */
+    background-color: var(--warning-color);
+}
+
+.modal-box--error .modal-btn--confirm:hover {
+    background-color: var(--warning-color-hover);
+}
+
+/* --- Флеш-повідомлення (без змін) --- */
 .flash-message {
     display: flex;
     justify-content: space-between;

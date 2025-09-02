@@ -33,7 +33,7 @@
                     <td><?php echo htmlspecialchars($currency['bank']); ?></td>
                     <td><?php echo htmlspecialchars($currency['rate_buy'] ?? '---'); ?></td>
                     <td><?php echo htmlspecialchars($currency['rate_sale'] ?? '---'); ?></td>
-                    <td><?php echo $currency['last_updated'] ? date('d.m.Y H:i', strtotime($currency['last_updated'])) : 'Ніколи'; ?></td>
+                    <td class="time-ago" data-timestamp="<?php echo $currency['last_updated'] ? gmdate('Y-m-d\TH:i:s\Z', strtotime($currency['last_updated'])) : ''; ?>">
                     <td class="actions-cell">
                         <?php if ($this->hasPermission('currencies', 'd')): ?>
                             <button type="button" class="action-btn delete-currency-btn" title="Видалити">
@@ -170,5 +170,67 @@ document.addEventListener('DOMContentLoaded', () => {
             }, { once: true });
         }
     });
+
+    /**
+     * Функція для правильної відміни слів в українській мові (1 секунду, 2 секунди, 5 секунд).
+     */
+    function getUkrainianPlural(number, one, few, many) {
+        number = Math.abs(number) % 100;
+        if (number % 10 === 1 && number % 100 !== 11) {
+            return one;
+        }
+        if ([2, 3, 4].includes(number % 10) && ![12, 13, 14].includes(number % 100)) {
+            return few;
+        }
+        return many;
+    }
+
+    /**
+     * Форматує рядок дати у формат "X одиниць тому".
+     */
+    function formatTimeAgo(dateString) {
+        if (!dateString) return 'Ніколи';
+
+        const now = new Date();
+        const past = new Date(dateString.replace(' ', 'T')); // Робимо час сумісним з ISO
+        const secondsAgo = Math.round((now - past) / 1000);
+
+        if (secondsAgo < 0) return 'Щойно';
+        if (secondsAgo < 60) {
+            return `${secondsAgo} ${getUkrainianPlural(secondsAgo, 'секунду', 'секунди', 'секунд')} тому`;
+        }
+
+        const minutesAgo = Math.floor(secondsAgo / 60);
+        if (minutesAgo < 60) {
+            return `${minutesAgo} ${getUkrainianPlural(minutesAgo, 'хвилину', 'хвилини', 'хвилин')} тому`;
+        }
+
+        const hoursAgo = Math.floor(minutesAgo / 60);
+        if (hoursAgo < 24) {
+            return `${hoursAgo} ${getUkrainianPlural(hoursAgo, 'годину', 'години', 'годин')} тому`;
+        }
+
+        const daysAgo = Math.floor(hoursAgo / 24);
+        return `${daysAgo} ${getUkrainianPlural(daysAgo, 'день', 'дні', 'днів')} тому`;
+    }
+
+    /**
+     * Оновлює текст для всіх елементів з відліком часу.
+     */
+    function updateTimestamps() {
+        const timeElements = document.querySelectorAll('.time-ago');
+        timeElements.forEach(el => {
+            const timestamp = el.dataset.timestamp;
+            if (timestamp) {
+                el.textContent = formatTimeAgo(timestamp);
+            }
+        });
+    }
+
+    // Запускаємо оновлення кожні 5 секунд
+    setInterval(updateTimestamps, 5000);
+
+    // Оновлюємо одразу після завантаження сторінки
+    updateTimestamps();
 });
 </script>

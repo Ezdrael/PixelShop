@@ -9,7 +9,8 @@ class PhotoalbumsController extends BaseController  {
     protected $mAlbums;
     protected $mPhotos;
 
-    public function __construct($params) {
+    public function __construct($params)
+    {
         parent::__construct($params);
         if (!$this->hasPermission('albums', 'v')) {
             $this->showAccessDenied();
@@ -22,20 +23,30 @@ class PhotoalbumsController extends BaseController  {
     /**
      * Показує головну сторінку з деревом альбомів.
      */
-    public function indexAction() {
+    public function indexAction()
+    {
         $this->title = 'Фотоальбоми';
+        $this->addJS(PROJECT_URL . '/resources/js/photo-album-list.js');
+
         $allAlbums = $this->mAlbums->getAllWithDetails();
         $albumsTree = $this->mAlbums->buildTree($allAlbums);
+        
+        // --- ВИПРАВЛЕНО ТУТ: Додано 'id' => 0 ---
+        $breadcrumbs = [['name' => 'Фотоальбоми', 'url' => BASE_URL . '/albums', 'id' => 0]];
+
         $this->render('v_photo_albums_list', [
             'albumsTree' => $albumsTree,
-            'controller' => $this
+            'controller' => $this,
+            'breadcrumbs' => $breadcrumbs,
+            'albumsTreeData' => $albumsTree 
         ]);
     }
 
     /**
      * Показує вміст одного альбому.
      */
-    public function viewAlbumAction() {
+    public function viewAlbumAction()
+    {
         $id = (int)($this->params['id'] ?? 0);
         $album = $this->mAlbums->getById($id);
         
@@ -44,46 +55,61 @@ class PhotoalbumsController extends BaseController  {
             exit();
         }
         
+        $this->addCSS(PROJECT_URL . '/resources/css/admin/photo-album.css');
+        $this->addJS(PROJECT_URL . '/resources/js/photo-album-view.js');
+
         $this->title = 'Альбом: ' . htmlspecialchars($album['name']);
         
         $ancestors = $this->mAlbums->getAncestors($id);
         $children = $this->mAlbums->getChildren($id);
         $photos = $this->mPhotos->getByAlbumId($id);
 
+        // === ОСНОВНЕ ВИПРАВЛЕННЯ ТУТ ===
+        // Формуємо хлібні крихти, додаючи ID до кожного елемента
         $breadcrumbs = [
-            ['name' => 'Фотоальбоми', 'url' => BASE_URL . '/albums']
+            ['name' => 'Фотоальбоми', 'url' => BASE_URL . '/albums', 'id' => 0]
         ];
         foreach ($ancestors as $ancestor) {
             $breadcrumbs[] = [
                 'name' => $ancestor['name'],
-                'url' => BASE_URL . '/albums/view/' . $ancestor['id']
+                'url' => BASE_URL . '/albums/view/' . $ancestor['id'],
+                'id' => $ancestor['id'] // Додаємо ID
             ];
         }
         $breadcrumbs[] = [
             'name' => $album['name'],
-            'url' => BASE_URL . '/albums/view/' . $album['id']
+            'url' => BASE_URL . '/albums/view/' . $album['id'],
+            'id' => $album['id'] // Додаємо ID
         ];
+
+        $allAlbums = $this->mAlbums->getAllWithDetails();
+        $albumsTree = $this->mAlbums->buildTree($allAlbums);
 
         $this->render('v_photo_album_single', [
             'album' => $album,
             'ancestors' => $ancestors,
             'breadcrumbs' => $breadcrumbs, 
             'children' => $children,
-            'photos' => $photos
+            'photos' => $photos,
+            'albumsTree' => $albumsTree
         ]);
     }
 
+    /**
+     * Додає новий фотоальбом (форма + обробка POST).
+     */
     public function addAction() {
         if (!$this->hasPermission('albums', 'a')) {
             return $this->showAccessDenied();
         }
-        
+
         $this->title = 'Створення нового альбому';
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) die('CSRF Error');
-            
+
             if (!empty(trim($_POST['name']))) {
+                // === ВИПРАВЛЕНО ТУТ: 'addAlbum' замінено на 'add' ===
                 if ($this->mAlbums->add($_POST)) {
                     $_SESSION['flash_message'] = ['type' => 'success', 'text' => 'Новий альбом успішно створено.'];
                     header('Location: ' . BASE_URL . '/albums');
@@ -99,54 +125,62 @@ class PhotoalbumsController extends BaseController  {
         }
 
         $allAlbums = $this->mAlbums->getAllWithDetails();
-        
-        $this->render('v_photo_album_add', ['albums' => $allAlbums]);
+        $albumsTree = $this->mAlbums->buildTree($allAlbums);
+
+        $preselected_parent_id = (int)($_GET['parent_id'] ?? 0);
+
+        $this->render('v_photo_album_add', [
+            'albumsTree' => $albumsTree,
+            'preselected_parent_id' => $preselected_parent_id
+        ]);
     }
 
+    /**
+     * Редагує існуючий фотоальбом (форма + обробка POST).
+     */
     public function editAction() {
-    if (!$this->hasPermission('albums', 'e')) {
-        return $this->showAccessDenied();
-    }
-    
-    $id = (int)($this->params['id'] ?? 0);
-    $album = $this->mAlbums->getById($id);
-
-    if (!$album) {
-        header('Location: ' . BASE_URL . '/albums');
-        exit();
-    }
-
-    $this->title = 'Редагування альбому: ' . htmlspecialchars($album['name']);
-
-    // === ДОДАНО ВІДСУТНІЙ БЛОК КОДУ ===
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-            die('CSRF Error');
+        if (!$this->hasPermission('albums', 'e')) {
+            return $this->showAccessDenied();
         }
-        
-        if (!empty(trim($_POST['name']))) {
-            if ($this->mAlbums->update($id, $_POST)) {
-                $_SESSION['flash_message'] = ['type' => 'success', 'text' => 'Дані альбому успішно оновлено.'];
+
+        $id = (int)($this->params['id'] ?? 0);
+        $album = $this->mAlbums->getById($id);
+
+        if (!$album) {
+            $this->notFoundAction();
+            return;
+        }
+
+        $this->title = 'Редагування альбому: ' . htmlspecialchars($album['name']);
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) die('CSRF Error');
+
+            if (!empty(trim($_POST['name']))) {
+                if ($this->mAlbums->update($id, $_POST)) {
+                    $_SESSION['flash_message'] = ['type' => 'success', 'text' => 'Дані альбому успішно оновлено.'];
+                    header('Location: ' . BASE_URL . '/albums/view/' . $id);
+                    exit();
+                } else {
+                    $_SESSION['flash_message'] = ['type' => 'error', 'text' => 'Не вдалося оновити альбом.'];
+                }
             } else {
-                $_SESSION['flash_message'] = ['type' => 'error', 'text' => 'Не вдалося оновити дані альбому.'];
+                $_SESSION['flash_message'] = ['type' => 'error', 'text' => 'Назва альбому не може бути порожньою.'];
             }
-        } else {
-            $_SESSION['flash_message'] = ['type' => 'error', 'text' => 'Назва альбому не може бути порожньою.'];
+            header('Location: ' . BASE_URL . '/albums/edit/' . $id);
+            exit();
         }
-        
-        // Перенаправляємо назад на сторінку редагування, щоб показати повідомлення
-        header('Location: ' . BASE_URL . '/albums/edit/' . $id);
-        exit();
+
+        // Отримуємо список всіх альбомів для вибору батьківського
+        $allAlbums = $this->mAlbums->getAllWithDetails();
+        $albumsTree = $this->mAlbums->buildTree($allAlbums);
+
+        // Рендеримо той самий шаблон, що й для додавання, але передаємо йому дані альбому
+        $this->render('v_photo_album_add', [
+            'album' => $album,
+            'albumsTree' => $albumsTree
+        ]);
     }
-    // === КІНЕЦЬ НОВОГО БЛОКУ ===
-
-    $availableParents = $this->mAlbums->getAvailableParentAlbums($id);
-
-    $this->render('v_photo_album_edit', [
-        'album' => $album,
-        'albums' => $availableParents
-    ]);
-}
 
     public function uploadAction() {
         if (!$this->hasPermission('albums', 'a')) {
@@ -304,9 +338,14 @@ class PhotoalbumsController extends BaseController  {
     public function getAlbumsForMoveAction()
     {
         header('Content-Type: application/json');
+        
+        // Отримуємо ID альбому, який потрібно виключити, з GET-параметра
         $excludeId = (int)($_GET['exclude'] ?? 0);
-        $albums = $this->mAlbums->getAlbumsForMove($excludeId);
-        echo json_encode(['success' => true, 'albums' => $albums]);
+        
+        // Викликаємо новий метод моделі, який повертає вже відфільтроване дерево
+        $albumTree = $this->mAlbums->getAvailableAlbumsForMove($excludeId);
+        
+        echo json_encode(['success' => true, 'albums' => $albumTree]);
         exit();
     }
 
@@ -362,5 +401,25 @@ class PhotoalbumsController extends BaseController  {
 
     public function getMAlbums() {
         return $this->mAlbums;
+    }
+
+    public function movePhotosAction()
+    {
+        header('Content-Type: application/json');
+        if (!$this->hasPermission('albums', 'e')) { // Для переміщення потрібні права на редагування
+            echo json_encode(['success' => false, 'message' => 'Доступ заборонено.']);
+            exit();
+        }
+
+        $data = json_decode(file_get_contents('php://input'), true);
+        $photoIds = $data['photo_ids'] ?? [];
+        $targetAlbumId = (int)($data['target_album_id'] ?? 0);
+
+        if ($this->mPhotos->movePhotos($photoIds, $targetAlbumId)) {
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Помилка переміщення фото.']);
+        }
+        exit();
     }
 }

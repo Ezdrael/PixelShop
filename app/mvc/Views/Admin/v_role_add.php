@@ -50,7 +50,7 @@ function render_permission_checkboxes($role, $resource_name, $label) {
         
         <div class="form-body">
             <div class="form-group-inline">
-                <label for="role-name">Назва ролі</label>
+                <label for="role-name">Назва ролі <span class="required-field">*</span></label>
                 <input type="text" id="role-name" name="role_name" class="form-control" value="<?php echo htmlspecialchars($role['role_name'] ?? ''); ?>" required>
             </div>
         </div>

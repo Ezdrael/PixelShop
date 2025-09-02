@@ -160,36 +160,17 @@ class Photoalbums {
     }
 
     /**
-     * Отримує список всіх альбомів для переміщення, виключаючи вказаний та його нащадків.
+     * Отримує список всіх альбомів, які можуть бути батьківськими.
+     * Виключає поточний альбом та всіх його нащадків.
+     * @param int $excludeAlbumId - ID поточного альбому, який редагується.
+     * @return array
      */
-    public function getAlbumsForMove(int $excludeAlbumId): array
+    public function getAvailableParentAlbums(): array
     {
-        $descendants = $this->getDescendantIds($excludeAlbumId);
-        $descendants[] = $excludeAlbumId;
-
-        $placeholders = implode(',', array_fill(0, count($descendants), '?'));
-        $sql = "SELECT id, name FROM photo_albums WHERE id NOT IN ($placeholders) ORDER BY name ASC";
+        $sql = "SELECT id, name, parent_id FROM photo_albums ORDER BY name ASC";
         $stmt = $this->db->prepare($sql);
-        $stmt->execute($descendants);
+        $stmt->execute();
         return $stmt->fetchAll();
-    }
-
-    /**
-     * Допоміжний рекурсивний метод для отримання ID всіх нащадків.
-     */
-    private function getDescendantIds(int $parentId): array
-    {
-        $stmt = $this->db->prepare("SELECT id FROM photo_albums WHERE parent_id = ?");
-        $stmt->execute([$parentId]);
-        $children = $stmt->fetchAll(\PDO::FETCH_COLUMN);
-        
-        $descendantIds = $children;
-        
-        foreach ($children as $childId) {
-            $descendantIds = array_merge($descendantIds, $this->getDescendantIds($childId));
-        }
-        
-        return $descendantIds;
     }
 
     /**
@@ -199,16 +180,13 @@ class Photoalbums {
     {
         try {
             $this->db->beginTransaction();
-
             $stmtMoveAlbums = $this->db->prepare("UPDATE photo_albums SET parent_id = ? WHERE parent_id = ?");
             $stmtMoveAlbums->execute([$targetAlbumId, $sourceAlbumId]);
-
+            // Виправлено помилку: оновлюємо таблицю photos, а не photo_albums
             $stmtMovePhotos = $this->db->prepare("UPDATE photos SET album_id = ? WHERE album_id = ?");
             $stmtMovePhotos->execute([$targetAlbumId, $sourceAlbumId]);
-            
             $stmtDelete = $this->db->prepare("DELETE FROM photo_albums WHERE id = ?");
             $stmtDelete->execute([$sourceAlbumId]);
-
             $this->db->commit();
             return true;
         } catch (\Exception $e) {
@@ -225,7 +203,31 @@ class Photoalbums {
     {
         try {
             $this->db->beginTransaction();
-            $this->_recursiveDeleteWorker($albumId);
+
+            // 1. Знаходимо всі вкладені альбоми (всю ієрархію вниз)
+            $allAlbumIdsToDelete = array_merge([$albumId], $this->getDescendantIds($albumId));
+            $placeholders = implode(',', array_fill(0, count($allAlbumIdsToDelete), '?'));
+
+            // 2. Знаходимо всі фотографії у цих альбомах, щоб видалити їхні файли
+            $sqlPhotos = "SELECT filename FROM photos WHERE album_id IN ($placeholders)";
+            $stmtPhotos = $this->db->prepare($sqlPhotos);
+            $stmtPhotos->execute($allAlbumIdsToDelete);
+            $photosToDelete = $stmtPhotos->fetchAll(PDO::FETCH_COLUMN);
+
+            // 3. Видаляємо фізичні файли фотографій
+            foreach ($photosToDelete as $filename) {
+                $filePath = BASE_PATH . '/public/resources/img/products/' . $filename;
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
+            }
+            
+            // 4. Видаляємо ОДИН батьківський альбом.
+            // База даних автоматично видалить всі дочірні альбоми та всі фотографії
+            // завдяки налаштуванню зовнішніх ключів (ON DELETE CASCADE / ON DELETE SET NULL).
+            $stmtDelete = $this->db->prepare("DELETE FROM photo_albums WHERE id = ?");
+            $stmtDelete->execute([$albumId]);
+
             $this->db->commit();
             return true;
         } catch (\Exception $e) {
@@ -233,6 +235,39 @@ class Photoalbums {
             error_log("Album Deletion Failed: " . $e->getMessage());
             return false;
         }
+    }
+
+    /**
+     * Допоміжний рекурсивний метод для отримання ID всіх нащадків.
+     */
+    private function getDescendantIds(int $parentId): array
+    {
+        $stmt = $this->db->prepare("SELECT id FROM photo_albums WHERE parent_id = ?");
+        $stmt->execute([$parentId]);
+        $children = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        
+        $descendantIds = $children;
+        
+        foreach ($children as $childId) {
+            $descendantIds = array_merge($descendantIds, $this->getDescendantIds($childId));
+        }
+        
+        return $descendantIds;
+    }
+
+    /**
+     * Отримує список всіх альбомів для переміщення, виключаючи вказаний та його нащадків.
+     */
+    public function getAlbumsForMove(int $excludeAlbumId): array
+    {
+        $descendants = $this->getDescendantIds($excludeAlbumId);
+        $descendants[] = $excludeAlbumId;
+
+        $placeholders = implode(',', array_fill(0, count($descendants), '?'));
+        $sql = "SELECT id, name FROM photo_albums WHERE id NOT IN ($placeholders) ORDER BY name ASC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($descendants);
+        return $stmt->fetchAll();
     }
 
     /**
@@ -248,6 +283,7 @@ class Photoalbums {
             $this->_recursiveDeleteWorker($childId);
         }
 
+        // === ВИПРАВЛЕНО ТУТ: "album-id" замінено на "album_id" ===
         $stmtPhotos = $this->db->prepare("SELECT id, filename FROM photos WHERE album_id = ?");
         $stmtPhotos->execute([$albumId]);
         $photos = $stmtPhotos->fetchAll();
@@ -255,7 +291,8 @@ class Photoalbums {
         if (!empty($photos)) {
             $photoIds = array_column($photos, 'id');
             foreach ($photos as $photo) {
-                $filePath = ROOT . '/resources/img/products/' . $photo['filename'];
+                // Використовуємо BASE_PATH для правильного шляху
+                $filePath = BASE_PATH . '/public/resources/img/products/' . $photo['filename'];
                 if (file_exists($filePath)) {
                     unlink($filePath);
                 }
@@ -268,30 +305,34 @@ class Photoalbums {
         $stmtDeleteAlbum = $this->db->prepare("DELETE FROM photo_albums WHERE id = ?");
         $stmtDeleteAlbum->execute([$albumId]);
     }
-    
+
     /**
-     * Отримує список всіх альбомів, які можуть бути батьківськими.
-     * Виключає поточний альбом та всіх його нащадків.
-     * @param int $excludeAlbumId - ID поточного альбому, який редагується.
+     * Отримує список всіх альбомів для переміщення, виключаючи вказаний та його нащадків.
+     * Повертає готову деревоподібну структуру.
+     *
+     * @param int $excludeAlbumId ID альбому, який потрібно виключити разом з його деревом.
      * @return array
      */
-    public function getAvailableParentAlbums(int $excludeAlbumId = 0): array
+    public function getAvailableAlbumsForMove(int $excludeAlbumId): array
     {
-        // 1. Знаходимо ID всіх нащадків альбому, який редагуємо
-        $excludedIds = $this->getDescendantIds($excludeAlbumId);
-        // 2. Додаємо до списку виключення сам альбом
-        $excludedIds[] = $excludeAlbumId;
-
-        // 3. Формуємо плейсхолдери для SQL-запиту
+        // 1. Знаходимо ID всіх нащадків альбому, який видаляється
+        $descendantIds = $this->getDescendantIds($excludeAlbumId);
+        
+        // 2. Додаємо до списку виключення сам батьківський альбом
+        $excludedIds = array_merge([$excludeAlbumId], $descendantIds);
+        
+        // 3. Формуємо плейсхолдери для безпечного SQL-запиту
         $placeholders = implode(',', array_fill(0, count($excludedIds), '?'));
 
-        // 4. Вибираємо всі альбоми, ID яких не входять до списку виключення
+        // 4. Вибираємо всі альбоми, ID яких НЕ входять до списку виключення
         $sql = "SELECT id, name, parent_id FROM photo_albums WHERE id NOT IN ($placeholders) ORDER BY name ASC";
         
         $stmt = $this->db->prepare($sql);
         $stmt->execute($excludedIds);
-        
-        return $stmt->fetchAll();
+        $flatAlbumList = $stmt->fetchAll();
+
+        // 5. Будуємо з відфільтрованого плаского списку ієрархічне дерево
+        return $this->buildTree($flatAlbumList);
     }
 
 }

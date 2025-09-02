@@ -113,7 +113,7 @@
 .note-edit-form textarea {
     min-height: 80px;
     font-family: 'Roboto Mono', monospace;
-    /* Застосовуємо Roboto Mono */
+    font-size: 13px;
 }
 
 .note-edit-actions {
@@ -154,3 +154,4 @@
     font-family: 'Montserrat', sans-serif;
     /* Застосовуємо Montserrat */
 }
+

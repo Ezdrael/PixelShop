@@ -35,12 +35,16 @@ class Settings
         try {
             $this->db->beginTransaction();
 
-            $stmt = $this->db->prepare("UPDATE settings SET setting_value = ? WHERE setting_key = ?");
+            // Універсальний запит, що створює або оновлює запис
+            $sql = "INSERT INTO settings (setting_key, setting_value) VALUES (:key, :value)
+                    ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)";
+            
+            $stmt = $this->db->prepare($sql);
 
             foreach ($data as $key => $value) {
                 // Ігноруємо CSRF-токен та інші службові поля
                 if ($key !== 'csrf_token') {
-                    $stmt->execute([$value, $key]);
+                    $stmt->execute([':key' => $key, ':value' => $value]);
                 }
             }
 

@@ -1,8 +1,4 @@
-/* ===================================================================
-   Файл:      _main_modal-handlers.js
-   Призначення: Керування модальними вікнами для ПРОСТИХ сутностей
-               (користувачі, ролі, товари і т.д.).
-   =================================================================== */
+// public/resources/js/main/modal-handlers.js
 
 export function initModalHandlers() {
     const simpleDeleteModal = document.getElementById('deleteModalOverlay');
@@ -12,38 +8,45 @@ export function initModalHandlers() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
     const confirmBtn = simpleDeleteModal.querySelector('#modalConfirmBtn');
 
-    // --- Універсальний обробник для кнопок .delete-btn ---
-    document.body.addEventListener('click', async (event) => {
-        const button = event.target.closest('.delete-btn');
-        
-        // Ігноруємо кнопки видалення альбомів, оскільки вони мають свій,
-        // складніший обробник ('album-delete-handler.js').
-        if (!button || button.classList.contains('delete-album-btn')) {
+    document.body.addEventListener('click', (event) => {
+        const button = event.target.closest('.delete-btn, .delete-writeoff-btn, .delete-currency-btn');
+
+        // === ОСНОВНЕ ВИПРАВЛЕННЯ ===
+        // Ігноруємо будь-які кнопки, що знаходяться всередині віджетів,
+        // оскільки вони мають власні, унікальні обробники.
+        if (!button || button.closest('.notes-widget, .clipboard-widget, .messages-widget')) {
             return;
         }
-
-        const entity = button.dataset.entity;
-        const id = button.dataset.id || button.dataset.userId; // Підтримка обох атрибутів
-        const name = button.dataset.userName;
         
-        // Знаходимо елементи модального вікна
+        const entity = button.dataset.entity;
+        const id = button.dataset.id || button.dataset.userId || button.dataset.ids;
+        const name = button.dataset.userName || button.dataset.name || button.dataset.id || button.dataset.ids;
+
+        if (!id) {
+             console.warn('Кнопка видалення не має атрибута data-id, data-user-id або data-ids.');
+             return;
+        }
+        
         const modalTitle = simpleDeleteModal.querySelector('#modalTitle');
         const modalBody = simpleDeleteModal.querySelector('#modalBody');
         
-        // Заповнюємо модальне вікно даними
         modalTitle.textContent = 'Підтвердження видалення';
         modalBody.innerHTML = `<p>Ви впевнені, що хочете видалити <strong>"${name}"</strong>?</p>`;
         
-        // Використовуємо addEventListener з опцією { once: true },
-        // щоб обробник автоматично видалився після першого ж кліку.
-        // Це чистіший спосіб, ніж клонування кнопки.
-        confirmBtn.addEventListener('click', async function handleDelete() {
-            // Формуємо URL для запиту
-            const deleteUrl = (entity === 'arrivals')
-                ? `${baseUrl}/arrivals/delete/${id}`
-                : (entity === 'photos') 
-                    ? `${baseUrl}/albums/delete-photo/${id}` 
-                    : `${baseUrl}/${entity}/delete/${id}`;
+        // Клонуємо кнопку, щоб очистити всі попередні обробники подій
+        const newConfirmBtn = confirmBtn.cloneNode(true);
+        confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+        newConfirmBtn.addEventListener('click', async function handleDelete() {
+            let deleteUrl;
+            if (button.classList.contains('delete-writeoff-btn')) {
+                deleteUrl = `${baseUrl}/writeoffs/delete/${id}`;
+            } else if (entity) {
+                 deleteUrl = `${baseUrl}/${entity}/delete/${id}`;
+            } else {
+                console.error('Не вдалося визначити URL для видалення.');
+                return;
+            }
 
             try {
                 const response = await fetch(deleteUrl, { 
@@ -52,17 +55,8 @@ export function initModalHandlers() {
                 });
                 
                 const data = await response.json();
-
                 if (data.success) {
-                    // Для окремих фото видаляємо елемент зі сторінки без перезавантаження
-                    if (entity === 'photos') {
-                        button.closest('.photo-thumbnail')?.remove();
-                        simpleDeleteModal.style.display = 'none';
-                    } else {
-                        // Для інших сутностей просто перезавантажуємо сторінку,
-                        // щоб побачити оновлений список та флеш-повідомлення.
-                        window.location.reload();
-                    }
+                    window.location.reload();
                 } else {
                     alert(data.message || 'Сталася помилка під час видалення.');
                 }
@@ -70,27 +64,8 @@ export function initModalHandlers() {
                 console.error("Помилка видалення:", error);
                 alert('Не вдалося виконати запит.');
             }
-
-        }, { once: true }); // <--- Ключове покращення
+        });
         
-        // Показуємо модальне вікно
         simpleDeleteModal.style.display = 'flex';
-    });
-
-    // --- Обробники закриття для модального вікна ---
-    const closeModal = () => {
-        // Оскільки обробник на кнопці "Так" тепер самовидаляється,
-        // нам не потрібно його чистити вручну при закритті.
-        simpleDeleteModal.style.display = 'none';
-    };
-
-    simpleDeleteModal.querySelectorAll('.modal-close, .cancel').forEach(btn => {
-        btn.addEventListener('click', closeModal);
-    });
-
-    simpleDeleteModal.addEventListener('click', e => {
-        if (e.target === simpleDeleteModal) {
-            closeModal();
-        }
     });
 }

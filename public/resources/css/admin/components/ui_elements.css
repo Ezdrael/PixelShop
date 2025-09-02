@@ -135,6 +135,9 @@
     color: var(--danger-color);
 }
 
+
+
+
 /* --- Хлібні крихти (Breadcrumbs) --- */
 .breadcrumbs {
     display: flex;
@@ -148,6 +151,57 @@
     border-radius: 8px;
     border: 1px solid var(--border-color);
 }
+
+/* === СТИЛІ для випадаючих списків === */
+.breadcrumb-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.breadcrumb-item::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -8px;
+    height: 8px;
+}
+
+.breadcrumb-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: -16px;
+    background-color: var(--card-bg);
+    min-width: 220px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    border: 1px solid var(--border-color);
+    list-style: none;
+    padding: 0.5rem 0;
+    margin-top: 8px;
+}
+
+.breadcrumb-item:hover .breadcrumb-dropdown {
+    display: block;
+}
+
+.breadcrumb-dropdown li a {
+    display: block;
+    padding: 0.6rem 1rem;
+    text-decoration: none;
+    color: var(--primary-text);
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.breadcrumb-dropdown li a:hover {
+    background-color: var(--sidebar-hover-bg);
+    color: var(--accent-color);
+}
+
+/* === КІНЕЦЬ НОВИХ СТИЛІВ === */
 
 .breadcrumbs a {
     color: var(--secondary-text);
@@ -171,4 +225,119 @@
 .breadcrumbs .active {
     color: var(--accent-color);
     font-weight: 700;
+}
+
+/* === СТИЛІ ДЛЯ АДАПТИВНОГО КАСКАДНОГО МЕНЮ === */
+
+.breadcrumb-dropdown {
+    padding: 0;
+}
+
+.breadcrumb-dropdown .album-tree-level {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    min-width: 240px;
+}
+
+.breadcrumb-dropdown .album-tree-level a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.7rem 1rem;
+    text-decoration: none;
+    color: var(--primary-text);
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.breadcrumb-dropdown .album-tree-level a:hover {
+    background-color: var(--sidebar-hover-bg);
+    color: var(--accent-color);
+}
+
+.breadcrumb-dropdown li {
+    position: relative;
+}
+
+/* --- Логіка каскадного відображення --- */
+
+/* 1. Ховаємо всі підменю за замовчуванням */
+.breadcrumb-dropdown .submenu {
+    display: none;
+    /* Змінено з visibility для простоти */
+    position: absolute;
+    top: -1px;
+    /* Трохи підняли для кращого вигляду */
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 2. Клас, який JavaScript буде додавати для показу меню */
+.breadcrumb-dropdown .submenu.is-visible {
+    display: block;
+}
+
+/* 3. Стиль для розкриття ВПРАВО (за замовчуванням) */
+.breadcrumb-dropdown .submenu {
+    left: 100%;
+}
+
+/* 4. НОВИЙ стиль для розкриття ВЛІВО */
+.breadcrumb-dropdown .submenu.opens-left {
+    left: auto;
+    /* Скидаємо позиціонування зліва */
+    right: 100%;
+    /* Позиціонуємо від правого краю */
+}
+
+/* --- Стрілки-індикатори --- */
+
+/* Стрілка вправо за замовчуванням */
+.breadcrumb-dropdown li.has-submenu>a::after {
+    content: '\f054';
+    /* chevron-right */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 0.7em;
+    margin-left: 1rem;
+    color: var(--secondary-text);
+}
+
+/* НОВА стрілка вліво для меню, що відкривається вліво */
+.breadcrumb-dropdown li.has-submenu.opens-left>a::after {
+    content: '\f053';
+    /* chevron-left */
+}
+
+
+hr {
+    border: 0;
+    height: 1px;
+    background-color: var(--border-color);
+    /* Використовуємо змінну з вашого дизайну */
+    margin: 2rem 0;
+    /* Вертикальні відступи зверху та знизу */
+    position: relative;
+    text-align: center;
+}
+
+/* Додаємо іконку по центру лінії */
+hr::after {
+    content: '\f141';
+    /* Іконка "ellipsis-h" з Font Awesome */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--card-bg);
+    /* Колір фону картки, щоб "розрізати" лінію */
+    color: var(--border-color-hover);
+    /* Трохи темніший колір для контрасту */
+    padding: 0 0.75rem;
+    /* Горизонтальні відступи навколо іконки */
+    font-size: 1rem;
 }

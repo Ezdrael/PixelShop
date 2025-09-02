@@ -7,7 +7,7 @@ C:.
 |   composer.lock
 |   config.php
 |   start-chat.bat
-|   structuer.bat
+|   structure.bat
 |   structure.txt
 |   
 +---app
@@ -66,6 +66,7 @@ C:.
 |   |   |       
 |   |   \---Views
 |   |       \---Admin
+|   |               v_404.php
 |   |               v_arrivals_list.php
 |   |               v_arrival_add.php
 |   |               v_arrival_edit.php
@@ -162,10 +163,47 @@ C:.
 |   |   |   |       
 |   |   |   \---products
 |   |   |           10.jfif
+|   |   |           106.jpg
+|   |   |           107.jpg
+|   |   |           108.jpg
+|   |   |           109.jpg
 |   |   |           11.jfif
+|   |   |           110.jpg
+|   |   |           111.jpg
+|   |   |           112.jpg
+|   |   |           113.jpg
+|   |   |           114.jpg
+|   |   |           115.jpg
+|   |   |           116.jpg
+|   |   |           117.jpg
+|   |   |           118.jpg
+|   |   |           119.jpeg
 |   |   |           12.jfif
+|   |   |           120.jpg
+|   |   |           121.jpg
+|   |   |           122.jpg
+|   |   |           123.jpg
+|   |   |           124.jpg
+|   |   |           125.jpg
+|   |   |           127.png
+|   |   |           128.png
+|   |   |           129.png
 |   |   |           13.jfif
+|   |   |           130.png
+|   |   |           131.png
+|   |   |           132.png
+|   |   |           133.png
+|   |   |           134.png
+|   |   |           135.png
+|   |   |           136.png
 |   |   |           14.jfif
+|   |   |           140.png
+|   |   |           149.png
+|   |   |           150.jpg
+|   |   |           151.jpg
+|   |   |           152.jpg
+|   |   |           153.jpg
+|   |   |           154.jpg
 |   |   |           16.jfif
 |   |   |           17.jfif
 |   |   |           18.jfif
@@ -186,6 +224,7 @@ C:.
 |   |   |           38.jpg
 |   |   |           39.jpg
 |   |   |           40.jpg
+|   |   |           41.jpg
 |   |   |           42.jpeg
 |   |   |           8.jfif
 |   |   |           9.jfif
@@ -206,7 +245,6 @@ C:.
 |   |       |       
 |   |       +---messages-widget
 |   |       |       api.js
-|   |       |       msg_ui.js
 |   |       |       state.js
 |   |       |       ui.js
 |   |       |       websocket.js
@@ -214,6 +252,8 @@ C:.
 |   |       \---photo-album-view
 |   |               album-deleter.js
 |   |               gallery.js
+|   |               hotkeys.js
+|   |               photo-move.js
 |   |               photo-selection.js
 |   |               
 |   \---themes

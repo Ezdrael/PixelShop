@@ -89,12 +89,14 @@ abstract class BaseController extends Controller
     protected function showAccessDenied()
     {
         $this->title = 'Доступ заборонено';
-        $this->render('v_simple_page', ['page_content' => '<h2>Помилка доступу</h2><p>У вас немає прав для виконання цієї дії.</p>']);
+        $this->render('v_simple_page');
     }
     
     public function notFoundAction()
     {
+        http_response_code(404);
         $this->title = '404 - Сторінку не знайдено';
-        $this->render('v_simple_page', ['page_content' => '<h2>404</h2><p>Сторінку не знайдено.</p>']);
+        // Тепер рендеримо наш новий, гарний шаблон
+        $this->render('v_404');
     }
 }

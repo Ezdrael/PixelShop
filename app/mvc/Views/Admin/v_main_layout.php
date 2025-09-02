@@ -131,6 +131,10 @@ use App\Core\TokenManager;
                             <i class="fas fa-user-circle user-avatar"></i>
                         <?php endif; ?>
                         <div class="user-dropdown" id="user-dropdown">
+                            <a href="<?php echo BASE_URL; ?>/account/settings" class="dropdown-item">
+                                <i class="fas fa-cog"></i>
+                                <span>Налаштування</span>
+                            </a>
                             <a href="<?php echo PROJECT_URL; ?>/logout.php" class="dropdown-item">
                                 <i class="fas fa-sign-out-alt"></i>
                                 <span>Вийти</span>
