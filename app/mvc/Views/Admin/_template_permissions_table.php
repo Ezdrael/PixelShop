@@ -33,6 +33,13 @@ function render_permission_icon($permissions, $char) {
             <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_chat'], 'd'); ?></td>
         </tr>
         <tr>
+            <td>Дашборд</td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_dashboard'], 'v'); ?></td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_dashboard'], 'a'); ?></td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_dashboard'], 'e'); ?></td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_dashboard'], 'd'); ?></td>
+        </tr>
+        <tr>
             <td>Ролі</td>
             <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_roles'], 'v'); ?></td>
             <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_roles'], 'a'); ?></td>
@@ -122,6 +129,55 @@ function render_permission_icon($permissions, $char) {
             <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_clipboard'], 'a'); ?></td>
             <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_clipboard'], 'e'); ?></td>
             <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_clipboard'], 'd'); ?></td>
+        </tr>
+        <tr>
+            <td>Календар</td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_calendar'], 'v'); ?></td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_calendar'], 'a'); ?></td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_calendar'], 'e'); ?></td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_calendar'], 'd'); ?></td>
+        </tr>
+        <tr>
+            <td>Акції</td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_sales'], 'v'); ?></td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_sales'], 'a'); ?></td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_sales'], 'e'); ?></td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_sales'], 'd'); ?></td>
+        </tr>
+        <tr>
+            <td>Знижки</td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_discounts'], 'v'); ?></td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_discounts'], 'a'); ?></td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_discounts'], 'e'); ?></td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_discounts'], 'd'); ?></td>
+        </tr>
+        <tr>
+            <td>Промокоди</td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_coupons'], 'v'); ?></td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_coupons'], 'a'); ?></td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_coupons'], 'e'); ?></td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_coupons'], 'd'); ?></td>
+        </tr>
+        <tr>
+            <td>Бонусні бали</td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_bonus_points'], 'v'); ?></td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_bonus_points'], 'a'); ?></td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_bonus_points'], 'e'); ?></td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_bonus_points'], 'd'); ?></td>
+        </tr>
+        <tr>
+            <td>Атрибути</td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_attributes'], 'v'); ?></td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_attributes'], 'a'); ?></td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_attributes'], 'e'); ?></td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_attributes'], 'd'); ?></td>
+        </tr>
+        <tr>
+            <td>Опції</td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_options'], 'v'); ?></td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_options'], 'a'); ?></td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_options'], 'e'); ?></td>
+            <td style="text-align: center;"><?php echo render_permission_icon($permissions_source['perm_options'], 'd'); ?></td>
         </tr>
     </tbody>
 </table>

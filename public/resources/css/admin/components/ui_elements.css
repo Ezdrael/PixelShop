@@ -68,42 +68,59 @@
     text-decoration: line-through;
 }
 
-/* --- Вкладки (Tabs) --- */
+/* --- СТИЛІ ДЛЯ ВКЛАДОК --- */
 .tabs-container {
     margin-top: 1.5rem;
 }
 
 .tab-nav {
     display: flex;
-    border-bottom: 2px solid var(--border-color);
-    margin-bottom: -2px;
-    display: flex;
-    flex-grow: 1;
     background-color: var(--sidebar-hover-bg);
     border-radius: 8px 8px 0 0;
     padding: 4px;
+    gap: 4px;
+    /* Простір між кнопками */
+    border: 1px solid var(--border-color);
 }
 
 .tab-link {
     display: flex;
     align-items: center;
-    gap: .5rem;
-    padding: .8rem 1.5rem;
+    justify-content: center;
+    flex-grow: 1;
+    /* Рівномірно розтягуємо кнопки */
+    padding: .7rem .8rem;
     cursor: pointer;
     text-decoration: none;
     color: var(--secondary-text);
     font-weight: 500;
-    border-bottom: 2px solid transparent;
-    transition: color .2s, border-color .2s;
+    border-radius: 6px;
+    transition: all 0.3s ease-in-out;
 }
 
-.tab-link:hover {
-    color: var(--primary-text);
+.tab-link span {
+    display: inline-block;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-width 0.3s ease-in-out, opacity 0.2s ease-in-out;
+    vertical-align: middle;
+    white-space: nowrap;
 }
 
 .tab-link.active {
+    background-color: var(--card-bg);
     color: var(--accent-color);
-    border-bottom-color: var(--accent-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    font-weight: 600;
+    flex-grow: 2;
+    /* Активна вкладка стає ширшою */
+}
+
+.tab-link.active span {
+    max-width: 150px;
+    opacity: 1;
+    margin-left: 0.5rem;
 }
 
 .tab-content-wrapper {
@@ -340,4 +357,48 @@ hr::after {
     padding: 0 0.75rem;
     /* Горизонтальні відступи навколо іконки */
     font-size: 1rem;
+}
+
+/* --- Стилі для кастомних підказок (Tooltip) --- */
+.custom-tooltip {
+    position: fixed;
+    /* Позиціонування відносно вікна браузера */
+    background-color: var(--primary-text);
+    /* Темний фон */
+    color: white;
+    /* Білий текст */
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.9em;
+    font-weight: 500;
+    z-index: 2000;
+    /* Має бути поверх усіх інших елементів */
+    pointer-events: none;
+    /* Щоб підказка не перехоплювала кліки миші */
+
+    /* Плавна поява та зникнення */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s 0.2s;
+}
+
+.custom-tooltip.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* Створюємо маленький трикутник-стрілку */
+.custom-tooltip::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 100%;
+    /* Розміщуємо зверху */
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent var(--primary-text) transparent;
 }

@@ -1,0 +1,7 @@
+<div class="tab-content" id="data">
+    <div class="form-body">
+        <div class="form-group-inline"><label for="good-price">Ціна, грн<span class="required-field">*</span></label><div class="form-control-wrapper"><input type="number" step="0.01" id="good-price" name="price" class="form-control" value="<?php echo htmlspecialchars($good['price'] ?? '0.00'); ?>" required></div></div>
+        <div class="form-group-inline"><label>Розміри (ДxШxВ), см</label><div class="form-control-wrapper dimensions-group"><input type="number" step="0.01" name="length" placeholder="Довжина" class="form-control" value="<?php echo htmlspecialchars($good['length'] ?? ''); ?>"><input type="number" step="0.01" name="width" placeholder="Ширина" class="form-control" value="<?php echo htmlspecialchars($good['width'] ?? ''); ?>"><input type="number" step="0.01" name="height" placeholder="Висота" class="form-control" value="<?php echo htmlspecialchars($good['height'] ?? ''); ?>"></div></div>
+        <div class="form-group-inline"><label for="good-weight">Вага, кг</label><div class="form-control-wrapper"><input type="number" step="0.001" id="good-weight" name="weight" class="form-control" value="<?php echo htmlspecialchars($good['weight'] ?? ''); ?>"></div></div>
+    </div>
+</div>

@@ -1,12 +1,5 @@
 // public/resources/js/photo-album-view/photo-move.js
 
-/**
- * ✅ ОНОВЛЕНО: Показує модальне вікно для переміщення вибраних фото.
- *
- * @param {Array<string>} photoIds - Масив ID фотографій для переміщення.
- * @param {object} config - Спільний об'єкт конфігурації.
- * @param {function} showErrorMessage - Функція для відображення помилок.
- */
 export const showMovePhotoModal = async (photoIds, config, showErrorMessage) => {
     const confirmationModal = document.getElementById('deleteModalOverlay');
     if (!confirmationModal) return;
@@ -78,9 +71,6 @@ export const showMovePhotoModal = async (photoIds, config, showErrorMessage) => 
     }
 };
 
-/**
- * Ініціалізує кнопку "Перемістити вибрані" в режимі вибору.
- */
 export function initPhotoMove(config, showErrorMessage) {
     const moveSelectedBtn = document.getElementById('move-selected-btn');
     if (moveSelectedBtn) {

@@ -4,6 +4,7 @@ import { initUiHandlers } from './main/ui-handlers.js';
 import { initBreadcrumbs } from './main/breadcrumbs.js';
 import { initHotkeys } from './_main_hotkeys.js';
 
+
 /**
  * Ініціалізує логіку для ОДНОГО flash-повідомлення (таймер, закриття).
  * @param {HTMLElement} flashElement - Елемент повідомлення.
@@ -77,7 +78,41 @@ function showFlashMessage(type, text) {
 // Робимо функцію глобально доступною
 window.showFlashMessage = showFlashMessage;
 
+/**
+ * ✅ НОВА ФУНКЦІЯ: Ініціалізує кастомні, стилізовані підказки.
+ */
+function initCustomTooltips() {
+    // 1. Створюємо один-єдиний елемент для підказки, який будемо перевикористовувати
+    const tooltipElement = document.createElement('div');
+    tooltipElement.className = 'custom-tooltip';
+    document.body.appendChild(tooltipElement);
+
+    // 2. Використовуємо делегування подій для ефективності
+    document.body.addEventListener('mouseover', (event) => {
+        const target = event.target.closest('[data-tooltip]');
+        if (!target) return;
+
+        // Отримуємо текст підказки з атрибута data-tooltip
+        tooltipElement.textContent = target.dataset.tooltip;
+        tooltipElement.classList.add('visible');
+    });
+
+    document.body.addEventListener('mouseout', (event) => {
+        const target = event.target.closest('[data-tooltip]');
+        if (target) {
+            tooltipElement.classList.remove('visible');
+        }
+    });
+
+    document.body.addEventListener('mousemove', (event) => {
+        // Переміщуємо підказку за курсором з невеликим зміщенням
+        tooltipElement.style.left = `${event.pageX + 10}px`;
+        tooltipElement.style.top = `${event.pageY + 20}px`;
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    initCustomTooltips();
     initUiHandlers();
     initModalHandlers();
     initBreadcrumbs();

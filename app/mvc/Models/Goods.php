@@ -183,4 +183,70 @@ class Goods {
         $stmt->execute([$goodId]);
         return $stmt->fetchAll();
     }
+
+    /**
+     * Отримує опції для конкретного товару.
+     */
+    public function getOptionsForProduct(int $goodId): array
+    {
+        $sql = "SELECT og.name as group_name, ov.value 
+                FROM product_options po
+                JOIN option_values ov ON po.option_value_id = ov.id
+                JOIN option_groups og ON ov.group_id = og.id
+                WHERE po.good_id = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$goodId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    /**
+     * Зберігає опції для товару.
+     */
+    public function saveOptionsForProduct(int $goodId, array $optionsData): void
+    {
+        // 1. Видаляємо старі опції для цього товару
+        $stmtDelete = $this->db->prepare("DELETE FROM product_options WHERE good_id = ?");
+        $stmtDelete->execute([$goodId]);
+
+        if (empty($optionsData)) {
+            return; // Якщо нових опцій немає, просто виходимо
+        }
+
+        // 2. Додаємо нові опції
+        $sql = "INSERT INTO product_options (good_id, option_value_id) VALUES (?, ?)";
+        $stmtInsert = $this->db->prepare($sql);
+
+        foreach ($optionsData as $groupId => $valueIds) {
+            if (is_array($valueIds)) {
+                foreach ($valueIds as $valueId) {
+                    $stmtInsert->execute([$goodId, (int)$valueId]);
+                }
+            }
+        }
+    }
+
+    public function getAttributesForProduct(int $goodId): array
+    {
+        $sql = "SELECT pa.attribute_id, a.name, pa.value
+                FROM product_attributes pa
+                JOIN attributes a ON pa.attribute_id = a.id
+                WHERE pa.good_id = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$goodId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function saveAttributesForProduct(int $goodId, array $attributesData): void
+    {
+        $this->db->prepare("DELETE FROM product_attributes WHERE good_id = ?")->execute([$goodId]);
+        if (empty($attributesData)) return;
+
+        $sql = "INSERT INTO product_attributes (good_id, attribute_id, value) VALUES (?, ?, ?)";
+        $stmt = $this->db->prepare($sql);
+        foreach ($attributesData as $attr) {
+            if (!empty($attr['id']) && !empty($attr['value'])) {
+                $stmt->execute([$goodId, (int)$attr['id'], trim($attr['value'])]);
+            }
+        }
+    }
 }

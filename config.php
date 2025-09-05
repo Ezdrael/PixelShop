@@ -6,4 +6,4 @@ define('DB_USER', 'root');
 define('DB_PASS', '');
 
 // Для віртуального хоста pixelshop.local, PROJECT_URL має бути порожнім.
-define('PROJECT_URL', '');
+define('PROJECT_URL', 'http://pixelshop.loc');

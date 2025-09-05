@@ -1,23 +1,28 @@
 <?php
-// ===================================================================
 // app/Mvc/Controllers/Admin/GoodsController.php
-// ===================================================================
 namespace App\Mvc\Controllers\Admin;
 
 use App\Mvc\Models\Goods;
 use App\Mvc\Models\Categories;
 use App\Mvc\Models\Warehouses;
+use App\Mvc\Models\Options;
+use App\Mvc\Models\Attributes;
+use App\Mvc\Models\Currencies;
 
 class GoodsController extends BaseController  {
     protected $mGoods;
     protected $mCategories;
     protected $mWarehouses;
+    protected $mOptions;
+    protected $mAttributes;
 
     public function __construct($params) {
         parent::__construct($params);
         $this->mGoods = new Goods();
         $this->mCategories = new Categories();
         $this->mWarehouses = new Warehouses();
+        $this->mOptions = new Options();
+        $this->mAttributes = new Attributes();
     }
 
     public function indexAction()
@@ -55,17 +60,32 @@ class GoodsController extends BaseController  {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) die('CSRF Error');
+            
             $data = $this->preparePostData();
             if (!empty($data['name']) && $data['category_id'] > 0) {
-                if ($this->mGoods->add($data)) {
+                $newGoodId = $this->mGoods->add($data);
+                if ($newGoodId) {
+                    $this->mGoods->saveAttributesForProduct($newGoodId, $_POST['attributes'] ?? []);
+                    $this->mGoods->saveOptionsForProduct($newGoodId, $_POST['options'] ?? []);
+
                     $_SESSION['flash_message'] = ['type' => 'success', 'text' => 'Новий товар успішно додано.'];
-                    header('Location: ' . BASE_URL . '/goods');
+                    header('Location: ' . BASE_URL . '/goods/edit/' . $newGoodId);
                     exit();
                 }
             }
+             $_SESSION['flash_message'] = ['type' => 'error', 'text' => 'Помилка: заповніть усі обов\'язкові поля.'];
         }
-        $categories = $this->mCategories->getAll();
-        $this->render('v_good_add', ['categories' => $categories]);
+
+        $this->addJS(PROJECT_URL . '/resources/js/product-edit.js');
+        
+        $mCurrencies = new Currencies();
+
+        $this->render('v_good_add', [
+            'categories' => $this->mCategories->getAll(),
+            'attributes' => $this->mAttributes->getAll(),
+            'options' => $this->mOptions->getAllGroupsWithValues(),
+            'currencies' => $mCurrencies->getAll()
+        ]);
     }
     
     public function editAction()
@@ -76,19 +96,37 @@ class GoodsController extends BaseController  {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) die('CSRF Error');
+            
             $data = $this->preparePostData();
             if (!empty($data['name']) && $data['category_id'] > 0) {
                 if ($this->mGoods->update($id, $data)) {
+                    $this->mGoods->saveAttributesForProduct($id, $_POST['attributes'] ?? []);
+                    $this->mGoods->saveOptionsForProduct($id, $_POST['options'] ?? []);
                     $_SESSION['flash_message'] = ['type' => 'success', 'text' => 'Товар успішно оновлено.'];
+                } else {
+                    $_SESSION['flash_message'] = ['type' => 'error', 'text' => 'Не вдалося оновити товар.'];
                 }
+            } else {
+                 $_SESSION['flash_message'] = ['type' => 'error', 'text' => 'Помилка: заповніть усі обов\'язкові поля.'];
             }
             header('Location: ' . BASE_URL . '/goods/edit/' . $id);
             exit();
         }
         
+        $this->addJS(PROJECT_URL . '/resources/js/product-edit.js');
+        
+        $mCurrencies = new Currencies();
         $good = $this->mGoods->getById($id);
-        $categories = $this->mCategories->getAll();
-        $this->render('v_good_edit', ['good' => $good, 'categories' => $categories]);
+
+        $this->render('v_good_edit', [
+            'good' => $good,
+            'categories' => $this->mCategories->getAll(),
+            'attributes' => $this->mAttributes->getAll(),
+            'options' => $this->mOptions->getAllGroupsWithValues(),
+            'good_attributes' => $this->mGoods->getAttributesForProduct($id),
+            'good_options' => $this->mGoods->getOptionsForProduct($id),
+            'currencies' => $mCurrencies->getAll()
+        ]);
     }
 
     public function deleteAction() {

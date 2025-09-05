@@ -36,7 +36,15 @@ class Users {
                             r.perm_currencies,
                             r.perm_writeoffs,
                             r.perm_notes,
-                            r.perm_clipboard
+                            r.perm_clipboard,
+                            r.perm_calendar,
+                            r.perm_dashboard,
+                            r.perm_sales,
+                            r.perm_discounts,
+                            r.perm_coupons,
+                            r.perm_bonus_points,
+                            r.perm_attributes,
+                            r.perm_options
             FROM users u 
             LEFT JOIN roles r ON u.role_id = r.id 
             WHERE u.id = ?";

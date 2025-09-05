@@ -133,4 +133,3 @@
     </div>
 </div>
 
-<script type="module" src="<?php echo BASE_URL; ?>/resources/js/photo-album-view.js"></script>

@@ -42,8 +42,12 @@ use App\Core\TokenManager;
                 <span>PixelShop</span>
             </div>
             <nav class="sidebar-nav">
-                <a href="<?php echo BASE_URL; ?>/" class="<?php echo ($current_route == '') ? 'active' : ''; ?>"><i class="fas fa-tachometer-alt"></i><span>Дашборд</span></a>
-                
+                <?php if ($this->hasPermission('dashboard', 'v')): ?>
+                    <a href="<?php echo BASE_URL; ?>/dashboard" class="<?php echo (strpos($current_route, 'dashboard') !== false) ? 'active' : ''; ?>">
+                        <i class="fas fa-tachometer-alt"></i><span>Дашборд</span>
+                    </a>
+                <?php endif; ?>    
+
                 <?php if ($this->hasPermission('roles', 'v')): ?>
                     <a href="<?php echo BASE_URL; ?>/roles" class="<?php echo (strpos($current_route, 'roles') !== false) ? 'active' : ''; ?>"><i class="fas fa-user-shield"></i><span>Ролі</span></a>
                 <?php endif; ?>
@@ -88,13 +92,55 @@ use App\Core\TokenManager;
                 
                 <?php if ($this->hasPermission('writeoffs', 'v')): ?>
                     <a href="<?php echo BASE_URL; ?>/writeoffs" class="<?php echo (strpos($current_route, 'writeoffs') !== false) ? 'active' : ''; ?>">
-                        <i class="fas fa-minus-circle"></i><span>Списання</span>
+                        <i class="fas fa-file-export"></i><span>Списання</span>
                     </a>
                 <?php endif; ?>
                 
                 <?php if ($this->hasPermission('settings', 'v')): ?>
                     <a href="<?php echo BASE_URL; ?>/settings" class="<?php echo (strpos($current_route, 'settings') !== false) ? 'active' : ''; ?>">
                         <i class="fas fa-cog"></i><span>Налаштування</span>
+                    </a>
+                <?php endif; ?>
+
+                <?php if ($this->hasPermission('calendar', 'v')): ?>
+                    <a href="<?php echo BASE_URL; ?>/calendar" class="<?php echo (strpos($current_route, 'calendar') !== false) ? 'active' : ''; ?>">
+                        <i class="fas fa-calendar-alt"></i><span>Календар</span>
+                    </a>
+                <?php endif; ?>
+                
+                <?php if ($this->hasPermission('sales', 'v')): ?>
+                    <a href="<?php echo BASE_URL; ?>/sales" class="<?php echo (strpos($current_route, 'sales') !== false) ? 'active' : ''; ?>">
+                        <i class="fas fa-tags"></i><span>Акції</span>
+                    </a>
+                <?php endif; ?>
+
+                <?php if ($this->hasPermission('discounts', 'v')): ?>
+                    <a href="<?php echo BASE_URL; ?>/discounts" class="<?php echo (strpos($current_route, 'discounts') !== false) ? 'active' : ''; ?>">
+                        <i class="fas fa-percent"></i><span>Знижки</span>
+                    </a>
+                <?php endif; ?>
+
+                <?php if ($this->hasPermission('coupons', 'v')): ?>
+                    <a href="<?php echo BASE_URL; ?>/coupons" class="<?php echo (strpos($current_route, 'coupons') !== false) ? 'active' : ''; ?>">
+                        <i class="fas fa-ticket-alt"></i><span>Промокоди</span>
+                    </a>
+                <?php endif; ?>
+
+                <?php if ($this->hasPermission('bonus_points', 'v')): ?>
+                    <a href="<?php echo BASE_URL; ?>/bonuspoints" class="<?php echo (strpos($current_route, 'bonuspoints') !== false) ? 'active' : ''; ?>">
+                        <i class="fas fa-coins"></i><span>Бонусні бали</span>
+                    </a>
+                <?php endif; ?>
+
+                <?php if ($this->hasPermission('attributes', 'v')): ?>
+                    <a href="<?php echo BASE_URL; ?>/attributes" class="<?php echo (strpos($current_route, 'attributes') !== false) ? 'active' : ''; ?>">
+                        <i class="fas fa-tasks"></i><span>Атрибути</span>
+                    </a>
+                <?php endif; ?>
+
+                <?php if ($this->hasPermission('options', 'v')): ?>
+                    <a href="<?php echo BASE_URL; ?>/options" class="<?php echo (strpos($current_route, 'options') !== false) ? 'active' : ''; ?>">
+                        <i class="fas fa-swatchbook"></i><span>Опції товарів</span>
                     </a>
                 <?php endif; ?>
             </nav>
@@ -261,36 +307,29 @@ use App\Core\TokenManager;
     <!-- МОДАЛЬНЕ ВІКНО -->
     <?php include '_template_modals.php'; ?>
 
-
-
-
-
-
+    <script src="<?php echo PROJECT_URL; ?>/resources/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/lightgallery.min.js"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+    
     <script type="module" src="<?php echo PROJECT_URL; ?>/resources/js/MAIN.js"></script>
-
     <?php if ($this->hasPermission('notes', 'v')): ?>
         <script type="module" src="<?php echo PROJECT_URL; ?>/resources/js/notes-widget.js"></script>
     <?php endif; ?>
-
     <?php if ($this->hasPermission('clipboard', 'v')): ?>
         <script type="module" src="<?php echo PROJECT_URL; ?>/resources/js/clipboard-widget.js"></script>
     <?php endif; ?>
-    
     <?php if ($this->hasPermission('chat', 'v')): ?>
         <script type="module" src="<?php echo PROJECT_URL; ?>/resources/js/messages-widget.js"></script>
     <?php endif; ?>
 
     <?php
+    // Універсальний цикл для всіх скриптів, що підключаються зі сторінок (включаючи tinymce-init.js)
     if (!empty($pageJS)) {
         foreach ($pageJS as $js_file) {
-            echo '<script type="module" src="' . htmlspecialchars($js_file) . '"></script>';
+            echo '<script defer src="' . htmlspecialchars($js_file) . '"></script>';
         }
     }
     ?>
-
-    
 </body>
 </html>

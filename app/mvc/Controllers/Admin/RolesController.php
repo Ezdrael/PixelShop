@@ -149,6 +149,14 @@ class RolesController extends BaseController {
             'settings' => $_POST['perms']['settings'] ?? [],
             'notes' => $_POST['perms']['notes'] ?? [],
             'clipboard' => $_POST['perms']['clipboard'] ?? [],
+            'calendar' => $_POST['perms']['calendar'] ?? [],
+            'dashboard' => $_POST['perms']['dashboard'] ?? [],
+            'sales' => $_POST['perms']['sales'] ?? [],
+            'discounts' => $_POST['perms']['discounts'] ?? [],
+            'coupons' => $_POST['perms']['coupons'] ?? [],
+            'bonus_points' => $_POST['perms']['bonus_points'] ?? [],
+            'attributes' => $_POST['perms']['attributes'] ?? [],
+            'options' => $_POST['perms']['options'] ?? [],
         ];
 
         return [
@@ -167,6 +175,14 @@ class RolesController extends BaseController {
             'perm_settings' => implode('', $perms['settings']),
             'perm_notes' => implode('', $perms['notes']),
             'perm_clipboard' => implode('', $perms['clipboard']),
+            'perm_calendar' => implode('', $perms['calendar']),
+            'perm_dashboard' => implode('', $perms['dashboard']),
+            'perm_sales' => implode('', $perms['sales']),
+            'perm_discounts' => implode('', $perms['discounts']),
+            'perm_coupons' => implode('', $perms['coupons']),
+            'perm_bonus_points' => implode('', $perms['bonus_points']),
+            'perm_attributes' => implode('', $perms['attributes']),
+            'perm_options' => implode('', $perms['options']),
         ];
     }
 }

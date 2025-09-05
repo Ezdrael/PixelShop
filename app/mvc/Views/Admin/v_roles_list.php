@@ -46,6 +46,7 @@ function format_permissions($role, $key, $label) {
                                 format_permissions($role, 'perm_notes', 'Нотатки'),
                                 format_permissions($role, 'perm_clipboard', 'Буфер обміну'),
                                 format_permissions($role, 'perm_chat', 'Повідомлення'),
+                                format_permissions($role, 'perm_dashboard', 'Дашборд'),
                                 format_permissions($role, 'perm_roles', 'Ролі'),
                                 format_permissions($role, 'perm_users', 'Користувачі'),
                                 format_permissions($role, 'perm_categories', 'Категорії'),
@@ -56,7 +57,14 @@ function format_permissions($role, $key, $label) {
                                 format_permissions($role, 'perm_albums', 'Фотоальбоми'),
                                 format_permissions($role, 'perm_currencies', 'Валюти'),
                                 format_permissions($role, 'perm_writeoffs', 'Списання'),
-                                format_permissions($role, 'perm_settings', 'Налаштування')
+                                format_permissions($role, 'perm_settings', 'Налаштування'),
+                                format_permissions($role, 'perm_calendar', 'Календар'),
+                                format_permissions($role, 'perm_discounts', 'Знижки'),
+                                format_permissions($role, 'perm_sales', 'Акції'),
+                                format_permissions($role, 'perm_coupons', 'Промокоди'),
+                                format_permissions($role, 'perm_bonus_points', 'Бонусні бали'),
+                                format_permissions($role, 'perm_attributes', 'Атрибути'),
+                                format_permissions($role, 'perm_options', 'Опції')
                             ];
                             echo implode('<br>', array_filter($permissions));
                         ?>

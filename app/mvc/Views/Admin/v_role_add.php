@@ -68,6 +68,7 @@ function render_permission_checkboxes($role, $resource_name, $label) {
             </thead>
             <tbody>
                 <?php render_permission_checkboxes($role ?? [], 'chat', 'Повідомлення'); ?>
+                <?php render_permission_checkboxes($role ?? [], 'dashboard', 'Дашборд'); ?>
                 <?php render_permission_checkboxes($role ?? [], 'roles', 'Ролі'); ?>
                 <?php render_permission_checkboxes($role ?? [], 'users', 'Користувачі'); ?>
                 <?php render_permission_checkboxes($role ?? [], 'categories', 'Категорії'); ?>
@@ -81,6 +82,13 @@ function render_permission_checkboxes($role, $resource_name, $label) {
                 <?php render_permission_checkboxes($role ?? [], 'settings', 'Налаштування'); ?>
                 <?php render_permission_checkboxes($role ?? [], 'notes', 'Нотатки'); ?>
                 <?php render_permission_checkboxes($role ?? [], 'clipboard', 'Буфер обміну'); ?>
+                <?php render_permission_checkboxes($role ?? [], 'calendar', 'Календар'); ?>
+                <?php render_permission_checkboxes($role ?? [], 'sales', 'Акції'); ?>
+                <?php render_permission_checkboxes($role ?? [], 'discounts', 'Знижки'); ?>
+                <?php render_permission_checkboxes($role ?? [], 'coupons', 'Промокоди'); ?>
+                <?php render_permission_checkboxes($role ?? [], 'bonus_points', 'Бонусні бали'); ?>
+                <?php render_permission_checkboxes($role ?? [], 'attributes', 'Атрибути'); ?>
+                <?php render_permission_checkboxes($role ?? [], 'options', 'Опції'); ?>
             </tbody>
         </table>
     </form>

@@ -2,6 +2,8 @@
 // public/index.php
 session_start();
 
+setlocale(LC_TIME, 'uk_UA.UTF-8', 'uk_UA', 'ukr');
+
 // --- ЛОГІКА ІНСТАЛЯТОРА ---
 // Якщо файлу конфігурації немає, але є папка інсталяції, запускаємо її.
 if (!file_exists(dirname(__DIR__) . '/config.php') && is_dir(__DIR__ . '/install')) {

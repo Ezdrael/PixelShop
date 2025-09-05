@@ -1,0 +1,1 @@
+<div class="tab-content" id="images"><p>Тут буде реалізовано завантаження зображень.</p></div>
